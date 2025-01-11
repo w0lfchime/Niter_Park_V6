@@ -19,7 +19,7 @@ public class AppManager : MonoBehaviour
 
     void Awake()
     {
-        // Singleton
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -27,28 +27,11 @@ public class AppManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        // - - - - - - - - - 
 
-        // Dev setup (console commands.. etc.)
        
-        CommandHandler.RegisterCommand("echo", args =>
-        {
-            if (args.Length == 0)
-            {
-                LogCore.Log("Usage: echo [message]");
-            }
-            else
-            {
-                // Join all arguments to recreate the user's input message
-                string message = string.Join(" ", args);
-                LogCore.Log(message);
-            }
-        });
 
 
-        // Setup
 
-        StandardInitApp();
 
 
 
@@ -56,12 +39,6 @@ public class AppManager : MonoBehaviour
 
 
 
-    void StandardInitApp()
-    {
-        AppState homeMenu = new HomeAppState();
-    }
-
-    //Scene Management 
 
 
 
