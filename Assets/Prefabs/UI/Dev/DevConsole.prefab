@@ -147,7 +147,6 @@ GameObject:
   - component: {fileID: 3644142010241271123}
   - component: {fileID: 7424846182920297655}
   - component: {fileID: 7668353279002021486}
-  - component: {fileID: 7114113508773193787}
   m_Layer: 5
   m_Name: DevConsole
   m_TagString: Untagged
@@ -218,26 +217,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7114113508773193787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1296174257244892742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22ad3e1a2b0df1a40b13ea1e529e517f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputField: {fileID: 4068742298777657104}
-  sendButton: {fileID: 7023041743149073251}
-  refreshButton: {fileID: 5759631351246098158}
-  exitButton: {fileID: 7101480450237992153}
-  consoleScrollRect: {fileID: 8462043942488308665}
-  consoleContent: {fileID: 578939294547839763}
-  consoleMessagePrefab: {fileID: 5256880416797057947, guid: 85ca0caf24ef1dc45b9ebd3f0af59e7d, type: 3}
-  messageLimit: 100
 --- !u!1 &1681821295555686117
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,18 +1,74 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Bootstrap : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public 
+
+    void Awake()
     {
-        
+        RegisterServices();
+        RegisterCommands();
     }
 
-    // Update is called once per frame
-    void Update()
+    void RegisterServices()
     {
-        
+
+        ServiceLocator.RegisterService<AudioManager>(GetComponent<AudioManager>());
+        ServiceLocator.RegisterService<InputManager>(GetComponent<InputManager>());
+        ServiceLocator.RegisterService<InputManager>(GetComponent<InputManager>());
     }
+
+    void RegisterCommands()
+    {
+        CommandHandler.RegisterCommand("echo", args =>
+        {
+            if (args.Length == 0)
+            {
+                LogCore.Log("Usage: echo [message]");
+            }
+            else
+            {
+                // Join all arguments to recreate the user's input message
+                string message = string.Join(" ", args);
+                LogCore.Log(message);
+            }
+        });
+
+        CommandHandler.RegisterCommand("log", args =>
+        {
+            if (args.Length < 2)
+            {
+                LogCore.Log("Usage: /log [enable|disable] [category]");
+                return;
+            }
+
+            string action = args[0].ToLower();
+            string categoryName = args[1];
+            if (!Enum.TryParse(typeof(LogCategory), categoryName, true, out var categoryEnum))
+            {
+                LogCore.LogError($"Invalid log category: {categoryName}");
+                return;
+            }
+
+            var category = (LogCategory)categoryEnum;
+
+            if (action == "enable")
+            {
+                LogCore.EnableCategory(category);
+                LogCore.Log($"{category} logging enabled.", LogCategory.Response);
+            }
+            else if (action == "disable")
+            {
+                LogCore.DisableCategory(category);
+                LogCore.Log($"{category} logging disabled.", LogCategory.Response);
+            }
+            else
+            {
+                LogCore.LogError("Unknown action. Use 'enable' or 'disable'.");
+            }
+        });
+
+    }
+
 }

@@ -8,13 +8,17 @@ public static class ServiceLocator
     public static void RegisterService<T>(T service)
     {
         Type serviceType = typeof(T);
+        string serviceName = serviceType.Name;
+
         if (!services.ContainsKey(serviceType))
         {
             services[serviceType] = service;
+
+            LogCore.Log("Registered service: {serviceName}", LogCategory.Software);
         }
         else
         {
-            //TODO: LOG
+            LogCore.Log("Serivce already registered: {serviceName}", LogCategory.Software);
         }
     }
 
