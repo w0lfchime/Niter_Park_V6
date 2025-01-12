@@ -14,11 +14,11 @@ public static class ServiceLocator
         {
             services[serviceType] = service;
 
-            LogCore.Log("Registered service: {serviceName}", LogCategory.Software);
+            LogCore.Log($"Registered service: {serviceName}", LogCategory.Software);
         }
         else
         {
-            LogCore.Log("Serivce already registered: {serviceName}", LogCategory.Software);
+            LogCore.Log($"Serivce already registered: {serviceName}", LogCategory.Software);
         }
     }
 
