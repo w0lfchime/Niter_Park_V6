@@ -8,8 +8,7 @@ public class TimePanel : MonoBehaviour
     public TextMeshProUGUI fpsText;
     public TextMeshProUGUI timeScaleText;
     public TextMeshProUGUI gameTimeText;
-    public TextMeshProUGUI appStateTimeText;
-    public TextMeshProUGUI subStateTimeText;
+    public TextMeshProUGUI appSubStateTimeText;
     public TextMeshProUGUI unscaledGameTimeText;
 
     private float fpsUpdateInterval = 0.5f;
@@ -18,6 +17,8 @@ public class TimePanel : MonoBehaviour
 
     private float appStateStartTime = 0f;
     private float subStateStartTime = 0f;
+
+    private bool panelIsOpen = false; 
 
     private void Start()
     {
@@ -28,11 +29,15 @@ public class TimePanel : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            panelIsOpen = !panelIsOpen;
+            wholeTimePanel.SetActive(panelIsOpen);
+        }
         UpdateFPS();
         UpdateTimeScale();
         UpdateGameTime();
-        UpdateAppStateTime();
-        UpdateSubStateTime();
+        UpdateAppSubStateTime();
         UpdateUnscaledGameTime();
     }
 
@@ -61,22 +66,18 @@ public class TimePanel : MonoBehaviour
         gameTimeText.text = $": {scaledGameTime:F2}s";
     }
 
-    private void UpdateAppStateTime()
+    private void UpdateAppSubStateTime()
     {
-        float timeSinceAppState = Time.unscaledTime - appStateStartTime;
-        appStateTimeText.text = $"S->AppState: {timeSinceAppState:F2}s";
+        float timeSinceAppStateSwitch = Time.unscaledTime - appStateStartTime;
+        float timeSinceSubStateSwitch = Time.unscaledTime - subStateStartTime;
+        appSubStateTimeText.text = $"S->AppState: {timeSinceAppStateSwitch:F2}\nS->AppState: {timeSinceSubStateSwitch:F2}";
     }
 
-    private void UpdateSubStateTime()
-    {
-        float timeSinceSubState = Time.unscaledTime - subStateStartTime;
-        subStateTimeText.text = $"S->SubState: {timeSinceSubState:F2}s";
-    }
 
     private void UpdateUnscaledGameTime()
     {
         float unscaledGameTime = Time.unscaledTime;
-        unscaledGameTimeText.text = $"G-REAL: {unscaledGameTime:F2}s";
+        unscaledGameTimeText.text = $"REAL: {unscaledGameTime:F2}s";
     }
 
     public void ResetAppStateTime()

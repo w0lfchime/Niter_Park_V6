@@ -61,6 +61,8 @@ public abstract class AppState
 
         _subStateStack.Push(subState);
         subState.Enter();
+
+
     }
 
     public void PopSubState()
