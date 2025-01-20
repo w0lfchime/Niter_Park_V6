@@ -1,47 +1,47 @@
-using UnityEngine;
+//using UnityEngine;
 
-public class HomeMenuHome : SubState
-{
-    public HomeMenuHome(AppState parentState) : base(parentState)
-    {
-    }
+//public class HomeMenuHome : SubState
+//{
+//    public HomeMenuHome(AppState parentState) : base(parentState)
+//    {
+//    }
 
-    public override void Enter()
-    {
-        base.Enter();
+//    public override void Enter()
+//    {
+//        base.Enter();
 
-        LogCore.Log("Entered HomeMenuHome SubState", LogCategory.SubState);
+//        LogCore.Log("Entered HomeMenuHome SubState", LogCategory.SubState);
 
-        // Example: Display the main menu UI
-        UIManager.Instance.ShowMenu("MainMenu");
-    }
+//        // Example: Display the main menu UI
+//        UIManager.Instance.ShowMenu("MainMenu");
+//    }
 
-    public override void Exit()
-    {
-        base.Exit();
+//    public override void Exit()
+//    {
+//        base.Exit();
 
 
 
-    }
+//    }
 
-    public override void Update()
-    {
-        base.Update();
+//    public override void Update()
+//    {
+//        base.Update();
 
-        HandleInput();
-    }
+//        HandleInput();
+//    }
 
-    public override void Pause()
-    {
-        base.Pause();
+//    public override void Pause()
+//    {
+//        base.Pause();
 
-        LogCore.Log("Paused HomeMenuHome SubState", LogCategory.SubState);
-    }
+//        LogCore.Log("Paused HomeMenuHome SubState", LogCategory.SubState);
+//    }
 
-    public override void Resume()
-    {
-        base.Resume();
+//    public override void Resume()
+//    {
+//        base.Resume();
 
-        LogCore.Log("Resumed HomeMenuHome SubState", LogCategory.SubState);
-    }
-}
+//        LogCore.Log("Resumed HomeMenuHome SubState", LogCategory.SubState);
+//    }
+//}
