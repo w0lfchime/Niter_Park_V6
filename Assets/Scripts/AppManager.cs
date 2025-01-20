@@ -26,7 +26,7 @@ public class AppManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //dd on load ?
 
        
 
@@ -66,11 +66,7 @@ public class AppManager : MonoBehaviour
     //Mono Behaviour
     void Update()
     {
-        // Periodically update settings
-        if (Input.GetKeyDown(KeyCode.U)) // For testing: manually trigger updates
-        {
-            //globalSettings.UpdateSettings();
-        }
+
 
 
         
