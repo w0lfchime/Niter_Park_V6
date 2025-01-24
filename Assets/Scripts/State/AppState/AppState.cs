@@ -23,7 +23,7 @@ public abstract class AppState
     // Lifecycle Methods
     public virtual void Enter()
     {
-
+        LogCore.Log($"")
     }
 
     public virtual void Exit()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -37,12 +38,43 @@ public class AppManager : MonoBehaviour
 
     }
 
+    void RegisterCommands()
+    {
+        CommandHandler.RegisterCommand("appstate", args =>
+        {
+            switch (args[1])
+            {
+                case "set":
+                    
+                    break;
+                case "reset":
+                    AppState newState = (AppState)Activator.CreateInstance(CurrentState.GetType());
+                    SetAppState(newState);
+                    break;
+                default:
+                    LogCore.Log($"Unknown argument: {args[1]}");
+                    break;
+            }
+        });
+    }
 
 
 
 
 
 
+    void SetAppState(string appstate)
+    {
+        switch (appstate)
+        {
+            case "match":
+                break;
+
+            default:
+                LogCore.Log($"Unknown appstate: {appstate}");
+                break;
+        }
+    }
 
     // 
     void SetAppState(AppState state)
@@ -51,7 +83,7 @@ public class AppManager : MonoBehaviour
         if (CurrentState != null)
         {
             CurrentState.Exit();
-        }
+
 
         // Assign the new state
         CurrentState = state;
@@ -72,7 +104,7 @@ public class AppManager : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         // Update global data, such as screen size 
         //GlobalDataUpdates();
@@ -82,8 +114,5 @@ public class AppManager : MonoBehaviour
 
 
 
-    private void GlobalDataUpdates()
-    {
-        //globalSettings.UpdateSettings();
-    }
+
 }
