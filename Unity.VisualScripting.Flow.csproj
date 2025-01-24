@@ -116,9 +116,9 @@
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Collections\Lists\InsertListItem.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Control\Sequence.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\UnitPreservation.cs" />
-    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Logic\Greater.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Collections\Lists\ListContainsItem.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Collections\Dictionaries\DictionaryContainsKey.cs" />
+    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Logic\Greater.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Connections\ControlConnection.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Round.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Variables\GetVariable.cs" />
@@ -255,8 +255,8 @@
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector2\Vector2Multiply.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Nulls\Null.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Dependencies\NCalc\LogicalExpression.cs" />
-    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Control\Break.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Multiply.cs" />
+    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Control\Break.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector2\DeprecatedVector2Add.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector3\DeprecatedVector3Add.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Ports\ControlOutput.cs" />
@@ -323,8 +323,8 @@
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Events\Application\OnApplicationLostFocus.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Collections\FirstItem.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\EditorBinding\UnitShortTitleAttribute.cs" />
-    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector4\Vector4Absolute.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector2\Vector2Normalize.cs" />
+    <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector4\Vector4Absolute.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\IUnit.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\Framework\Math\Vector3\Vector3Divide.cs" />
     <Compile Include="Library\PackageCache\com.unity.visualscripting\Runtime\VisualScripting.Flow\UnitPortDefinitionCollection.cs" />
@@ -953,6 +953,22 @@
       <HintPath>Library\PackageCache\com.unity.testtools.codecoverage\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="unityplastic">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Plastic.Antlr3.Runtime">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Plastic.Newtonsoft.Json">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="log4netPlastic">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.IonicZip">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
       <Private>False</Private>
@@ -963,22 +979,6 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="log4netPlastic">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Plastic.Newtonsoft.Json">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.Plastic.Antlr3.Runtime">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="unityplastic">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
