@@ -58,16 +58,14 @@ public class AppManager : MonoBehaviour
         });
     }
 
-
-
-
-
-
     void SetAppState(string appstate)
     {
         switch (appstate)
         {
             case "match":
+                AppState newAppState = new AppState();
+
+                SetAppState(newAppState);
                 break;
 
             default:
