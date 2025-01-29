@@ -29,7 +29,7 @@ public class AppManager : MonoBehaviour
         Instance = this;
         //dd on load ?
 
-       
+
 
 
 
@@ -45,7 +45,7 @@ public class AppManager : MonoBehaviour
             switch (args[1])
             {
                 case "set":
-                    
+
                     break;
                 case "reset":
                     AppState newState = (AppState)Activator.CreateInstance(CurrentState.GetType());
@@ -63,9 +63,9 @@ public class AppManager : MonoBehaviour
         switch (appstate)
         {
             case "match":
-                AppState newAppState = new AppState();
+                //AppState newAppState = new Match();
 
-                SetAppState(newAppState);
+                //SetAppState(newAppState);
                 break;
 
             default:
@@ -83,34 +83,35 @@ public class AppManager : MonoBehaviour
             CurrentState.Exit();
 
 
-        // Assign the new state
-        CurrentState = state;
+            // Assign the new state
+            CurrentState = state;
 
-        // Start the new state
-        if (CurrentState != null)
-        {
-            CurrentState.Enter();
+            // Start the new state
+            if (CurrentState != null)
+            {
+                CurrentState.Enter();
+            }
         }
+
+        //Mono Behaviour
+        void Update()
+        {
+
+
+
+
+        }
+
+        void FixedUpdate()
+        {
+            // Update global data, such as screen size 
+            //GlobalDataUpdates();
+            //CurrentState.FixedUpdate();
+        }
+
+
+
+
+
     }
-
-    //Mono Behaviour
-    void Update()
-    {
-
-
-
-        
-    }
-
-    void FixedUpdate()
-    {
-        // Update global data, such as screen size 
-        //GlobalDataUpdates();
-        //CurrentState.FixedUpdate();
-    }
-
-
-
-
-
 }
