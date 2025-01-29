@@ -1,18 +1,18 @@
-using UnityEngine;
+//using UnityEngine;
 
-public class Match : AppState
-{
-    Match(string stage)
-    {
+//public class Match : AppState
+//{
+//    Match(string stage)
+//    {
         
-    }
+//    }
 
-    public override void Enter()
-    {
-        base.Enter();
+//    public override void Enter()
+//    {
+//        base.Enter();
 
 
 
         
-    }
-}
+//    }
+//}
