@@ -2,17 +2,23 @@ using UnityEngine;
 
 public abstract class CharacterState
 {
-    protected Character character;
+    [Header("Parent")]
+    protected Character ch;
+
+    [Header("Component Refs")]
+    protected Animator animator;
+    protected Rigidbody rb;
+    protected CapsuleCollider cc;
 
     public CharacterState(Character character)
     {
-        this.character = character;
+        this.ch = character;
+        this.animator = character.animator;
         this.rb = character.rigidBody;
+        this.cc = character.capsuleCollider;
     }
 
-    protected Rigidbody rb;
-
-    public virtual void Enter() { }
+    public virtual void Entry() { }
     public virtual void Exit() { }
     public virtual void Update() { }
     public virtual void FixedUpdate() { }

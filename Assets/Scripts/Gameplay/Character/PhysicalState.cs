@@ -2,39 +2,6 @@ using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
-    [Header("Movement Variables")]
-    public float currentMaxSpeed;
-    public float currentControlForce;
-    public Vector3 movementInput;
-    public Vector3 playerMovementDirection;
-    public float playerSpeed;
-    public float velocityX;
-    public float velocityY;
-    public float targetVelocityX;
-    public float targetVelocityY;
-
-    [Header("Ground Checking Variables")]
-    public LayerMask groundLayer;
-    public bool isGrounded;
-    public bool onGrounding; //on frame isgrounded is set to false to true
-    public bool onUngrounding; //on frame isgrounded isss set from true to false
-    public float distanceToGround;
-    public float lastGroundedCheckTime = 0.0f;
-    public float timeSinceLastGrounding = 0.0f;
-
-    [Header("Rotation Variables")]
-    public bool clockwiseRotation = true;
-    public bool facingRight;
-
-    [Header("Jump Variables")]
-    public float lastJumpTime;
-    public int jumpCount;
-    public float jumpForceLerp;
-
-    [Header("Physics Variables")]
-    public float appliedGravityFactor; //gravity factor thats actually used. Post lerp. 
-    public Vector3 appliedForce;
-    public Vector3 appliedImpulseForce;
 
     public PhysicalState(Character character) : base(character)
     {
@@ -43,9 +10,9 @@ public class PhysicalState : CharacterState
 
 
 
-    public override void Enter()
+    public override void Entry()
     {
-        base.Enter();
+        base.Entry();
 
     }
 
@@ -91,10 +58,60 @@ public class PhysicalState : CharacterState
     // - - - - - - - - 
 
 
+    void ApplyGravity()
+    {
+        appliedForce += new Vector3(0, -10, 0);
+    }
 
     void ApplyMotion()
     {
         rb.AddForce(appliedForce, ForceMode.Force);
         rb.AddForce(appliedImpulseForce, ForceMode.Impulse);
+    }
+
+
+    private void CheckGrounded()
+    {
+        float sphereRadius = capsuleCollider.radius;
+        Vector3 capsuleRaycastStart = transform.position + new Vector3(0, sphereRadius, 0);
+
+        Debug.DrawRay(capsuleRaycastStart, Vector3.down * groundCheckingDistance, Color.red);
+        Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * isGroundedDistance, Color.blue);
+
+        RaycastHit hit;
+
+        if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, groundCheckingDistance, groundLayer))
+        {
+            distanceToGround = hit.distance - sphereRadius;
+        }
+        else
+        {
+            distanceToGround = groundCheckingDistance;
+        }
+
+        bool newGroundedState = distanceToGround < isGroundedDistance;
+
+        onGrounding = false;
+        onUngrounding = false;
+
+        if (Time.time - lastGroundedCheckTime >= groundedSwitchCooldown && newGroundedState != isGrounded)
+        {
+            isGrounded = newGroundedState;
+            lastGroundedCheckTime = Time.time;
+
+            //reset jumps on grounded
+            if (isGrounded)
+            {
+                jumpCount = 0;
+                timeSinceLastGrounding = Time.time;
+
+                onGrounding = true;
+
+            }
+            else
+            {
+                onUngrounding = true;
+            }
+        }
     }
 }
