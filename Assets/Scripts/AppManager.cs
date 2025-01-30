@@ -11,11 +11,18 @@ public class AppManager : MonoBehaviour
 
 
 
-    public List<Player> Players { get; private set; }
+    public HashSet<Player> players { get; private set; }
     public AppState CurrentState { get; private set; }
 
 
     public string DevLayerScene = "DevLayer";
+
+
+    
+    public void AddPlayer(string name)
+    {
+        players.Add(new Player(name))
+    }
 
 
     void Awake()
@@ -28,16 +35,8 @@ public class AppManager : MonoBehaviour
         }
         Instance = this;
         //dd on load ?
-
-
-
-
-
-
-
-
     }
-
+    //TODO: implement commands 
     void RegisterCommands()
     {
         CommandHandler.RegisterCommand("appstate", args =>
@@ -57,7 +56,6 @@ public class AppManager : MonoBehaviour
             }
         });
     }
-
     void SetAppState(string appstate)
     {
         switch (appstate)
@@ -73,8 +71,6 @@ public class AppManager : MonoBehaviour
                 break;
         }
     }
-
-    // 
     void SetAppState(AppState state)
     {
         // Exit the current state if it exists
@@ -114,4 +110,9 @@ public class AppManager : MonoBehaviour
 
 
     }
+
+
+
+
+
 }

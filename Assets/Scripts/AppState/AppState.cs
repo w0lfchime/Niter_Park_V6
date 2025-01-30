@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class AppState
 {
-    public abstract string AppStateUIScene { get; }
-    public abstract string AppState3DScene { get; }
+    public string AppStateUIScene;
+    public string AppState3DScene;
 
     // Service locator references
     protected InputManager _inputManager { get; private set; }

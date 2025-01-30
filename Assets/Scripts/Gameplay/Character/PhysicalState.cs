@@ -10,9 +10,9 @@ public class PhysicalState : CharacterState
 
 
 
-    public override void Entry()
+    public override void Enter()
     {
-        base.Entry();
+        base.Enter();
 
     }
 
@@ -60,57 +60,106 @@ public class PhysicalState : CharacterState
 
     void ApplyGravity()
     {
-        appliedForce += new Vector3(0, -10, 0);
+        ch.appliedForce += new Vector3(0, -10, 0);
     }
 
     void ApplyMotion()
     {
-        rb.AddForce(appliedForce, ForceMode.Force);
-        rb.AddForce(appliedImpulseForce, ForceMode.Impulse);
+        rb.AddForce(ch.appliedForce, ForceMode.Force);
+        rb.AddForce(ch.appliedImpulseForce, ForceMode.Impulse);
     }
-
-
-    private void CheckGrounded()
+    void ProcessVerticalMovement()
     {
-        float sphereRadius = capsuleCollider.radius;
-        Vector3 capsuleRaycastStart = transform.position + new Vector3(0, sphereRadius, 0);
+        //Option 1: handle the jump just as basic movement.
+        //Add jump force directly, then maintain jump progression with upward target speed. 
+        //cut target speed influence once max jump hold is complete 
+        //Option 2: handle the jump by manipualting gravity
+        //always apply the base jump force directly.
+        //disable or alter gravity during/based on jump hold time
 
-        Debug.DrawRay(capsuleRaycastStart, Vector3.down * groundCheckingDistance, Color.red);
-        Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * isGroundedDistance, Color.blue);
+        //Jump count resets on grounded. 
 
-        RaycastHit hit;
+        //Option 2: Gravity Jumping
 
-        if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, groundCheckingDistance, groundLayer))
+        Vector3 appliedVerticalForce = Vector3.zero;
+
+        Vector3 appliedVerticalImpluseForce = Vector3.zero;
+
+        //Perform a jump
+        if (jumpDown && jumpCount < maxJumps)
         {
-            distanceToGround = hit.distance - sphereRadius;
+            appliedVerticalImpluseForce += Vector3.up; //Vector3.Lerp(Vector3.up, movementInput, jumpDirectionalInfluenceFactor);
+            appliedVerticalImpluseForce *= jumpForce;
+            lastJumpTime = Time.time;
+
+            rigidBody.velocity = new Vector3(velocityX, 0, 0);
+        }
+
+        appliedImpulseForce += appliedVerticalImpluseForce;
+
+        if (jumpHold && Time.time - lastJumpTime < maxJumpHoldTime)
+        {
+            //immediately ignore gravity
+            appliedGravityFactor = gravityFactorWhileJumping;
         }
         else
         {
-            distanceToGround = groundCheckingDistance;
+
+            appliedGravityFactor = Mathf.Lerp(appliedGravityFactor, gravityFactor, Time.deltaTime * gravityFactorLerpRate);
         }
 
-        bool newGroundedState = distanceToGround < isGroundedDistance;
+        targetVelocityY = gravityTerminalVelocity;
+        float velocityDiffY = targetVelocityY - velocityY;
 
-        onGrounding = false;
-        onUngrounding = false;
+        appliedVerticalForce.y += velocityDiffY * appliedGravityFactor;
 
-        if (Time.time - lastGroundedCheckTime >= groundedSwitchCooldown && newGroundedState != isGrounded)
+        appliedForce += appliedVerticalForce;
+
+
+        //diving mechanic, when veritcal velocity is within a small negative range, allow impulse dropping to the ground. 
+    }
+
+    private void CheckGrounded()
+    {
+        float sphereRadius = cc.radius;
+        Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius, 0);
+
+        Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
+        Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
+
+        RaycastHit hit;
+
+        if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, ch.acd.groundCheckingDistance, ch.groundLayer))
         {
-            isGrounded = newGroundedState;
-            lastGroundedCheckTime = Time.time;
+            ch.distanceToGround = hit.distance - sphereRadius;
+        }
+        else
+        {
+            ch.distanceToGround = ch.acd.groundCheckingDistance;
+        }
+
+        bool newGroundedState = ch.distanceToGround < ch.acd.isGroundedDistance;
+
+        ch.onGrounding = false;
+        ch.onUngrounding = false;
+
+        if (Time.time - ch.lastGroundedCheckTime >= ch.acd.groundedSwitchCooldown && newGroundedState != ch.isGrounded)
+        {
+            ch.isGrounded = newGroundedState;
+            ch.lastGroundedCheckTime = Time.time;
 
             //reset jumps on grounded
-            if (isGrounded)
+            if (ch.isGrounded)
             {
-                jumpCount = 0;
-                timeSinceLastGrounding = Time.time;
+                ch.jumpCount = 0;
+                ch.timeSinceLastGrounding = Time.time;
 
-                onGrounding = true;
+                ch.onGrounding = true;
 
             }
             else
             {
-                onUngrounding = true;
+                ch.onUngrounding = true;
             }
         }
     }

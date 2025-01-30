@@ -7,25 +7,32 @@ using UnityEngine.TextCore.Text;
 
 public abstract class Character : MonoBehaviour
 {
+	[Header("Meta")]
+	public string characterName;
+	public Player player;
+
 	[Header("Debug")]
 	public bool characterDebug = true;
 	public TextMeshPro stateText;
 	//giving character class service access?
 
-	//Character Stats and Data
+	[Header("Stats (Data)")]
 	public CharacterData ucd; //Universal
     public CharacterData bcd; //Base Character Specific
     public CharacterData acd; //Active Universal+Base+Context 
 
+	//Character 
+	[Header("States")]
 	private CharacterState currentState;
 	private Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
 
+	[Header("Component Refs")]
 	public Rigidbody rigidBody;
 	public CapsuleCollider capsuleCollider;
 	public Animator animator;
 
 	/// <summary>
-	/// Physical State Wiring Data
+	/// Physical State Wiring Data:
 	/// </summary>
 
     [Header("Movement Variables")]
@@ -43,7 +50,7 @@ public abstract class Character : MonoBehaviour
     public LayerMask groundLayer;
     public bool isGrounded;
     public bool onGrounding; //on frame isgrounded is set to false to true
-    public bool onUngrounding; //on frame isgrounded isss set from true to false
+    public bool onUngrounding; //on frame isgrounded is set from true to false
     public float distanceToGround;
     public float lastGroundedCheckTime = 0.0f;
     public float timeSinceLastGrounding = 0.0f;
@@ -58,11 +65,9 @@ public abstract class Character : MonoBehaviour
     public float jumpForceLerp;
 
     [Header("Physics Variables")]
-    public float appliedGravityFactor; //gravity factor thats actually used. Post lerp. 
+    public float appliedGravityFactor; 
     public Vector3 appliedForce;
     public Vector3 appliedImpulseForce;
-
-
 
     public virtual void DrawCharacterDebug()
     {
@@ -74,7 +79,7 @@ public abstract class Character : MonoBehaviour
 		//more gizmo draw data
     }
 
-    public void UpdateActiveCharacterData()
+    public virtual void UpdateActiveCharacterData()
 	{
 		if (ucd == null || bcd == null || acd == null)
 		{
@@ -109,13 +114,15 @@ public abstract class Character : MonoBehaviour
 
 	public virtual void CharacterInitialization()
 	{
-		LogCore.Log("Character entered: {bcd");
+		this.name = bcd.name;
+
+		LogCore.Log($"Character entered: {characterName}");
 
 		//physics
 		rigidBody = GetComponent<Rigidbody>();
 		capsuleCollider = GetComponent<CapsuleCollider>();
 
-		//animations
+		//animation
 		animator = GetComponent<Animator>();
 
 		//debug
@@ -125,48 +132,48 @@ public abstract class Character : MonoBehaviour
 
         UpdateActiveCharacterData();
 
-		//define states in child 
+		RegisterCharacterStates();
 	}
 
-	public void BasicEntry()
+
+
+	public void SetState(string newState)
 	{
-		CharacterInitialization();
+
 	}
 
-	public void SetState(CharacterState newState)
-	{
-		if (stateDict.ContainsValue(newState))
 
-			if (currentState != null)
-			{
-				currentState.Exit();
-			}
+	/// <summary>
+	/// MonoBehavior 
+	/// </summary>
+    private void Start()
+    {
 
-		currentState = newState;
-		if (currentState != null)
-		{
-			currentState.Entry();
-		}
-	}
-
+		CharacterStart();
+    }
 	private void Update()
 	{
 		currentState?.Update();
 		CharacterUpdate();
 	}
-
 	private void FixedUpdate()
 	{
 		currentState?.FixedUpdate();
 		CharacterFixedUpdate();
 	}
+	private void OnDisable() { }
+	private void OnEnable() { }
 
-
-
-
-
-
-	protected abstract void CharacterUpdate();
+	/// <summary>
+	/// Monobehavior Abstracts 
+	/// </summary>
+	protected abstract void CharacterStart();
+    protected abstract void CharacterUpdate();
 	protected abstract void CharacterFixedUpdate();
+
+	/// <summary>
+	/// Other abstracts
+	/// </summary>
+	protected abstract void RegisterCharacterStates();
 
 }
