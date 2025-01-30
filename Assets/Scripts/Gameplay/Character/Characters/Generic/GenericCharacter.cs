@@ -2,10 +2,14 @@ using UnityEngine;
 
 public class GenericCharacter : Character
 {
-	//This is a character 
+    //This is a character 
 
 
-	protected override void CharacterUpdate()
+    protected override void CharacterStart()
+    {
+        
+    }
+    protected override void CharacterUpdate()
 	{
 		
 	}
@@ -19,8 +23,11 @@ public class GenericCharacter : Character
 	{
 		base.CharacterInitialization();
 
-
-		
-	
+		//Addtional code pretaining to character
 	}
+	protected override void RegisterCharacterStates()
+	{
+
+	}
+
 }

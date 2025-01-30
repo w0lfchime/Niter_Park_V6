@@ -18,7 +18,7 @@ public abstract class CharacterState
         this.cc = character.capsuleCollider;
     }
 
-    public virtual void Entry() { }
+    public virtual void Enter() { }
     public virtual void Exit() { }
     public virtual void Update() { }
     public virtual void FixedUpdate() { }
