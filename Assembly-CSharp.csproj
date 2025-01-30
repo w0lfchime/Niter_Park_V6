@@ -94,15 +94,19 @@
     <Compile Include="Assets\Scripts\AppManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\GenericWalk.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCategory.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\SceneManager.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\GenericIdle.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\PhysicalState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\GenericAirborne.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\GenericRun.cs" />
     <Compile Include="Assets\Scripts\AppState\AppState.cs" />
     <Compile Include="Assets\Scripts\AppState\Substate.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\InputManager.cs" />
@@ -120,6 +124,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\Scripts\UI\UIStylesheet.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\GenericJump.cs" />
     <Compile Include="Assets\Scripts\ServiceLocator.cs" />
     <Compile Include="Assets\Scripts\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\AppState\Gameplay\Match.cs" />
