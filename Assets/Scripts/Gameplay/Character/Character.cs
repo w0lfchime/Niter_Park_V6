@@ -45,8 +45,6 @@ public abstract class Character : MonoBehaviour
 	[Header("Movement Variables")]
 	public float currentMaxSpeed;
 	public float currentControlForce;
-	public Vector3 movementInput;
-	public Vector3 playerMovementDirection;
 	public float playerSpeed;
 	public float velocityX;
 	public float velocityY;
@@ -76,15 +74,17 @@ public abstract class Character : MonoBehaviour
 	public Vector3 appliedForce = Vector3.zero;
 	public Vector3 appliedImpulseForce = Vector3.zero;
 
+	[Header("Input Variables")]
+	public Vector3 inputMoveDirection = Vector3.zero;
+	public Vector3 inputLookDirection = Vector3.zero;
 
 	public virtual void RegisterCommands()
 	{
 		if (GlobalData.characterInitialized)
 		{
+			//register commands here (?)
 
-
-
-		}
+        }
 	}
 
 	public virtual void CharacterInitialization()
@@ -121,8 +121,10 @@ public abstract class Character : MonoBehaviour
     public virtual void DrawCharacterDebug()
 	{
 
-		//more gizmo draw data
+
 	}
+
+	
 
 	public virtual void UpdateActiveCharacterData()
 	{

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class AirborneState : PhysicalState
 {
+
+
     public AirborneState(Character character) : base(character)
     {
 
@@ -35,7 +37,7 @@ public class AirborneState : PhysicalState
 
     }
 
-    protected void ApplyGravity ()
+    protected virtual void ApplyGravity ()
     {
         ch.appliedForce += Vector3.down * 5;
     }

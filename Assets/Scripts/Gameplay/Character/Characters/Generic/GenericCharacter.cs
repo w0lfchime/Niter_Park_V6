@@ -18,7 +18,11 @@ public class GenericCharacter : Character
     }
     protected override void CharacterUpdate()
 	{
-		
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SetState("Flight");
+        }
+
 	}
 
 	protected override void CharacterFixedUpdate()
@@ -47,6 +51,7 @@ public class GenericCharacter : Character
         stateDict.Add("Walk", new GenericWalk(this));
         stateDict.Add("Run", new GenericRun(this));
 		stateDict.Add("Jump", new GenericJump(this));
+
     }
 
 }
