@@ -8,7 +8,6 @@ public abstract class AppState
     public string AppState3DScene;
 
     // Service locator references
-    protected InputManager _inputManager { get; private set; }
     protected UIManager _uiManager { get; private set; }
     protected SettingsManager _settingsManager { get; private set; }
 

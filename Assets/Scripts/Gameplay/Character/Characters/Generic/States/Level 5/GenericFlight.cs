@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GenericAirborne
+public class GenericFlight
 {
     
 }

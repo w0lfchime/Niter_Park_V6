@@ -6,6 +6,16 @@ public class Player
 {
     public string name;
 
+    public Character character;
 
-    public 
+    public Player(string name)
+    {
+
+    } 
+
+    public void ProcessInput()
+    {
+        //Buttons
+
+    }
 }
