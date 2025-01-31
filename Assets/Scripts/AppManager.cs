@@ -11,7 +11,7 @@ public class AppManager : MonoBehaviour
 
 
 
-    public HashSet<Player> players { get; private set; }
+    public Dictionary<string, Player> players { get; private set; }
     public AppState CurrentState { get; private set; }
 
 
@@ -21,10 +21,12 @@ public class AppManager : MonoBehaviour
     
     public void AddPlayer(string name)
     {
-        players.Add(new Player(name))
+        players.Add(name, new Player(name));
     }
 
-
+    /// <summary>
+    /// Monobehavior
+    /// </summary>
     void Awake()
     {
 
@@ -36,6 +38,23 @@ public class AppManager : MonoBehaviour
         Instance = this;
         //dd on load ?
     }
+    private void Update()
+    {
+        
+    }
+    private void LateUpdate()
+    {
+        
+    }
+    private void FixedUpdate()
+    {
+
+    }
+
+
+    
+
+
     //TODO: implement commands 
     void RegisterCommands()
     {

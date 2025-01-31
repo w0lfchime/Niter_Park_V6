@@ -25,9 +25,5 @@ public abstract class CharacterState
 
     //data copy method ?
 
-
-    public virtual void ProcessInput() { }
-    public virtual void DataUpdates() { }
-    public virtual void Animate() { }
 }
 

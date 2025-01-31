@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class Home : AppState
 {
-    public override string AppStateUIScene => "HomeUI"; // Replace with the name of your UI scene
-    public override string AppState3DScene => "Home3D"; // Replace with the name of your 3D scene
 
     public Home()
     {
-        // Constructor logic (if needed)
+        AppStateUIScene = "HomeUI";
+        AppState3DScene = "Home3D";
     }
 
     // Lifecycle Methods

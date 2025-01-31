@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GroundedState
+public class FlightState
 {
     
 }
