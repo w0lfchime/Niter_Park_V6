@@ -4,6 +4,7 @@ public class GenericFlight : AirborneState
 {
     public GenericFlight(Character character) : base(character)
     {
+
     }
 
     public override void Enter()
