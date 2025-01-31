@@ -1,11 +1,12 @@
+using System.Diagnostics;
 using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
-
+    PlayerInputHandler ih;
     public PhysicalState(Character character) : base(character)
     {
-
+        this.ih = ch.inputHandler;
     }
 
 
@@ -24,7 +25,7 @@ public class PhysicalState : CharacterState
 
     public override void Update()
     {
-        
+        ProcessInput();
         CheckGrounded();
         base.Update();
 
@@ -45,9 +46,14 @@ public class PhysicalState : CharacterState
 
         ch.velocityX = lv.x;
         ch.velocityY = lv.y;
-        ch.playerMovementDirection = lv.normalized;
         ch.playerSpeed = lv.magnitude;
 
+    }
+
+    public virtual void ProcessInput()
+    {
+        //look vector
+        Vector3 lookDirection
     }
 
 
