@@ -23,8 +23,6 @@ public class AirborneState : PhysicalState
 
     public override void Update()
     {
-        CheckGrounded();
-
         base.Update();
 
     }

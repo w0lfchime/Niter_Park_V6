@@ -38,5 +38,8 @@ public class CharacterData : ScriptableObject
     public float gravityFactorLerpRate; //How quickly the effect of gravity can change 
 
     [Header("Flight")] //debug mode of character 
-    public float 
+    public float meowidk;
+
+
+
 }

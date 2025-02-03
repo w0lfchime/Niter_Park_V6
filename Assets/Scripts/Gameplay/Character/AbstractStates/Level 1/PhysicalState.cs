@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 public class PhysicalState : CharacterState
@@ -25,7 +24,6 @@ public class PhysicalState : CharacterState
 
     public override void Update()
     {
-        ProcessInput();
         CheckGrounded();
         base.Update();
 
@@ -50,11 +48,6 @@ public class PhysicalState : CharacterState
 
     }
 
-    public virtual void ProcessInput()
-    {
-        //look vector
-        Vector3 lookDirection
-    }
 
 
 
@@ -74,8 +67,8 @@ public class PhysicalState : CharacterState
         float sphereRadius = cc.radius;
         Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius, 0);
 
-        Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
-        Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
+        UnityEngine.Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
+        UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
 
         RaycastHit hit;
 
