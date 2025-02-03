@@ -46,11 +46,15 @@ public class GenericCharacter : Character
     }
     protected override void RegisterCharacterStates()
 	{
+        //common 
 		stateDict.Add("IdleAirborne", new GenericIdleAirborne(this));
 		stateDict.Add("IdleGrounded", new GenericIdleGrounded(this));
         stateDict.Add("Walk", new GenericWalk(this));
         stateDict.Add("Run", new GenericRun(this));
 		stateDict.Add("Jump", new GenericJump(this));
+        //(dev)
+        stateDict.Add("Flight", new GenericFlight(this));
+        
 
     }
 

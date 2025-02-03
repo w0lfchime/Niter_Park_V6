@@ -18,6 +18,7 @@ public abstract class Character : MonoBehaviour
 	public bool debug;
 	public bool characterDebug = true;
 	public TextMeshPro stateText;
+	public DebugRenderManager drm;
 
     [Header("Input")]
     public PlayerInputHandler inputHandler;
@@ -106,6 +107,7 @@ public abstract class Character : MonoBehaviour
 		//debug
 		stateText = transform.Find("CharacterStateText")?.GetComponent<TextMeshPro>();
 		this.debug = GlobalData.debug;
+		this.drm = ServiceLocator.GetService<DebugRenderManager>();
 		RegisterCommands();
         GlobalData.characterInitialized = true;
 
@@ -124,7 +126,97 @@ public abstract class Character : MonoBehaviour
 
 	}
 
-	
+	public virtual void ProcessInput()
+	{
+		//reset
+		inputMoveDirection = Vector3.zero;
+		inputLookDirection = Vector3.zero;
+
+
+		//movement input
+		if (inputHandler.GetButtonHold("MoveUp"))
+		{
+			inputMoveDirection += Vector3.up;
+		}
+        if (inputHandler.GetButtonHold("MoveRight"))
+        {
+			inputMoveDirection += Vector3.right;
+        }
+        if (inputHandler.GetButtonHold("MoveDown"))
+        {
+			inputMoveDirection += Vector3.down;
+        }
+        if (inputHandler.GetButtonHold("MoveLeft"))
+        {
+			inputMoveDirection += Vector3.left;
+        }
+		inputMoveDirection.Normalize();
+
+
+		//"looking" input
+        if (inputHandler.GetButtonHold("LookUp"))
+        {
+			inputLookDirection += Vector3.up;
+        }
+        if (inputHandler.GetButtonHold("LookRight"))
+        {
+			inputLookDirection += Vector3.right;
+        }
+        if (inputHandler.GetButtonHold("LookDown"))
+        {
+			inputLookDirection += Vector3.down;
+        }
+        if (inputHandler.GetButtonHold("LookLeft"))
+        {
+			inputLookDirection += Vector3.left;
+        }
+		inputLookDirection.Normalize();
+
+
+
+		//developer input for flight mode  
+		if (debug && Input.GetKeyDown(KeyCode.F))
+		{
+			if (currentState == "Flight")
+			{
+				SetState("IdleAirborne");
+			} else
+			{
+				SetState("Flight");
+			}
+
+		}
+
+	}
+
+	//Physics
+
+
+
+	public virtual void ApplyStandardForce(string name, Vector3 force)
+	{
+		if (debug)
+		{
+			drm.UpdateVector(name, transform.position, force, Color.green);
+		}
+
+		appliedForce += force;
+
+	}
+
+	public virtual void ApplyImpulseForce(string name, Vector3 impulseForce)
+	{
+		if (debug)
+		{
+			drm.StampVector(name, transform.position, impulseForce, Color.red, 1.0f);
+		}
+
+		appliedImpulseForce += impulseForce;
+	}
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
 
 	public virtual void UpdateActiveCharacterData()
 	{
@@ -193,6 +285,7 @@ public abstract class Character : MonoBehaviour
 	private void Update()
 	{
         inputHandler.UpdateInputs();
+		ProcessInput();
 		if (currentState == null || !stateDict.ContainsKey(currentState))
 		{
 			LogCore.Log("Null or undefined state error. Setting state to IdleAirborne.");

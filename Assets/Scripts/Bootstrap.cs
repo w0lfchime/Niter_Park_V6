@@ -30,6 +30,7 @@ public class Bootstrap : MonoBehaviour
         ServiceLocator.RegisterService<SceneManager>(GetComponent<SceneManager>());
         ServiceLocator.RegisterService<TimeManager>(GetComponent<TimeManager>());
         ServiceLocator.RegisterService<UIManager>(GetComponent<UIManager>());
+        ServiceLocator.RegisterService<DebugRenderManager>(GetComponent<DebugRenderManager>());
     }
 
     void RegisterCommands()
