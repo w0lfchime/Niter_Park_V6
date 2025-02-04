@@ -1,11 +1,14 @@
+using System.Diagnostics;
+using System.Xml.Linq;
+using Unity.VisualScripting.Dependencies.Sqlite;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
-    PlayerInputHandler ih;
     public PhysicalState(Character character) : base(character)
     {
-        this.ih = ch.inputHandler;
+
     }
 
 
@@ -20,11 +23,14 @@ public class PhysicalState : CharacterState
     {
         base.Exit();
 
+        //clear physics values?
+        //save physics values?
     }
 
     public override void Update()
     {
         CheckGrounded();
+        HandleJump();
         base.Update();
 
     }
@@ -40,16 +46,61 @@ public class PhysicalState : CharacterState
 
     void PhysicalDataUpdates()
     {
-        Vector3 lv = rb.linearVelocity;
+        ch.position = rb.position;
 
+        Vector3 lv = rb.linearVelocity;
+        ch.velocity = lv;
         ch.velocityX = lv.x;
         ch.velocityY = lv.y;
         ch.playerSpeed = lv.magnitude;
 
     }
 
+    void HandleJump()
+    {
+        if (ch.jumpAllowedByContext && pinput.GetButtonDown("Jump")) {
+            ch.SetState("Jump");
+        }
+    }
 
+    //Handling Forces
+    public virtual void AddForceByTargetVelocity(string forceName, Vector3 targetVelocity, float forceFactor)
+    {
+        //debug
+        string tvName = $"{forceName}_TargetVelocity";
+        ch.drm.UpdateVector(GenerateForceName(tvName), ch.position, targetVelocity, Color.white);
 
+        //force
+        Vector3 forceByTargetVeloity = Vector3.zero;
+        forceByTargetVeloity += targetVelocity - ch.velocity;
+        forceByTargetVeloity *= forceFactor;
+        AddForce(forceName, forceByTargetVeloity);
+    }
+
+    public virtual void AddForce(string forceName, Vector3 force)
+    {
+        if (ch.debug)
+        {
+            ch.drm.UpdateVector(GenerateForceName(forceName), ch.transform.position, force, Color.green);
+        }
+
+        ch.appliedForce += force;
+
+    }
+    public virtual void AddImpulseForce(string forceName, Vector3 impulseForce)
+    {
+        if (ch.debug)
+        {
+            ch.drm.StampVector(GenerateForceName(forceName), ch.transform.position, impulseForce, Color.red, 1.0f);
+        }
+
+        ch.appliedImpulseForce += impulseForce;
+    }
+
+    public virtual string GenerateForceName(string forceName)
+    {
+        return $"{ch.name}_{forceName}";
+    }
 
     protected void ApplyForces()
     {
@@ -61,6 +112,8 @@ public class PhysicalState : CharacterState
         rb.AddForce(ch.appliedImpulseForce, ForceMode.Impulse);
         ch.appliedImpulseForce = Vector3.zero;
     }
+
+
 
     protected void CheckGrounded()
     {

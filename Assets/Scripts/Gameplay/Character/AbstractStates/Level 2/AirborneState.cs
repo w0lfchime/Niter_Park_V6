@@ -37,6 +37,7 @@ public class AirborneState : PhysicalState
 
     protected virtual void ApplyGravity ()
     {
-        ch.appliedForce += Vector3.down * 5;
+        Vector3 gravForceVector = Vector3.down * 5.0f;
+        AddForce("Gravity", gravForceVector);
     }
 }

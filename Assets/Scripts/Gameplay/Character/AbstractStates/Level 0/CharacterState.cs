@@ -6,16 +6,18 @@ public abstract class CharacterState
     protected Character ch;
 
     [Header("Component Refs")]
-    protected Animator animator;
+    protected Animator anim;
     protected Rigidbody rb;
     protected CapsuleCollider cc;
+    protected PlayerInputHandler pinput;
 
     public CharacterState(Character character)
     {
         this.ch = character;
-        this.animator = character.animator;
+        this.anim = character.animator;
         this.rb = character.rigidBody;
         this.cc = character.capsuleCollider;
+        this.pinput = character.inputHandler; 
     }
 
     public virtual void Enter() { }
