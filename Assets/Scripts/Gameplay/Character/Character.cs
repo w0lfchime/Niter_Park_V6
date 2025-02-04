@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting.FullSerializer;
-using System;
 
 
 public abstract class Character : MonoBehaviour
@@ -70,8 +68,9 @@ public abstract class Character : MonoBehaviour
 	public bool jumpAllowedByContext = true;
 
 	[Header("Physics Variables")]
-	public float appliedGravityFactor;
-	public Vector3 targetVelocity = Vector3.zero;
+	public Vector3 position;
+	public Vector3 velocity;
+	public float appliedGravityFactor; // ? what is this 
 	public Vector3 appliedForce = Vector3.zero;
 	public Vector3 appliedImpulseForce = Vector3.zero;
 
@@ -193,26 +192,8 @@ public abstract class Character : MonoBehaviour
 
 
 
-	public virtual void ApplyStandardForce(string name, Vector3 force)
-	{
-		if (debug)
-		{
-			drm.UpdateVector(name, transform.position, force, Color.green);
-		}
 
-		appliedForce += force;
 
-	}
-
-	public virtual void ApplyImpulseForce(string name, Vector3 impulseForce)
-	{
-		if (debug)
-		{
-			drm.StampVector(name, transform.position, impulseForce, Color.red, 1.0f);
-		}
-
-		appliedImpulseForce += impulseForce;
-	}
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -299,8 +280,9 @@ public abstract class Character : MonoBehaviour
 	}
 	private void FixedUpdate()
 	{
-        stateDict[currentState]?.FixedUpdate();
 		CharacterFixedUpdate();
+        stateDict[currentState]?.FixedUpdate();
+
 	}
 	private void OnDisable() { }
 	private void OnEnable() { }
