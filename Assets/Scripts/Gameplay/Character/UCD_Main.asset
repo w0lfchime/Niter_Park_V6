@@ -17,9 +17,9 @@ MonoBehaviour:
   walkSpeed: 20
   runSpeed: 30
   groundedControlForce: 0.5
-  airborneMaxSpeed: 15
+  driftMaxSpeed: 20
   airborneTargetSpeedControlRate: 50
-  airborneControlForce: 0.2
+  driftForceFactor: 1
   groundCheckingDistance: 5
   isGroundedDistance: 0.2
   groundedSwitchCooldown: 0.2
@@ -28,6 +28,7 @@ MonoBehaviour:
   maxJumps: 2
   jumpForce: 25
   gravityTerminalVelocity: -25
-  gravityFactor: 4
+  gravityForceFactor: 0
   gravityFactorWhileJumping: 0.004
   gravityFactorLerpRate: 0.1
+  meowidk: 0

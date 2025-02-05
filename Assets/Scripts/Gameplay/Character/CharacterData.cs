@@ -11,9 +11,9 @@ public class CharacterData : ScriptableObject
     public float walkSpeed;
     public float runSpeed;
     public float groundedControlForce;
-    public float airborneMaxSpeed;
+    public float driftMaxSpeed;
     public float airborneTargetSpeedControlRate;
-    public float airborneControlForce;
+    public float driftForceFactor;
 
     [Header("Ground Checking")]
     public float groundCheckingDistance;
@@ -33,7 +33,7 @@ public class CharacterData : ScriptableObject
 
     [Header("Physics")]
     public float gravityTerminalVelocity; //Terminal Velocity 
-    public float gravityFactor;
+    public float gravityForceFactor;
     public float gravityFactorWhileJumping; //How much effect gravity has while holding jump
     public float gravityFactorLerpRate; //How quickly the effect of gravity can change 
 

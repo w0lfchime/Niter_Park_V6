@@ -257,7 +257,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 392474151}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e501cf9d1ae65944685c245941af21e3, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -797,46 +797,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399541278}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1413113224 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6969727892146856842, guid: ec14afa512d84aa44b6eb29063f33ad4, type: 3}
-  m_PrefabInstance: {fileID: 7947303883661379446}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1413113229 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 431665461622247714, guid: ec14afa512d84aa44b6eb29063f33ad4, type: 3}
   m_PrefabInstance: {fileID: 7947303883661379446}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1413113230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1413113224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 1f7646ee64e7862469c955de39252254, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: CharacterActions
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1001 &7947303883661379446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -889,17 +854,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
-    - target: {fileID: 9066267023359822645, guid: ec14afa512d84aa44b6eb29063f33ad4, type: 3}
-      propertyPath: groundLayer.m_Bits
-      value: 256
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6969727892146856842, guid: ec14afa512d84aa44b6eb29063f33ad4, type: 3}
-      insertIndex: 4
-      addedObject: {fileID: 1413113230}
     - targetCorrespondingSourceObject: {fileID: 6175687906413816705, guid: ec14afa512d84aa44b6eb29063f33ad4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AirborneState : PhysicalState
 {
-
+    public bool allowDrift; 
 
     public AirborneState(Character character) : base(character)
     {
@@ -11,6 +11,7 @@ public class AirborneState : PhysicalState
 
     public override void Enter()
     {
+        allowDrift = true;  
         base.Enter();
 
     }
@@ -27,17 +28,27 @@ public class AirborneState : PhysicalState
 
     }
 
+
     public override void FixedUpdate()
     {
         ApplyGravity();
-
+        HandleDrift();
         base.FixedUpdate();
 
+    }
+    public virtual void HandleDrift()
+    {
+        if (allowDrift)
+        {
+            Vector3 tv = ch.inputMoveDirection;
+            tv *= ch.acd.driftMaxSpeed;
+            AddForceByTargetVelocity("Drift", tv, ch.acd.driftForceFactor);
+        }
     }
 
     protected virtual void ApplyGravity ()
     {
-        Vector3 gravForceVector = Vector3.down * 5.0f;
+        Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
         AddForce("Gravity", gravForceVector);
     }
 }

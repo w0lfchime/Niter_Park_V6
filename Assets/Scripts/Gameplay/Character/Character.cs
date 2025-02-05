@@ -16,7 +16,7 @@ public abstract class Character : MonoBehaviour
 	public bool debug;
 	public bool characterDebug = true;
 	public TextMeshPro stateText;
-	public DebugRenderManager drm;
+	public VectorRenderManager vrm;
 
     [Header("Input")]
     public PlayerInputHandler inputHandler;
@@ -28,7 +28,7 @@ public abstract class Character : MonoBehaviour
 	public CharacterData acd; //Active Universal+Base+Context 
 
 	//Character 
-	[Header("States")]
+	[Header("State")]
 	protected string currentState;
 	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
 
@@ -37,6 +37,8 @@ public abstract class Character : MonoBehaviour
 	public CapsuleCollider capsuleCollider;
 	public Animator animator;
 
+	[Header("Character Dimensions")]
+	public float characterHeight;
 	/// <summary>
 	/// Physical State Wiring Data:
 	/// </summary>
@@ -106,7 +108,7 @@ public abstract class Character : MonoBehaviour
 		//debug
 		stateText = transform.Find("CharacterStateText")?.GetComponent<TextMeshPro>();
 		this.debug = GlobalData.debug;
-		this.drm = ServiceLocator.GetService<DebugRenderManager>();
+		this.vrm = ServiceLocator.GetService<VectorRenderManager>();
 		RegisterCommands();
         GlobalData.characterInitialized = true;
 
@@ -114,9 +116,15 @@ public abstract class Character : MonoBehaviour
         UpdateActiveCharacterData();
 		RegisterCharacterStates();
 
-
+		//misc character data
+		SetCharacterDimensions();
 
 		LogCore.Log($"Character entered: {characterName}");
+	}
+
+	public virtual void SetCharacterDimensions()
+	{
+		this.characterHeight = capsuleCollider.height;
 	}
 
     public virtual void DrawCharacterDebug()
@@ -174,16 +182,26 @@ public abstract class Character : MonoBehaviour
 
 
 		//developer input for flight mode  
-		if (debug && Input.GetKeyDown(KeyCode.F))
+		if (debug)
 		{
-			if (currentState == "Flight")
+			if (Input.GetKeyDown(KeyCode.F))
 			{
-				SetState("IdleAirborne");
-			} else
-			{
-				SetState("Flight");
+				if (currentState == "Flight")
+				{
+					SetState("IdleAirborne");
+				} else
+				{
+					SetState("Flight");
+				}
 			}
-
+			if (Input.GetKeyDown(KeyCode.U))
+			{
+				UpdateActiveCharacterData();
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.D))
+		{
+			debug = !debug;
 		}
 
 	}
