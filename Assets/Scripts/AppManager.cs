@@ -21,7 +21,7 @@ public class AppManager : MonoBehaviour
     
     public void AddPlayer(string name)
     {
-        players.Add(name, new Player(name));
+        //players.Add(name, new Player(name));
     }
 
     /// <summary>
