@@ -18,10 +18,7 @@ public class GenericCharacter : Character
 	}
 	protected override void CharacterUpdate()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-		{
-			SetState("Flight");
-		}
+
 
 	}
 
@@ -30,7 +27,12 @@ public class GenericCharacter : Character
 		// Implement character-specific physics update logic here
 	}
 
-	public override void CharacterInitialization()
+    protected override void CharacterLateUpdate()
+    {
+        
+    }
+
+    public override void CharacterInitialization()
 	{
 		base.CharacterInitialization();
 
@@ -46,8 +48,8 @@ public class GenericCharacter : Character
 	}
 	protected override void RegisterCharacterStates()
 	{
+		base.RegisterCharacterStates();
 
-		print("ADDING. STATES.");
 		//common 
 		stateDict.Add("IdleAirborne", new GenericIdleAirborne(this));
 		stateDict.Add("IdleGrounded", new GenericIdleGrounded(this));
