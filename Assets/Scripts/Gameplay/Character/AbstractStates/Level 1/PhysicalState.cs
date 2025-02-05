@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
+
+
     public PhysicalState(Character character) : base(character)
     {
 
@@ -66,7 +68,7 @@ public class PhysicalState : CharacterState
     void HandleJump()
     {
         if (ch.jumpAllowedByContext && pinput.GetButtonDown("Jump")) {
-            ch.SetState("Jump");
+            ch.TrySetState("Jump", 4);
         }
     }
 

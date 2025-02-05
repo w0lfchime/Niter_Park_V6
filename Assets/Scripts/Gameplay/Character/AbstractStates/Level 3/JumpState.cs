@@ -37,7 +37,7 @@ public class JumpState : AirborneState
         base.FixedUpdate();
         if (ch.velocityY < 0)
         {
-            ch.SetState("IdleAirborne");
+            ch.TrySetState("IdleAirborne", 3);
         }
 
 
