@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: 1521967405078833780}
   - component: {fileID: 6370532290374655177}
   - component: {fileID: 8680537046836478659}
+  - component: {fileID: 2968019577109913136}
   - component: {fileID: 9066267023359822645}
   m_Layer: 0
   m_Name: Generic
@@ -393,7 +394,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6969727892146856842}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e501cf9d1ae65944685c245941af21e3, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -458,6 +459,36 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2968019577109913136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6969727892146856842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 1f7646ee64e7862469c955de39252254, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: CharacterActions
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!114 &9066267023359822645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,11 +501,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16d43fa9ce012d43b793b8be2c13bfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterName: 
+  nonPlayer: 0
+  debug: 0
   characterDebug: 1
   stateText: {fileID: 0}
+  vrm: {fileID: 0}
   ucd: {fileID: 11400000, guid: e2a3016af3134c24ba03ae3f5dbb4552, type: 2}
   bcd: {fileID: 11400000, guid: c4c3ad8a646f4f34095327fcef988a63, type: 2}
   acd: {fileID: 11400000, guid: a26ca8c2494868d4a97543da91cc49a1, type: 2}
   rigidBody: {fileID: 0}
   capsuleCollider: {fileID: 0}
   animator: {fileID: 0}
+  currentMaxSpeed: 0
+  currentControlForce: 0
+  playerSpeed: 0
+  velocityX: 0
+  velocityY: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  isGrounded: 0
+  onGrounding: 0
+  onUngrounding: 0
+  distanceToGround: 0
+  lastGroundedCheckTime: 0
+  timeSinceLastGrounding: 0
+  clockwiseRotation: 1
+  facingRight: 0
+  lastJumpTime: 0
+  jumpCount: 0
+  jumpForceLerp: 0
+  jumpAllowedByContext: 1
+  position: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
+  appliedGravityFactor: 0
+  appliedForce: {x: 0, y: 0, z: 0}
+  appliedImpulseForce: {x: 0, y: 0, z: 0}
+  inputMoveDirection: {x: 0, y: 0, z: 0}
+  inputLookDirection: {x: 0, y: 0, z: 0}

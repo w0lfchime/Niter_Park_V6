@@ -23,12 +23,15 @@ public class PhysicalState : CharacterState
     {
         base.Exit();
 
+        //ch.vrm.ResetVectors();
+
         //clear physics values?
         //save physics values?
     }
 
     public override void Update()
     {
+        PhysicalDataUpdates();
         CheckGrounded();
         HandleJump();
         base.Update();
@@ -46,13 +49,17 @@ public class PhysicalState : CharacterState
 
     void PhysicalDataUpdates()
     {
-        ch.position = rb.position;
+        ch.position = ch.transform.position;
 
         Vector3 lv = rb.linearVelocity;
         ch.velocity = lv;
         ch.velocityX = lv.x;
         ch.velocityY = lv.y;
         ch.playerSpeed = lv.magnitude;
+
+
+        //debug 
+        ch.vrm.UpdateVector(GenerateVectorName("Velocity"), ch.transform, ch.position, lv, Color.green);
 
     }
 
@@ -68,7 +75,7 @@ public class PhysicalState : CharacterState
     {
         //debug
         string tvName = $"{forceName}_TargetVelocity";
-        ch.drm.UpdateVector(GenerateForceName(tvName), ch.position, targetVelocity, Color.white);
+        ch.vrm.UpdateVector(GenerateVectorName(tvName), ch.transform, ch.position, targetVelocity, Color.white);
 
         //force
         Vector3 forceByTargetVeloity = Vector3.zero;
@@ -81,7 +88,7 @@ public class PhysicalState : CharacterState
     {
         if (ch.debug)
         {
-            ch.drm.UpdateVector(GenerateForceName(forceName), ch.transform.position, force, Color.green);
+            ch.vrm.UpdateVector(GenerateVectorName(forceName), ch.transform, ch.position, force, Color.yellow);
         }
 
         ch.appliedForce += force;
@@ -91,19 +98,21 @@ public class PhysicalState : CharacterState
     {
         if (ch.debug)
         {
-            ch.drm.StampVector(GenerateForceName(forceName), ch.transform.position, impulseForce, Color.red, 1.0f);
+
+            ch.vrm.StampVector(GenerateVectorName(forceName), ch.transform.position, impulseForce, Color.red, 1.0f);
         }
 
         ch.appliedImpulseForce += impulseForce;
     }
 
-    public virtual string GenerateForceName(string forceName)
+    public virtual string GenerateVectorName(string vectorName)
     {
-        return $"{ch.name}_{forceName}";
+        return $"{ch.name}_{vectorName}";
     }
 
     protected void ApplyForces()
     {
+        ch.vrm.UpdateVector(GenerateVectorName("AppliedForceVector"), ch.transform, ch.position, ch.appliedForce, Color.blue);
         rb.AddForce(ch.appliedForce, ForceMode.Force);
         ch.appliedForce = Vector3.zero;
     }
