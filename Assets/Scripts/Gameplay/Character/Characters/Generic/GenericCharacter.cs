@@ -2,26 +2,26 @@ using UnityEngine;
 
 public class GenericCharacter : Character
 {
-    //This is a character 
+	//This is a character 
 
 
-    protected override void CharacterStart()
-    {
-        //HACK
-        string playerName = "3 pushups, fucked by a black guy";
-
-        AppManager.Instance.AddPlayer(playerName);
-
-        this.player = AppManager.Instance.players[playerName];
-
-		player.character = this;
-    }
-    protected override void CharacterUpdate()
+	protected override void CharacterStart()
 	{
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            SetState("Flight");
-        }
+		//HACK
+		//string playerName = "3 pushups, fucked by a black guy";
+
+		//AppManager.Instance.AddPlayer(playerName);
+
+		//this.player = AppManager.Instance.players[playerName];
+
+		//player.character = this;
+	}
+	protected override void CharacterUpdate()
+	{
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			SetState("Flight");
+		}
 
 	}
 
@@ -38,24 +38,26 @@ public class GenericCharacter : Character
 		//Addtional code pretaining to character
 	}
 
-    public override void UpdateActiveCharacterData()
-    {
-        base.UpdateActiveCharacterData();
-
-        this.name = "Generic";
-    }
-    protected override void RegisterCharacterStates()
+	public override void UpdateActiveCharacterData()
 	{
-        //common 
+		base.UpdateActiveCharacterData();
+
+		this.name = "Generic";
+	}
+	protected override void RegisterCharacterStates()
+	{
+
+		print("ADDING. STATES.");
+		//common 
 		stateDict.Add("IdleAirborne", new GenericIdleAirborne(this));
 		stateDict.Add("IdleGrounded", new GenericIdleGrounded(this));
-        stateDict.Add("Walk", new GenericWalk(this));
-        stateDict.Add("Run", new GenericRun(this));
+		stateDict.Add("Walk", new GenericWalk(this));
+		stateDict.Add("Run", new GenericRun(this));
 		stateDict.Add("Jump", new GenericJump(this));
-        //(dev)
-        stateDict.Add("Flight", new GenericFlight(this));
-        
+		//(dev)
+		stateDict.Add("Flight", new GenericFlight(this));
+		
 
-    }
+	}
 
 }

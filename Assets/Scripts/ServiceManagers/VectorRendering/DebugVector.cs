@@ -1,74 +1,110 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using NUnit.Framework.Internal.Commands;
 
 public class DebugVector : MonoBehaviour
 {
-    public static float vectorMagRenderCutoff = 0.05f;
-    private static float inactiveTimeThreshold = 0.1f;
+    //Vector Params
+    public float vectorMagRenderCutoff = 0.05f;
+    public float inactiveTimeThreshold = 0.05f;
+    public float vectorLerpRate = 15.0f;
+    public float positionLerpRate = 30.0f;
+    public float thickness = 0.1f;
+    public float vectorLengthFactor = 0.3f;
 
+    //Object refs
     [SerializeField] private GameObject vectorLine;
-    [SerializeField] private GameObject vectorArrow;
+    [SerializeField] private GameObject vectorHead;
+
+    //Rendering
     private Renderer lineRenderer;
     private Renderer arrowRenderer;
-    private float thickness;
-    private float lastUpdateTime;
-    private bool isActive;
+    private Color vectorColor;
+
+    //Activation Control
+    [SerializeField] private float lastUpdateTime;
+    [SerializeField] private bool isActive;
+
+    //interpolation
+    private Vector3 targetVector;
+    private Vector3 lerpVector;
+    private Vector3 targetPosition;
 
     private void Awake()
     {
         if (vectorLine) lineRenderer = vectorLine.GetComponent<Renderer>();
-        if (vectorArrow) arrowRenderer = vectorArrow.GetComponent<Renderer>();
+        if (vectorHead) arrowRenderer = vectorHead.GetComponent<Renderer>();
     }
 
-    //private void Update()
-    //{
-    //    if (isActive && Time.time - lastUpdateTime > inactiveTimeThreshold)
-    //    {
-    //        SetActiveState(false);
-    //    }
-    //}
-
-    public void Initialize(float thickness)
+    private void Update()
     {
-        this.thickness = thickness;
-        SetActiveState(false);
+        VectorLerp();
+        ApplyVectorUpdates();
+
+        if (Time.time - lastUpdateTime > inactiveTimeThreshold)
+        {
+            isActive = false;
+        }
+
+        SetActiveState(isActive); //hack shit
     }
 
-    public void UpdateVector(Vector3 startPos, Vector3 vector, Color color)
+    public void Initialize()
+    {
+        SetActiveState(false);
+
+        //more if needed
+    }
+
+    public void VectorLerp()
+    {
+        lerpVector = Vector3.Lerp(lerpVector, targetVector, vectorLerpRate * Time.deltaTime);
+    }
+
+    private void ApplyVectorUpdates()
     {
         isActive = false;
 
-
-        lastUpdateTime = Time.time;
-
-        if (vector.magnitude > vectorMagRenderCutoff)
+        if (lerpVector.magnitude > vectorMagRenderCutoff)
         {
-            SetActiveState(true);
             isActive = true;
-            Vector3 endPos = startPos + vector;
-            Vector3 midPoint = (startPos + endPos) / 2f;
 
-            vectorLine.transform.position = midPoint;
-            vectorLine.transform.rotation = Quaternion.LookRotation(vector.sqrMagnitude > 0 ? vector.normalized : Vector3.forward);
-            vectorLine.transform.localScale = new Vector3(thickness, thickness, vector.magnitude);
+            Vector3 endPos = lerpVector;
+            Vector3 midPoint = (endPos) / 2f;
 
-            if (lineRenderer) lineRenderer.material.color = color;
+            vectorLine.transform.localPosition = midPoint;
+            vectorLine.transform.localRotation = Quaternion.LookRotation(lerpVector.sqrMagnitude > 0 ? lerpVector.normalized : Vector3.forward);
+            vectorLine.transform.localScale = new Vector3(thickness, thickness, lerpVector.magnitude);
 
-            if (vectorArrow)
+            if (lineRenderer) lineRenderer.material.color = vectorColor;
+
+ 
+
+            if (vectorHead)
             {
-                vectorArrow.transform.position = endPos;
-                vectorArrow.transform.rotation = Quaternion.LookRotation(Vector3.forward, vector);
-                if (arrowRenderer) arrowRenderer.material.color = color;
+                vectorHead.transform.localPosition = endPos;
+                vectorHead.transform.localRotation = Quaternion.LookRotation(Vector3.forward, lerpVector);
+                if (arrowRenderer) arrowRenderer.material.color = vectorColor;
             }
         }
 
         SetActiveState(isActive);
     }
 
+    public void UpdateVector(Vector3 vector, Color color)
+    {
+
+        targetVector = vector * vectorLengthFactor;
+        vectorColor = color;
+
+        lastUpdateTime = Time.time;
+    }
+
     private void SetActiveState(bool active)
     {
         if (vectorLine) vectorLine.SetActive(active);
-        if (vectorArrow) vectorArrow.SetActive(active);
+        if (vectorHead) vectorHead.SetActive(active);
     }
 }

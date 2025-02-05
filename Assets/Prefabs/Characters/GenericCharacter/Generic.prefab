@@ -510,9 +510,11 @@ MonoBehaviour:
   ucd: {fileID: 11400000, guid: e2a3016af3134c24ba03ae3f5dbb4552, type: 2}
   bcd: {fileID: 11400000, guid: c4c3ad8a646f4f34095327fcef988a63, type: 2}
   acd: {fileID: 11400000, guid: a26ca8c2494868d4a97543da91cc49a1, type: 2}
+  currentState: IdleAirborne
   rigidBody: {fileID: 0}
   capsuleCollider: {fileID: 0}
   animator: {fileID: 0}
+  characterHeight: 0
   currentMaxSpeed: 0
   currentControlForce: 0
   playerSpeed: 0
@@ -520,7 +522,7 @@ MonoBehaviour:
   velocityY: 0
   groundLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
   isGrounded: 0
   onGrounding: 0
   onUngrounding: 0

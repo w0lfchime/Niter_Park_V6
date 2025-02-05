@@ -8,23 +8,20 @@ public class VectorRenderManager : MonoBehaviour
     private Dictionary<string, DebugVector> debugVectors = new Dictionary<string, DebugVector>();
 
     [SerializeField] private GameObject debugVectorPrefab;
-    [SerializeField] private float vectorThickness = 0.05f;
-    [SerializeField] private float vectorLengthFactor = 0.3f;
 
-    public void UpdateVector(string name, Transform parent, Vector3 startPos, Vector3 vector, Color color)
+    public void UpdateVector(string name, Transform parent, Vector3 vector, Color color)
     {
-        vector *= vectorLengthFactor;
 
         if (!debugVectors.TryGetValue(name, out DebugVector debugVector))
         {
             GameObject vectorObj = Instantiate(debugVectorPrefab, parent);
             vectorObj.name = name;
             debugVector = vectorObj.GetComponent<DebugVector>();
-            debugVector.Initialize(vectorThickness);
+            debugVector.Initialize();
             debugVectors[name] = debugVector;
         }
 
-        debugVector.UpdateVector(startPos, vector, color);
+        debugVector.UpdateVector(vector, color);
     }
 
     public void ResetVectors()
@@ -47,7 +44,6 @@ public class VectorRenderManager : MonoBehaviour
 
     public void StampVector(string name, Vector3 startPos, Vector3 vector, Color color, float duration)
     {
-        vector *= vectorLengthFactor;
         StartCoroutine(StampVectorCoroutine(name, startPos, vector, color, duration));
     }
 
@@ -55,8 +51,8 @@ public class VectorRenderManager : MonoBehaviour
     {
         GameObject vectorObj = Instantiate(debugVectorPrefab, transform);
         DebugVector tempVector = vectorObj.GetComponent<DebugVector>();
-        tempVector.Initialize(vectorThickness);
-        tempVector.UpdateVector(startPos, vector, color);
+        tempVector.Initialize();
+        tempVector.UpdateVector(vector, color);
 
         yield return new WaitForSeconds(duration);
 

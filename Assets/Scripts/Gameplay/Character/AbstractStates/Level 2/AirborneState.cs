@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class AirborneState : PhysicalState
 {
+    //in the player can input and move in the air
     public bool allowDrift; 
+
 
     public AirborneState(Character character) : base(character)
     {
@@ -46,7 +48,7 @@ public class AirborneState : PhysicalState
         }
     }
 
-    protected virtual void ApplyGravity ()
+    protected virtual void ApplyGravity()
     {
         Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
         AddForce("Gravity", gravForceVector);

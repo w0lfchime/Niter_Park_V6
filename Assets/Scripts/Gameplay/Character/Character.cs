@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine.InputSystem;
+using System.Runtime.InteropServices;
 
 
 public abstract class Character : MonoBehaviour
@@ -29,10 +30,11 @@ public abstract class Character : MonoBehaviour
 
 	//Character 
 	[Header("State")]
-	protected string currentState;
+	public string currentState = "IdleAirborne";
 	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
+	protected PriorityQueue<string, int> stateQueue = new PriorityQueue<string, int>();
 
-	[Header("Component Refs")]
+    [Header("Component Refs")]
 	public Rigidbody rigidBody;
 	public CapsuleCollider capsuleCollider;
 	public Animator animator;
@@ -94,6 +96,8 @@ public abstract class Character : MonoBehaviour
 		//meta
 		this.name = bcd.name;
 
+		//
+
 		//input
 		playerInput = GetComponent<PlayerInput>();
 		inputHandler = new PlayerInputHandler(playerInput);
@@ -112,9 +116,12 @@ public abstract class Character : MonoBehaviour
 		RegisterCommands();
         GlobalData.characterInitialized = true;
 
-        //character function
+        //wiring data
         UpdateActiveCharacterData();
-		RegisterCharacterStates();
+
+        //state
+        stateDict = new Dictionary<string, CharacterState>();
+        RegisterCharacterStates();
 
 		//misc character data
 		SetCharacterDimensions();
@@ -254,6 +261,8 @@ public abstract class Character : MonoBehaviour
 
 	public void SetState(string newState)
 	{
+
+
         if (currentState != null)
         {
 			stateDict[currentState]?.Exit();            
@@ -269,18 +278,26 @@ public abstract class Character : MonoBehaviour
 			string currentStateName = stateDict[currentState].GetType().Name;
 			stateText.text = currentStateName.Substring(name.Length);
 		}
+
+		LogCore.Log($"Current state: {currentState}");
     }
 
 
     /// <summary>
     /// MonoBehavior 
     /// </summary>
-    private void Start()
-	{
-		//HACK: ? may be sub optimal function placement 
+	/// 
+	private void Awake()
+    {
 		CharacterInitialization();
 		CharacterStart();
+
 	}
+    private void Start()
+	{
+
+
+    }
 	private void Update()
 	{
         inputHandler.UpdateInputs();

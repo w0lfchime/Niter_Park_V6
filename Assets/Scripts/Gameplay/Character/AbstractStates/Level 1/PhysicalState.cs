@@ -59,7 +59,7 @@ public class PhysicalState : CharacterState
 
 
         //debug 
-        ch.vrm.UpdateVector(GenerateVectorName("Velocity"), ch.transform, ch.position, lv, Color.green);
+        ch.vrm.UpdateVector(GenerateVectorName("Velocity"), ch.transform, lv, Color.green);
 
     }
 
@@ -75,7 +75,7 @@ public class PhysicalState : CharacterState
     {
         //debug
         string tvName = $"{forceName}_TargetVelocity";
-        ch.vrm.UpdateVector(GenerateVectorName(tvName), ch.transform, ch.position, targetVelocity, Color.white);
+        ch.vrm.UpdateVector(GenerateVectorName(tvName), ch.transform, targetVelocity, Color.white);
 
         //force
         Vector3 forceByTargetVeloity = Vector3.zero;
@@ -88,7 +88,7 @@ public class PhysicalState : CharacterState
     {
         if (ch.debug)
         {
-            ch.vrm.UpdateVector(GenerateVectorName(forceName), ch.transform, ch.position, force, Color.yellow);
+            ch.vrm.UpdateVector(GenerateVectorName(forceName), ch.transform, force, Color.yellow);
         }
 
         ch.appliedForce += force;
@@ -112,7 +112,7 @@ public class PhysicalState : CharacterState
 
     protected void ApplyForces()
     {
-        ch.vrm.UpdateVector(GenerateVectorName("AppliedForceVector"), ch.transform, ch.position, ch.appliedForce, Color.blue);
+        ch.vrm.UpdateVector(GenerateVectorName("AppliedForceVector"), ch.transform, ch.appliedForce, Color.blue);
         rb.AddForce(ch.appliedForce, ForceMode.Force);
         ch.appliedForce = Vector3.zero;
     }
