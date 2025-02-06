@@ -102,7 +102,7 @@ public abstract class Character : MonoBehaviour
 	public virtual void CharacterInitialization()
 	{
 		//meta
-		this.name = bcd.name;
+		this.characterName = bcd.characterName;
 
 		//
 
@@ -132,8 +132,8 @@ public abstract class Character : MonoBehaviour
 
 		//misc character data
 		SetCharacterDimensions();
-
-		LogCore.Log($"Character entered: {characterName}");
+		
+		LogCore.Log("Match", $"Character entered: {characterName}");
     }
 
     /// <summary>
@@ -261,7 +261,7 @@ public abstract class Character : MonoBehaviour
 			}
 		}
 
-		this.name = bcd.name;
+		this.characterName = bcd.characterName;
 	}
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -273,19 +273,23 @@ public abstract class Character : MonoBehaviour
     // State Control - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     public void TrySetState(string newState, int priority)
 	{
+		if (!ApproveState(newState))
+		{
+			return;
+		}
+
 		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
     }
+
 	public void ProcessStateQueue()
 	{
 		if (stateQueue.Count > 0)
 		{
-			print("the IF");
 			int limit = perFrameStateQueueLimit;
 			int topPriority = 0;
 
 			while (stateQueue.Count > 0 && limit > 0)
 			{
-				print("the WHILE");
 				//dequeue state
 				KeyValuePair<string, int> state = stateQueue.Dequeue();
 				//check if highest yet prio
@@ -302,6 +306,21 @@ public abstract class Character : MonoBehaviour
 		}
 
 	}
+	public bool ApproveState(string state)
+	{
+        if (state == null)
+        {
+            CLog("StateError", "Attempted to check a null state. Ignoring.");
+			return false;
+        }
+        else if (!stateDict.ContainsKey(state))
+        {
+            CLog("StateError", $"Attempted use of state: {state} which does not exist in stateDict.");
+			return false;
+        }
+		return true;
+    }
+
 	public void CheckCurrentState()
 	{
 		bool invalidState = false;
@@ -309,39 +328,46 @@ public abstract class Character : MonoBehaviour
 		{
 			invalidState = true;
 
-			LogCore.Log
+			CLog("StateError", "Current state is null.");
 		} 
 		else if (!stateDict.ContainsKey(currentState))
 		{
-			invalidState |= true;
+			invalidState = true;
+
+			CLog("StateError", $"Current state: {currentState} does not exist in stateDict.");
 		}
-
-
-
 		if (invalidState)
 		{
+			CLog("StateError", "Current state is invalid. Setting state to Suspended.");
 			TrySetState("Suspended", 0);
 		}
 	}
 	private void SetState(string newState)
 	{
-        if (currentState != null)
-        {
-            stateDict[currentState]?.Exit();
-        }
-        currentState = newState;
-        stateDict[currentState]?.Enter();
 
+		CheckCurrentState();
+        stateDict[currentState].Exit();
+		string oldState = currentState;
+        currentState = newState;
+        stateDict[currentState].Enter();
+
+		CLog("StateSwitch", $"Switched from {old");
 
         //debug
         if (debug && stateText != null)
         {
-
             string currentStateName = stateDict[currentState].GetType().Name;
-            stateText.text = currentStateName.Substring(name.Length);
-        }
+			if (currentStateName.Substring(0, characterName.Length) == characterName) 
+			{
+				currentStateName = currentStateName.Substring(characterName.Length);
+			}
+			stateText.text = currentStateName;
+        } 
+		else
+		{
+			print("HERE!!! ITS HERE!!!");
+		}
 
-        LogCore.Log($"Current state: {currentState}");
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -406,6 +432,12 @@ public abstract class Character : MonoBehaviour
 
 
     }
+	public virtual void CLog(string category, string message)
+	{
+		string messageWithName = $"{characterName}: {message}";
+		LogCore.Log(category, message);
+	}
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 }

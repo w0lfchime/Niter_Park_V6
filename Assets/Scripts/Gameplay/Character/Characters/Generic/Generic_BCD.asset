@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b605806c60c5fb8409ce622a1880706e, type: 3}
   m_Name: Generic_BCD
   m_EditorClassIdentifier: 
-  name: Generic Character
+  characterName: GenericCharacter
   sneakSpeed: 0
   walkSpeed: 0
   runSpeed: 0
   groundedControlForce: 0
-  airborneMaxSpeed: 0
+  driftMaxSpeed: 0
   airborneTargetSpeedControlRate: 0
-  airborneControlForce: 0
+  driftForceFactor: 0
   groundCheckingDistance: 0
   isGroundedDistance: 0
   groundedSwitchCooldown: 0
@@ -28,6 +28,7 @@ MonoBehaviour:
   maxJumps: 0
   jumpForce: 0
   gravityTerminalVelocity: 0
-  gravityFactor: 0
+  gravityForceFactor: 0
   gravityFactorWhileJumping: 0
   gravityFactorLerpRate: 0
+  meowidk: 0

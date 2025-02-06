@@ -29,10 +29,10 @@ public class SuspendedState : PhysicalState
         {
             if (Input.anyKeyDown)
             {
-                string newState = "Airborne";
+                string newState = "IdleAirborne";
                 if (ch.isGrounded)
                 {
-                    newState = "Grounded";
+                    newState = "IdleGrounded";
                 }
                 ch.TrySetState(newState, 0);
             }

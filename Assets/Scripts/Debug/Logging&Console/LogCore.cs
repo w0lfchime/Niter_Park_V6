@@ -1,61 +1,46 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 public static class LogCore
 {
-
-    private static HashSet<LogCategory> enabledCategories = new HashSet<LogCategory>
+    private static HashSet<string> blacklistedCategories = new HashSet<string>
     {
-        LogCategory.Software,
-        LogCategory.Response,
-        LogCategory.Undefined, // Default enabled categories
-        LogCategory.MenuNav,
+        //"Software",
+        //"Response",
+        //"Undefined", // Default blacklisted categories
+        //"MenuNav",
+        "Skoonce, MUH-HOY!",
     };
-
 
     public static event Action<string> OnLog;
 
-    public static void Log(string message, LogCategory category = LogCategory.Undefined)
+    public static void Log(string category, string message,
+        [CallerFilePath] string file = "",
+        [CallerLineNumber] int line = 0,
+        [CallerMemberName] string member = "")
     {
-        if (enabledCategories.Contains(category))
+        if (!blacklistedCategories.Contains(category))
         {
-            string formattedMessage = $"[{category}] {message}";
+            string formattedMessage = $"[{category}] {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
             Debug.Log(formattedMessage);
             OnLog?.Invoke(formattedMessage);
         }
     }
 
-    public static void LogError(string message, LogCategory category = LogCategory.Undefined)
+    public static void BlacklistCategory(string category)
     {
-        if (enabledCategories.Contains(category))
-        {
-            string formattedMessage = $"<color=red>[{category}] {message}</color>";
-            Debug.LogError(formattedMessage);
-            OnLog?.Invoke(formattedMessage);
-        }
+        blacklistedCategories.Add(category);
     }
 
-    public static void EnableCategory(LogCategory category)
+    public static void WhitelistCategory(string category)
     {
-        enabledCategories.Add(category);
+        blacklistedCategories.Remove(category);
     }
 
-    public static void DisableCategory(LogCategory category)
+    public static bool IsCategoryBlacklisted(string category)
     {
-        enabledCategories.Remove(category);
-    }
-
-    public static void ToggleCategory(LogCategory category)
-    {
-        if (enabledCategories.Contains(category))
-            enabledCategories.Remove(category);
-        else
-            enabledCategories.Add(category);
-    }
-
-    public static bool IsCategoryEnabled(LogCategory category)
-    {
-        return enabledCategories.Contains(category);
+        return blacklistedCategories.Contains(category);
     }
 }
