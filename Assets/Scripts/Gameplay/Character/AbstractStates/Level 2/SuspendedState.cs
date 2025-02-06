@@ -3,10 +3,11 @@ using UnityEngine.InputSystem;
 
 public class SuspendedState : PhysicalState 
 {
-    public bool canExit = true;
 
     public SuspendedState(Character character) : base(character)
     {
+
+        exitOnExitAllowed = true;
     }
 
     public override void Enter()
@@ -25,7 +26,7 @@ public class SuspendedState : PhysicalState
 
     public override void Update()
     {
-        if (canExit)
+        if (exitAllowed)
         {
             if (Input.anyKeyDown)
             {
@@ -48,4 +49,13 @@ public class SuspendedState : PhysicalState
         
 
     }
+
+    public override void CheckExitAllowed()
+    {
+        base.CheckExitAllowed();
+
+
+    }
+
+    public override void 
 }

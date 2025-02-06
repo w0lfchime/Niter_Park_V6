@@ -271,14 +271,29 @@ public abstract class Character : MonoBehaviour
 
 
     // State Control - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+	/// <summary>
+	/// Attempts to set the state of the character. The state must first be approved, then 
+	/// have the highest priority in the queue at the end of the frame. 
+	/// Priorities:
+	/// 0, 1, 2 - lowest importance. basic defaulting and error prevention, etc..
+	/// 3, 4 - general states.
+	/// 5, 6, 7 - important states. Responsive controls, grounding, etc..
+	/// 8, 9, 10 - critical states. Damage, flinching, getting grabbed, etc..
+	/// 10+ - complete overuling states. cutscenes, game ending, dev tools, etc..
+	/// </summary>
+	/// <param name="newState"></param>
+	/// <param name="priority"></param>
     public void TrySetState(string newState, int priority)
 	{
 		if (!ApproveState(newState))
 		{
 			return;
 		}
-
+	
 		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
+		CLog("StateHighDetail", $"Enqueued state: {newState}");
     }
 
 	public void ProcessStateQueue()
@@ -351,7 +366,7 @@ public abstract class Character : MonoBehaviour
         currentState = newState;
         stateDict[currentState].Enter();
 
-		CLog("StateSwitch", $"Switched from {old");
+		CLog("StateSwitch", $"Switched to from {oldState} to {currentState}");
 
         //debug
         if (debug && stateText != null)
@@ -402,6 +417,8 @@ public abstract class Character : MonoBehaviour
 	}
     private void LateUpdate()
     {
+		CharacterLateUpdate();
+
         ProcessStateQueue();
     }
     private void OnDisable() 
