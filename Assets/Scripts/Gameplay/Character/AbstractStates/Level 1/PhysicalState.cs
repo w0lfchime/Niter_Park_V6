@@ -109,7 +109,7 @@ public class PhysicalState : CharacterState
 
     public virtual string GenerateVectorName(string vectorName)
     {
-        return $"{ch.name}_{vectorName}";
+        return $"{ch.characterName}_{vectorName}";
     }
 
     protected void ApplyForces()

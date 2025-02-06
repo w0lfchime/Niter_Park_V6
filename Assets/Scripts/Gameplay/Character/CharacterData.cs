@@ -4,7 +4,7 @@ using UnityEngine;
 public class CharacterData : ScriptableObject
 {
     [Header("Meta")]
-    public string name;
+    public string characterName;
 
     [Header("Movement")]
     public float sneakSpeed;

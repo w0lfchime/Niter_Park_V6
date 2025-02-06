@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 6370532290374655177}
   - component: {fileID: 8680537046836478659}
   - component: {fileID: 2968019577109913136}
-  - component: {fileID: 9066267023359822645}
+  - component: {fileID: 9032297705817584582}
   m_Layer: 0
   m_Name: Generic
   m_TagString: Untagged
@@ -489,7 +489,7 @@ MonoBehaviour:
   m_DefaultActionMap: CharacterActions
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &9066267023359822645
+--- !u!114 &9032297705817584582
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -503,14 +503,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: 
   nonPlayer: 0
-  debug: 0
+  debug: 1
   characterDebug: 1
-  stateText: {fileID: 0}
+  stateText: {fileID: 6423160959340767403}
   vrm: {fileID: 0}
   ucd: {fileID: 11400000, guid: e2a3016af3134c24ba03ae3f5dbb4552, type: 2}
   bcd: {fileID: 11400000, guid: c4c3ad8a646f4f34095327fcef988a63, type: 2}
   acd: {fileID: 11400000, guid: a26ca8c2494868d4a97543da91cc49a1, type: 2}
   currentState: IdleAirborne
+  perFrameStateQueueLimit: 10
   rigidBody: {fileID: 0}
   capsuleCollider: {fileID: 0}
   animator: {fileID: 0}

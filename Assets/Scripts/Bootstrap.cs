@@ -39,50 +39,48 @@ public class Bootstrap : MonoBehaviour
         {
             if (args.Length == 0)
             {
-                LogCore.Log("Usage: echo [message]");
+                LogCore.Log("CommandMeta", "Usage: echo [message]");
             }
             else
             {
                 // Join all arguments to recreate the user's input message
                 string message = string.Join(" ", args);
-                LogCore.Log(message);
+                LogCore.Log("CommandMeta", message);
             }
         });
 
-        CommandHandler.RegisterCommand("log", args =>
-        {
-            if (args.Length < 2)
-            {
-                LogCore.Log("Usage: /log [enable|disable] [category]");
-                return;
-            }
+        //CommandHandler.RegisterCommand("log", args =>
+        //{
+        //    if (args.Length < 2)
+        //    {
+        //        LogCore.Log("Usage: /log [enable|disable] [category]");
+        //        return;
+        //    }
 
-            string action = args[0].ToLower();
-            string categoryName = args[1];
-            if (!Enum.TryParse(typeof(LogCategory), categoryName, true, out var categoryEnum))
-            {
-                LogCore.LogError($"Invalid log category: {categoryName}");
-                return;
-            }
+        //    string action = args[0].ToLower();
+        //    string categoryName = args[1];
+        //    if (!Enum.TryParse(typeof(LogCategory), categoryName, true, out var categoryEnum))
+        //    {
+        //        LogCore.LogError($"Invalid log category: {categoryName}");
+        //        return;
+        //    }
 
-            var category = (LogCategory)categoryEnum;
+        //    var category = (LogCategory)categoryEnum;
 
-            if (action == "enable")
-            {
-                LogCore.EnableCategory(category);
-                LogCore.Log($"{category} logging enabled.", LogCategory.Response);
-            }
-            else if (action == "disable")
-            {
-                LogCore.DisableCategory(category);
-                LogCore.Log($"{category} logging disabled.", LogCategory.Response);
-            }
-            else
-            {
-                LogCore.LogError("Unknown action. Use 'enable' or 'disable'.");
-            }
-        });
-
+        //    if (action == "enable")
+        //    {
+        //        LogCore.EnableCategory(category);
+        //        LogCore.Log($"{category} logging enabled.", LogCategory.Response);
+        //    }
+        //    else if (action == "disable")
+        //    {
+        //        LogCore.DisableCategory(category);
+        //        LogCore.Log($"{category} logging disabled.", LogCategory.Response);
+        //    }
+        //    else
+        //    {
+        //        LogCore.LogError("Unknown action. Use 'enable' or 'disable'.");
+        //    }
+        //});
     }
-
 }

@@ -70,7 +70,7 @@ public class AppManager : MonoBehaviour
                     SetAppState(newState);
                     break;
                 default:
-                    LogCore.Log($"Unknown argument: {args[1]}");
+                    LogCore.Log("CommandMeta", $"Unknown argument: {args[1]}");
                     break;
             }
         });
@@ -86,7 +86,7 @@ public class AppManager : MonoBehaviour
                 break;
 
             default:
-                LogCore.Log($"Unknown appstate: {appstate}");
+                LogCore.Log("AppState", $"Unknown appstate: {appstate}");
                 break;
         }
     }
@@ -109,20 +109,20 @@ public class AppManager : MonoBehaviour
         }
 
         //Mono Behaviour
-        void Update()
-        {
+        //void Update()
+        //{
 
 
 
 
-        }
+        //}
 
-        void FixedUpdate()
-        {
-            // Update global data, such as screen size 
-            //GlobalDataUpdates();
-            //CurrentState.FixedUpdate();
-        }
+        //void FixedUpdate()
+        //{
+        //    // Update global data, such as screen size 
+        //    //GlobalDataUpdates();
+        //    //CurrentState.FixedUpdate();
+        //}
 
 
 

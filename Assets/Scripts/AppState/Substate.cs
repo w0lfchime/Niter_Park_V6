@@ -11,12 +11,12 @@ public abstract class SubState
 
     public virtual void Enter()
     {
-        LogCore.Log("Entering SubState: {this.GetType().Name}", LogCategory.SubState);
+        LogCore.Log("SubState", "Entering SubState: {this.GetType().Name}");
     }
 
     public virtual void Exit()
     {
-        LogCore.Log("Exiting SubState: {this.GetType().Name}", LogCategory.SubState);
+        LogCore.Log("SubState", "Exiting SubState: {this.GetType().Name}");
     }
 
     public virtual void Update() { }
