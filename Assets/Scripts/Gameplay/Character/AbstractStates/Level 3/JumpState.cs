@@ -2,13 +2,23 @@ using UnityEngine;
 
 public class JumpState : AirborneState
 {
+    private float minimumExitVelocityY = -0.2f;
+
+    //Exit allowed is true by default.
     public JumpState(Character character) : base(character)
     {
+        minimumStateDuration = 0.2f;
+        exitOnExitAllowed = true;
     }
 
     public override void Enter()
     {
         base.Enter();
+        
+        //clearing vertical velocity 
+        Vector3 newVelocity = ch.rigidBody.linearVelocity;
+        newVelocity.y = 0;
+        ch.rigidBody.linearVelocity = newVelocity;
 
         Vector3 jumpImpluseForce = Vector3.up;
         jumpImpluseForce *= ch.acd.jumpForce;
@@ -32,15 +42,33 @@ public class JumpState : AirborneState
 
     }
 
+
+
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (ch.velocityY < 0)
+
+
+
+
+    }
+
+    public override void CheckExitAllowed()
+    {
+        base.CheckExitAllowed();
+
+        if (ch.velocityY > minimumExitVelocityY)
         {
-            ch.TrySetState("IdleAirborne", 3);
+            exitAllowed = false;
         }
+    }
+
+    public override void TryRouteState()
+    {
 
 
+
+        base.TryRouteState();
 
     }
 }
