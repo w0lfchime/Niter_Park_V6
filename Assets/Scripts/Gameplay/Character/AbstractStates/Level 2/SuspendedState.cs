@@ -7,7 +7,8 @@ public class SuspendedState : PhysicalState
     public SuspendedState(Character character) : base(character)
     {
 
-        exitOnExitAllowed = true;
+        exitOnExitAllowed = false;
+
     }
 
     public override void Enter()
@@ -15,6 +16,7 @@ public class SuspendedState : PhysicalState
 
         base.Enter();
 
+        exitAllowed = true;
     }
 
     public override void Exit()
@@ -26,19 +28,6 @@ public class SuspendedState : PhysicalState
 
     public override void Update()
     {
-        if (exitAllowed)
-        {
-            if (Input.anyKeyDown)
-            {
-                string newState = "IdleAirborne";
-                if (ch.isGrounded)
-                {
-                    newState = "IdleGrounded";
-                }
-                ch.TrySetState(newState, 0);
-            }
-
-        }
 
 
     }
@@ -57,5 +46,16 @@ public class SuspendedState : PhysicalState
 
     }
 
-    public override void 
+    public override void TryRouteState()
+    {
+        if (exitAllowed)
+        {
+            if (Input.anyKeyDown)
+            {
+                ch.TrySetState(defaultExitState, 2);
+            }
+
+            base.TryRouteState();
+        }
+    }
 }

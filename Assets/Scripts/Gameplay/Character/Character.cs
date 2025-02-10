@@ -34,6 +34,7 @@ public abstract class Character : MonoBehaviour
 	public string currentState = "IdleAirborne";
 	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
 	protected Queue<KeyValuePair<string, int>> stateQueue = new Queue<KeyValuePair<string, int>>();
+	public int queueSize = 0;
 	public int perFrameStateQueueLimit = 10;
 
     [Header("Component Refs")]
@@ -129,6 +130,8 @@ public abstract class Character : MonoBehaviour
 
         //state
         RegisterCharacterStates();
+		LogCore.Log("C-InitHighDetail", $"Regsitered character states.");
+
 
 		//misc character data
 		SetCharacterDimensions();
@@ -199,8 +202,7 @@ public abstract class Character : MonoBehaviour
         }
 		inputLookDirection.Normalize();
 
-
-
+		// DEBUG: 
 		//developer input for flight mode  
 		if (debug)
 		{
@@ -231,6 +233,8 @@ public abstract class Character : MonoBehaviour
 	}
 	public virtual void UpdateActiveCharacterData()
 	{
+		// ucd + bcd = acd
+
 		if (ucd == null || bcd == null || acd == null)
 		{
 			Debug.LogError("Error: ucd, bcd, or acd null.");
@@ -262,7 +266,14 @@ public abstract class Character : MonoBehaviour
 		}
 
 		this.characterName = bcd.characterName;
+
+
+		// Other data
 	}
+	public virtual void UpdateCharacterData()
+	{
+        this.queueSize = stateQueue.Count;
+    }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -293,25 +304,48 @@ public abstract class Character : MonoBehaviour
 		}
 	
 		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
-		CLog("StateHighDetail", $"Enqueued state: {newState}");
+		CLog("StateHighDetail", $"Enqueued state: {newState} with priority {priority}");
+    }
+    public bool ApproveState(string state)
+    {
+
+        if (state == null)
+        {
+            CLog("StateError", "Attempted to check a null state. Ignoring.");
+            return false;
+        }
+        else if (!stateDict.ContainsKey(state))
+        {
+            CLog("StateError", $"Attempted use of state: {state} which does not exist in stateDict.");
+            return false;
+        }
+		CLog("StateHighDetail", $"Approved state: {state}");
+
+
+        return true;
     }
 
-	public void ProcessStateQueue()
+    public void ProcessStateQueue()
 	{
 		if (stateQueue.Count > 0)
 		{
 			int limit = perFrameStateQueueLimit;
 			int topPriority = 0;
 
+			CLog("StateHighDetail", "Processing stateQueue ->");
+
 			while (stateQueue.Count > 0 && limit > 0)
 			{
 				//dequeue state
 				KeyValuePair<string, int> state = stateQueue.Dequeue();
+
+				CLog("StateHighDetail", $"Dequeued state {state.Key}");
 				//check if highest yet prio
 				if (state.Value >= topPriority)
 				{
 					topPriority = state.Value;
 					currentState = state.Key;
+					CLog("StateHighDetail", $"Current state set to {currentState}");
 				}
 				//dec limit
 				limit--;
@@ -321,20 +355,6 @@ public abstract class Character : MonoBehaviour
 		}
 
 	}
-	public bool ApproveState(string state)
-	{
-        if (state == null)
-        {
-            CLog("StateError", "Attempted to check a null state. Ignoring.");
-			return false;
-        }
-        else if (!stateDict.ContainsKey(state))
-        {
-            CLog("StateError", $"Attempted use of state: {state} which does not exist in stateDict.");
-			return false;
-        }
-		return true;
-    }
 
 	public void CheckCurrentState()
 	{
@@ -351,6 +371,8 @@ public abstract class Character : MonoBehaviour
 
 			CLog("StateError", $"Current state: {currentState} does not exist in stateDict.");
 		}
+
+		//finally
 		if (invalidState)
 		{
 			CLog("StateError", "Current state is invalid. Setting state to Suspended.");
@@ -380,7 +402,7 @@ public abstract class Character : MonoBehaviour
         } 
 		else
 		{
-			print("HERE!!! ITS HERE!!!");
+			print("HERE!!! ITS HERE!!!"); //lmfaoooo
 		}
 
     }
@@ -404,8 +426,7 @@ public abstract class Character : MonoBehaviour
 	{
         inputHandler.UpdateInputs();
 		ProcessInput();
-
-
+		UpdateCharacterData();
 		CharacterUpdate();
 		stateDict[currentState]?.Update();
 	}

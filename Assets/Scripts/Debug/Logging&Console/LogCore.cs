@@ -12,6 +12,7 @@ public static class LogCore
         //"Undefined", // Default blacklisted categories
         //"MenuNav",
         "Skoonce, MUH-HOY!",
+        "StateHighDetail",
     };
 
     public static event Action<string> OnLog;
