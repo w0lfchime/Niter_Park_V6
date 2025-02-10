@@ -50,6 +50,8 @@ public class GenericCharacter : Character
 	{
 		base.RegisterCharacterStates();
 
+		LogCore.Log("GenericCharacterHighDetail", "Registering character states...");
+
 		//common 
 		stateDict.Add("IdleAirborne", new GenericIdleAirborne(this));
 		stateDict.Add("IdleGrounded", new GenericIdleGrounded(this));
