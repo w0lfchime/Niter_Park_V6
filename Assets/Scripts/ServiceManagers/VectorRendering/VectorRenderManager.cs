@@ -9,7 +9,7 @@ public class VectorRenderManager : MonoBehaviour
 
     [SerializeField] private GameObject debugVectorPrefab;
 
-    public void UpdateVector(string name, Transform parent, Vector3 vector, Color color)
+    public void UpdateVector(string name, Transform parent, Vector3 offset, Vector3 vector, Color color)
     {
 
         if (!debugVectors.TryGetValue(name, out DebugVector debugVector))

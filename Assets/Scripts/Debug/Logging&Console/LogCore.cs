@@ -9,10 +9,9 @@ public static class LogCore
     {
         //"Software",
         //"Response",
-        //"Undefined", // Default blacklisted categories
+        //"Undefined",
         //"MenuNav",
-        "Skoonce, MUH-HOY!",
-        "StateHighDetail",
+        //"StateHighDetail",
     };
 
     public static event Action<string> OnLog;

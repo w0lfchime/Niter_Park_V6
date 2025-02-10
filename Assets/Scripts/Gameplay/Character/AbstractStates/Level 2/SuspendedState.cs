@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SuspendedState : PhysicalState 
+public class SuspendedState : CharacterState 
 {
 
     public SuspendedState(Character character) : base(character)
@@ -13,7 +13,6 @@ public class SuspendedState : PhysicalState
 
     public override void Enter()
     {
-
         base.Enter();
 
         exitAllowed = true;

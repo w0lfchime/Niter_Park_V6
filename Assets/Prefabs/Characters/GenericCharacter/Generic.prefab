@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2054532865701294516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4215815673454420771}
+  m_Layer: 0
+  m_Name: Debug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4215815673454420771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054532865701294516}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3644807609635203761}
+  m_Father: {fileID: 431665461622247714}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3661435671303867677
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,12 +229,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6175687906413816705}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 431665461622247714}
+  m_Father: {fileID: 4215815673454420771}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -384,7 +416,7 @@ Transform:
   m_Children:
   - {fileID: 8125129858866429496}
   - {fileID: 8141108134864169325}
-  - {fileID: 3644807609635203761}
+  - {fileID: 4215815673454420771}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &1521967405078833780
@@ -505,13 +537,16 @@ MonoBehaviour:
   nonPlayer: 0
   debug: 1
   characterDebug: 1
+  debugParentTransform: {fileID: 0}
   stateText: {fileID: 6423160959340767403}
   vrm: {fileID: 0}
   ucd: {fileID: 11400000, guid: e2a3016af3134c24ba03ae3f5dbb4552, type: 2}
   bcd: {fileID: 11400000, guid: c4c3ad8a646f4f34095327fcef988a63, type: 2}
   acd: {fileID: 11400000, guid: a26ca8c2494868d4a97543da91cc49a1, type: 2}
-  currentState: IdleAirborne
+  currentState: 
+  stateSwitchLastFrame: 0
   perFrameStateQueueLimit: 10
+  defaultState: IdleAirborne
   rigidBody: {fileID: 0}
   capsuleCollider: {fileID: 0}
   animator: {fileID: 0}

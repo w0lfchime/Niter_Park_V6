@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class FlightState : AirborneState
 {
+    //The flight state is basically a suspended airborne state, so the character class can directly
+    //register the flight state. TODO: implement as such
     public FlightState(Character character) : base(character)
     {
     }
