@@ -5,16 +5,26 @@ using System.Runtime.CompilerServices;
 
 public static class LogCore
 {
-    private static HashSet<string> blacklistedCategories = new HashSet<string>
-    {
-        //"Software",
-        //"Response",
-        //"Undefined",
-        //"MenuNav",
-        //"StateHighDetail",
-    };
+    private static HashSet<string> blacklistedCategories = new HashSet<string>();
 
     public static event Action<string> OnLog;
+
+    private static LogCategories logCategoriesAsset;
+
+    static LogCore()
+    {
+        LoadLogCategoriesAsset();
+    }
+
+    private static void LoadLogCategoriesAsset()
+    {
+        logCategoriesAsset = Resources.Load<LogCategories>("Debug/logCategoriesRef");
+
+        if (logCategoriesAsset == null)
+        {
+            Debug.LogWarning("No LogCategories asset found in Resources. Please create one.");
+        }
+    }
 
     public static void Log(string category, string message,
         [CallerFilePath] string file = "",
@@ -26,7 +36,27 @@ public static class LogCore
             string formattedMessage = $"[{category}] {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
             Debug.Log(formattedMessage);
             OnLog?.Invoke(formattedMessage);
+
+            // Save new category if not already logged
+            TrackNewCategory(category);
         }
+    }
+
+    private static void TrackNewCategory(string category)
+    {
+        if (logCategoriesAsset != null && !logCategoriesAsset.categories.Contains(category))
+        {
+            logCategoriesAsset.AddCategory(category);
+            SaveLoggedCategories();
+        }
+    }
+
+    private static void SaveLoggedCategories()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(logCategoriesAsset);
+        UnityEditor.AssetDatabase.SaveAssets();
+#endif
     }
 
     public static void BlacklistCategory(string category)

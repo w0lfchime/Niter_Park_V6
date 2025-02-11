@@ -10,9 +10,9 @@ public class AirborneState : PhysicalState
     {
 
     }
-    public override void SetReferences()
+    public override void SetStateReferences()
     {
-        base.SetReferences();
+        base.SetStateReferences();
 
 
     }
@@ -27,9 +27,9 @@ public class AirborneState : PhysicalState
 
 
     }
-    public override void SetStateVariablesOnEntrance()
+    public override void SetStateVariablesOnEntry()
     {
-        base.SetStateVariablesOnEntrance();
+        base.SetStateVariablesOnEntry();
 
 
     }
