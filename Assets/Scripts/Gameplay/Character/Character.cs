@@ -5,11 +5,11 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System.Runtime.InteropServices;
 using UnityEngine.InputSystem.LowLevel;
+using Unity.VisualScripting.Antlr3.Runtime;
 
 
 public abstract class Character : MonoBehaviour
 {
-
 
 	[Header("Meta")]
 	public string characterName;
@@ -154,14 +154,15 @@ public abstract class Character : MonoBehaviour
         //wiring data
         UpdateActiveCharacterData();
 
-        //state
-        RegisterCharacterStates();
-		LogCore.Log("InitHighDetail", $"Regsitered character states. Number of states: {stateDict.Count}");
-
 		//misc character data
 		SetCharacterDimensions();
+
+        //state
+        RegisterCharacterStates();
+		LogCore.Log("CharacterSetupHighDetail", $"Regsitered character states. Number of states: {stateDict.Count}");
+		VerifyCharacterStates();
 		
-		LogCore.Log("Match", $"Character entered: {characterName}");
+		LogCore.Log("Character", $"Character initialized: {characterName}");
     }
 
     /// <summary>
@@ -180,8 +181,6 @@ public abstract class Character : MonoBehaviour
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
 
 
     // Character Data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -308,9 +307,6 @@ public abstract class Character : MonoBehaviour
 
 
 
-
-
-
     // State Control - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -334,7 +330,7 @@ public abstract class Character : MonoBehaviour
 		}
 	
 		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
-		CLog("StateHighDetail", $"Enqueued state: {newState} with priority {priority}");
+		CLog("CharacterStateHighDetail", $"Enqueued state: {newState} with priority {priority}");
     }
 
 	/// <summary>
@@ -347,20 +343,20 @@ public abstract class Character : MonoBehaviour
 
         if (state == null)
         {
-            CLog("StateError", "Attempted approval a null state. Rejected.");
+            CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
             return false;
         }
 		if (state.Length < 4)
 		{
-			CLog("StateError", $"Attempted approval of an empty or overly short state: ->{state}<- Rejected.");
+			CLog("CharacterStateError", $"Attempted approval of an empty or overly short state: ->{state}<- Rejected.");
 			return false;
 		}
         if (!stateDict.ContainsKey(state))
         {
-            CLog("StateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
+            CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
             return false;
         }
-		CLog("StateHighDetail", $"Approved state: ->{state}<-");
+		CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
 
 
         return true;
@@ -370,7 +366,7 @@ public abstract class Character : MonoBehaviour
 
         if (!ApproveState(currentState))
         {
-            CLog("StateError", "Current state is invalid. Setting state to Suspended.");
+            CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
             TrySetState("Suspended", 0);
         }
     }
@@ -384,20 +380,20 @@ public abstract class Character : MonoBehaviour
 			int limit = perFrameStateQueueLimit;
 			int topPriority = 0;
 
-			CLog("StateHighDetail", "Processing stateQueue ->");
+			CLog("CharacterStateHighDetail", "Processing stateQueue ->");
 
 			while (stateQueue.Count > 0 && limit > 0)
 			{
 				//dequeue state
 				KeyValuePair<string, int> state = stateQueue.Dequeue();
 
-				CLog("StateHighDetail", $"Dequeued state {state.Key}");
+				CLog("CharacterStateHighDetail", $"Dequeued state {state.Key}");
 				//check if highest yet prio
 				if (state.Value >= topPriority)
 				{
 					topPriority = state.Value;
 					newState = state.Key;
-					CLog("StateHighDetail", $"Top priority: {newState}");
+					CLog("CharacterStateHighDetail", $"Top priority: {newState}");
 				}
 				//dec limit
 				limit--;
@@ -420,7 +416,7 @@ public abstract class Character : MonoBehaviour
         currentState = newState;
         stateDict[currentState].Enter();
 
-        CLog("StateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
+        CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
 
         //debug
 
@@ -477,11 +473,13 @@ public abstract class Character : MonoBehaviour
     {
 		CharacterLateUpdate();
 
+		stateDict[currentState]?.LateUpdate();
+
         ProcessStateQueue();
     }
     private void OnDisable() 
 	{
-	
+		
 	}
 	private void OnEnable()
 	{
@@ -542,6 +540,27 @@ public abstract class Character : MonoBehaviour
 		LogCore.Log(category, message);
 	}
 
+	// Debug Tests
+
+	public virtual void VerifyCharacterStates()
+	{
+		bool passed = true;
+		foreach (string key in stateDict.Keys)
+		{
+			if (!stateDict[key].VerifyState())
+			{
+				CLog("Critical", $"State {key} is invlaid.");
+				passed = false;
+			}
+		}
+		if (passed)
+		{
+			CLog("CharacterSetupHighDetail", "Successfully verified all registered character states.");
+		} else
+		{
+			CLog("Critical", "Failed to verify all registered character states.");
+		}
+	}
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 

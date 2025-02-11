@@ -61,7 +61,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.31f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericRun.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericWalk.cs" />
     <Compile Include="Assets\Scripts\UI\Dev\ConsoleManager.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\VectorRendering\VectorRenderManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
@@ -71,26 +71,28 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\Scripts\Settings&amp;Metadata\SettingsManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericFlight.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
     <Compile Include="Assets\Scripts\AppState\HomeMenu\Home.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericIdleAirborne.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 2\GroundedState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericRun.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericJump.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\TimeManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Character.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericWalk.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 1\Suspended.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\CommandHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCategories.cs" />
     <Compile Include="Assets\Scripts\Input\PlayerInputHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\Settings&amp;Metadata\GlobalSettings.cs" />
@@ -99,15 +101,15 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 3\FlightState.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCore.cs" />
     <Compile Include="Assets\Scripts\AppManager.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericIdleAirborne.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericJump.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
-    <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCategory.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\SceneManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 2\AirborneState.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 4\GenericIdleGrounded.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
@@ -116,7 +118,6 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Camera\CameraController1.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericFlight.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 3\RunState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
@@ -125,7 +126,6 @@
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\UIManager.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic\States\Level 5\GenericIdleGrounded.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\VectorRendering\DebugVector.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\AbstractStates\Level 3\IdleGroundedState.cs" />

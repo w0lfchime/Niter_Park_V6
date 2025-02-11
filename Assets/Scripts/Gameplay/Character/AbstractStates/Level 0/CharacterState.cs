@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Reflection;
 using System;
+using System.Reflection;
+using UnityEngine;
 
 public abstract class CharacterState
 {
@@ -35,39 +35,17 @@ public abstract class CharacterState
 	{
 		this.ch = character;
 	
-		SetReferences();
+		SetStateReferences();
 		SetStateParameters();
-		SetStateVariablesOnEntrance(); //for 
 
-		TestAllMemberFieldsForNull();
 	}
-
-	/// <summary>
-	/// Called in the CharacterState base constructor. 
-	/// Sets references of a character state for more immediate access. 
-	/// More references can be set in child override if needed.
-	/// Sets:
-	/// animator as anim,
-	/// rigidbody as rb, 
-	/// capsuleCollider as cc,
-	/// inputHandler as pinput,
-	/// </summary>
-	public virtual void SetReferences()
+	public virtual void SetStateReferences()
 	{
 		this.anim = ch.animator;
 		this.rb = ch.rigidBody;
         this.cc = ch.capsuleCollider;
 		this.pinput = ch.inputHandler;
 	}
-    /// <summary>
-    /// Called in base CharacterState constructor.
-    /// Paramters that should be set on construction: 
-    /// string defaultExitState, 
-    /// bool exitOnExitAllowed, 
-    /// float minimumStateDuration,
-    /// ...and more
-    /// 
-    /// </summary>
     public virtual void SetStateParameters()
 	{
 		this.stateName = GetType().Name;
@@ -79,7 +57,7 @@ public abstract class CharacterState
 	/// bool exitAllowed,
 	/// ...and more
 	/// </summary>
-	public virtual void SetStateVariablesOnEntrance()
+	public virtual void SetStateVariablesOnEntry()
 	{
         stateEntryTimeStamp = Time.time;
 
@@ -87,13 +65,13 @@ public abstract class CharacterState
 
 	public virtual void Enter() 
 	{
-		SetStateVariablesOnEntrance();
+		SetStateVariablesOnEntry();
 
-		LogCore.Log("StateTransition", $"Entering State {stateName}");
+		LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
 	}
 	public virtual void Exit() 
 	{
-        LogCore.Log("StateTransition", $"Exting State {stateName}");
+        LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
 	}
 	public virtual void Update() 
 	{
@@ -104,14 +82,22 @@ public abstract class CharacterState
             TryRouteState();
         }
 
+
+
     }
     public virtual void FixedUpdate() 
 	{
-
 		if (exitAllowed)
 		{
 			TryRouteStateFixed();
 		}
+
+
+	}
+
+	public virtual void LateUpdate()
+	{
+
 	}
 
 	/// <summary>
@@ -156,33 +142,7 @@ public abstract class CharacterState
 
     //HACK: data copy method ? (for data in character states, probably not.)
 
-    //DEBUG FUNCTIONS
 
-	/// <summary>
-	/// Test that checks all member variables to ensure they're set.
-	/// </summary>
-    public virtual void TestAllMemberFieldsForNull()
-    {
-        Type type = this.GetType(); // Get the runtime type (most derived type)
-
-        while (type != null && type != typeof(object)) // Iterate through all ancestor types
-        {
-            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly);
-
-            foreach (FieldInfo field in fields)
-            {
-                object value = field.GetValue(this);
-                if (value == null)
-                {
-					LogCore.Log("Critical", $"CharacterState ERROR in class: {GetType().Name}");
-					LogCore.Log("Critical", $"Field {field.GetType().Name} {field.Name} member of {type.Name} is null.");
-                    LogCore.Log("Critical", $"Ensure that the value is properly set in {GetType().Name}");
-                }
-            }
-
-            type = type.BaseType; // Move to the parent class
-        }
-    }
 
 }
 

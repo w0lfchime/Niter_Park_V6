@@ -18,9 +18,9 @@ public class PhysicalState : CharacterState
 	//{
 
 	//}
-    public override void SetReferences()
+    public override void SetStateReferences()
     {
-        base.SetReferences();
+        base.SetStateReferences();
 
 
     }
@@ -30,9 +30,9 @@ public class PhysicalState : CharacterState
 
 
     }
-	public override void SetStateVariablesOnEntrance()
+	public override void SetStateVariablesOnEntry()
 	{
-		base.SetStateVariablesOnEntrance();
+		base.SetStateVariablesOnEntry();
 
 
 	}
@@ -74,7 +74,7 @@ public class PhysicalState : CharacterState
 		TryRouteStateFixed();
 	}
 
-	void PhysicalDataUpdates()
+	protected virtual void PhysicalDataUpdates()
 	{
 		ch.position = ch.transform.position;
 
@@ -90,7 +90,7 @@ public class PhysicalState : CharacterState
 
 	}
 
-	void HandleJump()
+	protected virtual void HandleJump()
 	{
 		if (ch.jumpAllowedByContext && pinput.GetButtonDown("Jump")) {
 			ch.TrySetState("Jump", 4);
@@ -98,7 +98,7 @@ public class PhysicalState : CharacterState
 	}
 
 	//Handling Forces
-	public virtual void AddForceByTargetVelocity(string forceName, Vector3 targetVelocity, float forceFactor)
+	protected virtual void AddForceByTargetVelocity(string forceName, Vector3 targetVelocity, float forceFactor)
 	{
 		//debug
 		string tvName = $"{forceName}_TargetVelocity";
@@ -128,13 +128,13 @@ public class PhysicalState : CharacterState
 	}
 
 
-	protected void ApplyForces()
+	protected virtual void ApplyForces()
 	{
 		ch.UpdateDebugVector("AppliedForceVector", ch.appliedForce, Color.blue);
 		rb.AddForce(ch.appliedForce, ForceMode.Force);
 		ch.appliedForce = Vector3.zero;
 	}
-	protected void ApplyImpulseForces()
+	protected virtual void ApplyImpulseForces()
 	{
 		rb.AddForce(ch.appliedImpulseForce, ForceMode.Impulse);
 		ch.appliedImpulseForce = Vector3.zero;
@@ -142,7 +142,7 @@ public class PhysicalState : CharacterState
 	// - - - - - - - - - - - - - - - - - - - - -
 
 
-	protected void CheckGrounded()
+	protected virtual void CheckGrounded()
 	{
 		float sphereRadius = cc.radius;
 		Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius + 0.1f, 0);
