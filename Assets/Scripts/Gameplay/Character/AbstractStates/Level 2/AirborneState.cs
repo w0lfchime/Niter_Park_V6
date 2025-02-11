@@ -13,9 +13,11 @@ public class AirborneState : PhysicalState
 
     public override void Enter()
     {
-        allowDrift = true;  
         base.Enter();
 
+        allowDrift = true;  
+
+        ch.isGroundedBystate = false;
     }
 
     public override void Exit()
@@ -52,5 +54,14 @@ public class AirborneState : PhysicalState
     {
         Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
         AddForce("Gravity", gravForceVector);
+    }
+
+    /// <summary>
+    /// Use ground checking data to prepar for proper grounding. Accelerate animations, prepare state routing.
+    /// Grounding may not even occur. 
+    /// </summary>
+    protected virtual void WatchGrounding()
+    {
+
     }
 }

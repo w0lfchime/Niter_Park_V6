@@ -10,7 +10,10 @@ public class PhysicalState : CharacterState
 
 	public PhysicalState(Character character) : base(character)
 	{
-
+		//HACK: set minimum state duration to small value to prevent fluttering. Some
+		//states will probably override this.
+		minimumStateDuration = 0.2f;
+		exitOnExitAllowed = false; //redundant 
 	}
 
 
@@ -35,7 +38,7 @@ public class PhysicalState : CharacterState
 		base.Update();
 
 		PhysicalDataUpdates();
-		CheckGrounded();
+
 		HandleJump();
 
 	}
@@ -44,8 +47,8 @@ public class PhysicalState : CharacterState
 	{
 		base.FixedUpdate();
 
-
-		ApplyImpulseForces();
+        CheckGrounded();
+        ApplyImpulseForces();
 		ApplyForces();
 	}
 
@@ -120,10 +123,10 @@ public class PhysicalState : CharacterState
 	protected void CheckGrounded()
 	{
 		float sphereRadius = cc.radius;
-		Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius, 0);
+		Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius + 0.1f, 0);
 
 		UnityEngine.Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
-		UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(1, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
+		UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(0.1f, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
 
 		RaycastHit hit;
 
@@ -161,4 +164,28 @@ public class PhysicalState : CharacterState
 			}
 		}
 	}
+
+    //State flow - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+    public override void TryRouteState()
+    {
+		//something, idk what yet
+
+        base.TryRouteState();
+    }
+
+    public override void TryRouteStateFixed()
+    {
+		if (ch.onGrounding)
+		{
+			if(!ch.isGroundedBystate)
+			{
+				ch.TrySetState("IdleGrounded", 2);
+			}
+		}
+
+        base.TryRouteStateFixed();
+    }
+
+
 }
