@@ -10,6 +10,29 @@ public class AirborneState : PhysicalState
     {
 
     }
+    public override void SetReferences()
+    {
+        base.SetReferences();
+
+
+    }
+
+    /// <inheritdoc/>
+    /// <summary>
+    /// meow foonk shawpoi
+    /// </summary>
+    public override void SetStateParameters()
+    {
+        base.SetStateParameters();
+
+
+    }
+    public override void SetStateVariablesOnEntrance()
+    {
+        base.SetStateVariablesOnEntrance();
+
+
+    }
 
     public override void Enter()
     {

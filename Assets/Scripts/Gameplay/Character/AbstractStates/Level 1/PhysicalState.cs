@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
-
-
 	public PhysicalState(Character character) : base(character)
 	{
 		//HACK: set minimum state duration to small value to prevent fluttering. Some
@@ -16,9 +14,31 @@ public class PhysicalState : CharacterState
 		exitOnExitAllowed = false; //redundant 
 	}
 
+	//public StateName(Character character) : base (character)
+	//{
+
+	//}
+    public override void SetReferences()
+    {
+        base.SetReferences();
 
 
-	public override void Enter()
+    }
+    public override void SetStateParameters()
+    {
+        base.SetStateParameters();
+
+
+    }
+	public override void SetStateVariablesOnEntrance()
+	{
+		base.SetStateVariablesOnEntrance();
+
+
+	}
+
+
+    public override void Enter()
 	{
 		base.Enter();
 
@@ -50,6 +70,8 @@ public class PhysicalState : CharacterState
         CheckGrounded();
         ApplyImpulseForces();
 		ApplyForces();
+
+		TryRouteStateFixed();
 	}
 
 	void PhysicalDataUpdates()
@@ -176,6 +198,7 @@ public class PhysicalState : CharacterState
 
     public override void TryRouteStateFixed()
     {
+		//this only processes grounding in an instant 
 		if (ch.onGrounding)
 		{
 			if(!ch.isGroundedBystate)
