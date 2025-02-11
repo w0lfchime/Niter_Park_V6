@@ -2,9 +2,11 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
+
+
 public abstract class CharacterState
 {
-	//Core 
+	//Cor
 
 	[Header("Parent")]
 	protected Character ch;
@@ -22,16 +24,16 @@ public abstract class CharacterState
 
 	[Header("Flow Control Parameters")]
 	protected bool exitOnExitAllowed; //set true if state does not have particular exit routing
-    protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
-    protected float minimumStateDuration;
+	protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
+	protected float minimumStateDuration;
 
-    [Header("Flow Control Variables")]
+	[Header("Flow Control Variables")]
 	protected bool exitAllowed;
-    protected float stateEntryTimeStamp;
+	protected float stateEntryTimeStamp;
 
 
 
-    public CharacterState(Character character)
+	public CharacterState(Character character)
 	{
 		this.ch = character;
 	
@@ -39,14 +41,14 @@ public abstract class CharacterState
 		SetStateParameters();
 
 	}
-	public virtual void SetStateReferences()
+	protected virtual void SetStateReferences()
 	{
 		this.anim = ch.animator;
 		this.rb = ch.rigidBody;
-        this.cc = ch.capsuleCollider;
+		this.cc = ch.capsuleCollider;
 		this.pinput = ch.inputHandler;
 	}
-    public virtual void SetStateParameters()
+	protected virtual void SetStateParameters()
 	{
 		this.stateName = GetType().Name;
 	}
@@ -57,11 +59,11 @@ public abstract class CharacterState
 	/// bool exitAllowed,
 	/// ...and more
 	/// </summary>
-	public virtual void SetStateVariablesOnEntry()
+	protected virtual void SetStateVariablesOnEntry()
 	{
-        stateEntryTimeStamp = Time.time;
+		stateEntryTimeStamp = Time.time;
 
-    }
+	}
 
 	public virtual void Enter() 
 	{
@@ -71,21 +73,21 @@ public abstract class CharacterState
 	}
 	public virtual void Exit() 
 	{
-        LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
+		LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
 	}
 	public virtual void Update() 
 	{
 		CheckExitAllowed();
 
-        if (exitAllowed)
-        {
-            TryRouteState();
-        }
+		if (exitAllowed)
+		{
+			TryRouteState();
+		}
 
 
 
-    }
-    public virtual void FixedUpdate() 
+	}
+	public virtual void FixedUpdate() 
 	{
 		if (exitAllowed)
 		{
@@ -103,12 +105,12 @@ public abstract class CharacterState
 	/// <summary>
 	/// Exit allowed must be set true somewhere. 
 	/// </summary>
-	public virtual void CheckExitAllowed()
+	protected virtual void CheckExitAllowed()
 	{
-        //or base.CheckExitAllowed call
-        //exitAllowed checks that should be overridden by min state time
+		//or base.CheckExitAllowed call
+		//exitAllowed checks that should be overridden by min state time
 
-        if (!(Time.time - stateEntryTimeStamp > minimumStateDuration))
+		if (!(Time.time - stateEntryTimeStamp > minimumStateDuration))
 		{
 			exitAllowed = false;
 		}
@@ -121,7 +123,7 @@ public abstract class CharacterState
 	/// <summary>
 	/// State routing. Is called in update when exitAllowed is true. 
 	/// </summary>
-	public virtual void TryRouteState()
+	protected virtual void TryRouteState()
 	{
 
 		if (exitOnExitAllowed)
@@ -135,12 +137,12 @@ public abstract class CharacterState
 	/// <summary>
 	/// Just like TryRouteState(), but on fixed update. Useful for percise physics related transistions.
 	/// </summary>
-	public virtual void TryRouteStateFixed()
+	protected virtual void TryRouteStateFixed()
 	{
 
 	}
 
-    //HACK: data copy method ? (for data in character states, probably not.)
+	//HACK: data copy method ? (for data in character states, probably not.)
 
 
 
