@@ -9,6 +9,7 @@ public class JumpState : AirborneState
     {
         minimumStateDuration = 0.2f;
         exitOnExitAllowed = true;
+        defaultExitState = "IdleAirborne";
     }
 
     public override void Enter()
@@ -55,12 +56,14 @@ public class JumpState : AirborneState
 
     public override void CheckExitAllowed()
     {
+        if (ch.velocityY < minimumExitVelocityY)
+        {
+            exitAllowed = true;
+        }
+
         base.CheckExitAllowed();
 
-        if (ch.velocityY > minimumExitVelocityY)
-        {
-            exitAllowed = false;
-        }
+
     }
 
     public override void TryRouteState()

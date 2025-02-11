@@ -13,6 +13,7 @@ public abstract class Character : MonoBehaviour
 
 	[Header("Meta")]
 	public string characterName;
+	public string characterClassName;
 	public bool nonPlayer = false;
 	public Player player;
 
@@ -37,7 +38,6 @@ public abstract class Character : MonoBehaviour
 	public string currentState = null;
 	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
 	protected Queue<KeyValuePair<string, int>> stateQueue = new Queue<KeyValuePair<string, int>>();
-	public bool stateSwitchLastFrame = false;
 
 	[Header("State Parameter")]
 	public int perFrameStateQueueLimit = 10;
@@ -53,6 +53,7 @@ public abstract class Character : MonoBehaviour
 
 
 
+
 	[Header("Movement Variables")]
 	public float currentMaxSpeed;
 	public float currentControlForce;
@@ -62,7 +63,8 @@ public abstract class Character : MonoBehaviour
 
 	[Header("Ground Checking Variables")]
 	public LayerMask groundLayer;
-	public bool isGrounded;
+	public bool isGrounded; //is the capsule physically 'grounded'
+	public bool isGroundedBystate; //is the character grounded by state definition
 	public bool onGrounding; //on frame isgrounded is set to false to true
 	public bool onUngrounding; //on frame isgrounded is set from true to false
 	public float distanceToGround;
@@ -110,9 +112,13 @@ public abstract class Character : MonoBehaviour
 	{
 		//meta
 		this.characterName = bcd.characterName;
+		this.characterClassName = GetType().Name;
 
         //debug 
         this.debug = GlobalData.debug;
+
+		//state
+		currentState = null; //HACK: start as null to trigger check state to set as suspended state
     }
 
 	public virtual void SetReferences()
@@ -124,6 +130,7 @@ public abstract class Character : MonoBehaviour
         //physics
         rigidBody = GetComponent<Rigidbody>();
 		capsuleCollider = GetComponent<CapsuleCollider>();
+		groundLayer = LayerMask.GetMask("Ground");
 
         //animation
         animator = GetComponent<Animator>();
@@ -162,8 +169,10 @@ public abstract class Character : MonoBehaviour
 	/// </summary>
 	protected virtual void RegisterCharacterStates()
 	{
-		stateDict.Add("Suspended", new SuspendedState(this));
+		stateDict.Add("Suspended", new Suspended(this));
 
+		//HACK: Do we leave flight state abstract? (probably should, what if characters have jetpack? ATD what up)
+		//atd means attention to detail
 		//TODO: register flight state 
 
 		//other...
@@ -388,7 +397,7 @@ public abstract class Character : MonoBehaviour
 				{
 					topPriority = state.Value;
 					newState = state.Key;
-					CLog("StateHighDetail", $"Top priority: {currentState}");
+					CLog("StateHighDetail", $"Top priority: {newState}");
 				}
 				//dec limit
 				limit--;
@@ -396,25 +405,42 @@ public abstract class Character : MonoBehaviour
 
 			//finally, after being approved, then being dequeued, set the state.
 			SetState(newState);
-		} else
-		{
-			//Set stateSwitchLastFrame to false, since state queue was empty. it is enabled on SetState.
-			stateSwitchLastFrame = false;
-		}
-
+		} 
 	}
 
 	private void SetState(string newState)
 	{
-		//set state will typically be called in LateUpdate, so enable stateSwitchLastFrame for the next frame.
-		stateSwitchLastFrame = true;
+		string oldState = "NULL_STATE";
+		if (ApproveState(currentState))
+		{
+			stateDict[currentState].Exit();
+			oldState = currentState;
+		}
 
-        stateDict[currentState].Exit();
-		string oldState = currentState;
         currentState = newState;
         stateDict[currentState].Enter();
 
-		CLog("StateHighDetail", $"Switched to from {oldState} to {currentState}");
+        CLog("StateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
+
+        //debug
+
+        if (debug && stateText != null)
+        {
+            // Get the current state name from the dictionary
+            string currentStateName = stateDict[currentState].GetType().Name;
+
+            // Remove the character class name prefix if it exists
+            if (currentStateName.StartsWith(characterClassName))
+            {
+                currentStateName = currentStateName.Substring(characterClassName.Length);
+            }
+
+            // Update the UI text
+            stateText.text = currentStateName;
+        }
+
+
+
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -434,6 +460,7 @@ public abstract class Character : MonoBehaviour
     }
 	private void Update()
 	{
+
         inputHandler.UpdateInputs();
 		ProcessInput();
 		UpdateCharacterData();
@@ -504,26 +531,8 @@ public abstract class Character : MonoBehaviour
 
     public virtual void DrawCharacterDebug()
     {
-		if (debug)
-		{
 
-		}
-		if (stateSwitchLastFrame && stateText != null)
-		{
-			//source directly for debugging certainty
-            string currentStateName = stateDict[currentState].GetType().Name;
 
-            if (currentStateName.Length > characterName.Length)
-            {
-                if (currentStateName.Substring(0, characterName.Length) == characterName)
-                {
-                    currentStateName = currentStateName.Substring(characterName.Length);
-                }
-            }
-
-            stateText.text = currentStateName;
-            
-        }
 
     }
 

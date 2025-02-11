@@ -2,10 +2,18 @@ using UnityEngine;
 
 public class GenericCharacter : Character
 {
-	//This is a character 
+    //This is a character 
 
+    public override void SetMemberVariables()
+    {
+        base.SetMemberVariables();
+		//To avoid using the class name "Generic", generic character is the only character with "Character" in the class name.
+		//Thus, the character's member variable class name should be set as just "Generic" 
+		this.characterClassName = "Generic";
 
-	protected override void CharacterStart()
+    }
+
+    protected override void CharacterStart()
 	{
 		//HACK
 		//string playerName = "3 pushups, fucked by a black guy";

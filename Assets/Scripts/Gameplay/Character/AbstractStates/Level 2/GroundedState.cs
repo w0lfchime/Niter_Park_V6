@@ -7,9 +7,9 @@ public class GroundedState : PhysicalState
     }
     public override void Enter()
     {
-
         base.Enter();
 
+        ch.isGroundedBystate = true;
     }
 
     public override void Exit()

@@ -12,7 +12,7 @@ public class DebugVector : MonoBehaviour
     public float vectorLerpRate = 15.0f;
     public float positionLerpRate = 30.0f;
     public float thickness = 0.1f;
-    public float vectorLengthFactor = 0.3f;
+    public float vectorLengthFactor = 0.1f;
 
     //Object refs
     [SerializeField] private GameObject vectorLine;
