@@ -2,149 +2,155 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-
-
 public abstract class CharacterState
 {
-	//Cor
-
-	[Header("Parent")]
-	protected Character ch;
-
-	[Header("Meta")]
-	public string stateName;
-
-	[Header("Component Refs")]
-	protected Animator anim;
-	protected Rigidbody rb;
-	protected CapsuleCollider cc;
-	protected PlayerInputHandler pinput;
-
-	//Parameters and Variables 
-
-	[Header("Flow Control Parameters")]
-	protected bool exitOnExitAllowed; //set true if state does not have particular exit routing
-	protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
-	protected float minimumStateDuration;
-
-	[Header("Flow Control Variables")]
-	protected bool exitAllowed;
-	protected float stateEntryTimeStamp;
+    //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
 
+    //=//-----|General|----------------------------------------------//=//
+    [Header("Parent")]
+    protected Character ch;
 
-	public CharacterState(Character character)
-	{
-		this.ch = character;
-	
-		SetStateReferences();
-		SetStateParameters();
+    [Header("Meta")]
+    public string stateName;
 
-	}
-	protected virtual void SetStateReferences()
-	{
-		this.anim = ch.animator;
-		this.rb = ch.rigidBody;
-		this.cc = ch.capsuleCollider;
-		this.pinput = ch.inputHandler;
-	}
-	protected virtual void SetStateParameters()
-	{
-		this.stateName = GetType().Name;
-	}
-
-	/// <summary>
-	/// Called on state entry by base CharacterState class. 
-	/// Variables to set on entry:
-	/// bool exitAllowed,
-	/// ...and more
-	/// </summary>
-	protected virtual void SetStateVariablesOnEntry()
-	{
-		stateEntryTimeStamp = Time.time;
-
-	}
-
-	public virtual void Enter() 
-	{
-		SetStateVariablesOnEntry();
-
-		LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
-	}
-	public virtual void Exit() 
-	{
-		LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
-	}
-	public virtual void Update() 
-	{
-		CheckExitAllowed();
-
-		if (exitAllowed)
-		{
-			TryRouteState();
-		}
+    [Header("Component Refs")]
+    protected Animator anim;
+    protected Rigidbody rb;
+    protected CapsuleCollider cc;
+    protected PlayerInputHandler pinput;
 
 
-
-	}
-	public virtual void FixedUpdate() 
-	{
-		if (exitAllowed)
-		{
-			TryRouteStateFixed();
-		}
+    //=//-----|Parameters|-------------------------------------------//=//
+    [Header("Flow Control Parameters")]
+    protected bool exitOnExitAllowed; //set true if state does not have particular exit routing
+    protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
+    protected float minimumStateDuration;
 
 
-	}
-
-	public virtual void LateUpdate()
-	{
-
-	}
-
-	/// <summary>
-	/// Exit allowed must be set true somewhere. 
-	/// </summary>
-	protected virtual void CheckExitAllowed()
-	{
-		//or base.CheckExitAllowed call
-		//exitAllowed checks that should be overridden by min state time
-
-		if (!(Time.time - stateEntryTimeStamp > minimumStateDuration))
-		{
-			exitAllowed = false;
-		}
-
-		//or base.CheckExitAllowed call
-		//exitAllowed checks that should override min state time 
-	}
+    //=//-----|Variables|--------------------------------------------//=//
+    [Header("Flow Control Variables")]
+    protected bool exitAllowed;
+    protected float stateEntryTimeStamp;
 
 
-	/// <summary>
-	/// State routing. Is called in update when exitAllowed is true. 
-	/// </summary>
-	protected virtual void TryRouteState()
-	{
-
-		if (exitOnExitAllowed)
-		{
-			ch.TrySetState(defaultExitState, 1);
-		}
+    //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
 
-	}
+    //=//-----|Setup|------------------------------------------------//=//
+    public CharacterState(Character character)
+    {
+        this.ch = character;
 
-	/// <summary>
-	/// Just like TryRouteState(), but on fixed update. Useful for percise physics related transistions.
-	/// </summary>
-	protected virtual void TryRouteStateFixed()
-	{
+        SetStateReferences();
+        SetStateParameters();
 
-	}
+    }
+    protected virtual void SetStateReferences()
+    {
+        this.anim = ch.animator;
+        this.rb = ch.rigidBody;
+        this.cc = ch.capsuleCollider;
+        this.pinput = ch.inputHandler;
+    }
+    protected virtual void SetStateParameters()
+    {
+        this.stateName = GetType().Name;
+    }
 
-	//HACK: data copy method ? (for data in character states, probably not.)
+
+    //=//-----|Data Management|-------------------------------------//=//
+    protected virtual void SetStateVariablesOnEntry()
+    {
+        stateEntryTimeStamp = Time.time;
+    }
 
 
+    //=//-----|Flow Control|---------------------------------------//=//
+    public virtual void Enter()
+    {
+        SetStateVariablesOnEntry();
+
+        LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
+    }
+    public virtual void Exit()
+    {
+        LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
+    }
+    protected virtual void CheckExitAllowed()
+    {
+        if (!(Time.time - stateEntryTimeStamp > minimumStateDuration))
+        {
+            exitAllowed = false;
+        }
+    }
+    protected virtual void TryRouteState()
+    {
+        if (exitOnExitAllowed)
+        {
+            ch.TrySetState(defaultExitState, 1);
+        }
+    }
+    protected virtual void TryRouteStateFixed()
+    {
+        //nothing yet SHRUG
+    }
+
+
+    //=//-----|MonoBehavior|---------------------------------------//=//
+    public virtual void Update()
+    {
+        CheckExitAllowed();
+
+        if (exitAllowed)
+        {
+            TryRouteState();
+        }
+    }
+    public virtual void FixedUpdate()
+    {
+        if (exitAllowed)
+        {
+            TryRouteStateFixed();
+        }
+    }
+    public virtual void LateUpdate()
+    {
+        //nothing yet....
+    }
+
+
+    //=//-----|Debug|---------------------------------------------//=//
+    public virtual bool VerifyState()
+    {
+        return CheckStateForNullFields();
+    }
+    protected bool CheckStateForNullFields()
+    {
+        bool passed = true;
+
+        Type type = this.GetType();
+
+        while (type != null && type != typeof(object))
+        {
+            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+            foreach (FieldInfo field in fields)
+            {
+                object value = field.GetValue(this);
+                if (value == null)
+                {
+                    passed = false;
+                    string message = $"Critical error in {ch.characterName}. ";
+                    string message2 = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
+                    LogCore.Log("CriticalError", message + message2);
+                }
+            }
+
+            type = type.BaseType;
+        }
+
+        return passed;
+    }
 
 }
-

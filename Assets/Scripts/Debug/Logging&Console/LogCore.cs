@@ -34,7 +34,20 @@ public static class LogCore
         if (!blacklistedCategories.Contains(category))
         {
             string formattedMessage = $"[{category}] {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
-            Debug.Log(formattedMessage);
+
+            if (category.Contains("Error", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogError(formattedMessage);
+            }
+            else if (category.Contains("Warning", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogWarning(formattedMessage);
+            }
+            else
+            {
+                Debug.Log(formattedMessage);
+            }
+
             OnLog?.Invoke(formattedMessage);
 
             // Save new category if not already logged
