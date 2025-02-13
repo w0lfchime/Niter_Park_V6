@@ -21,9 +21,9 @@ public class ExampleState : CharacterState
         //...D
     }
     //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetStateVariablesOnEntry()
+    protected override void SetVariablesOnEntry()
     {
-        base.SetStateVariablesOnEntry();
+        base.SetVariablesOnEntry();
         //...
     }
     //=//-----|Flow Control|---------------------------------------------//=//

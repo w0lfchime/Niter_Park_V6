@@ -60,7 +60,10 @@ public abstract class CharacterState
 
 
     //=//-----|Data Management|-------------------------------------//=//
-    protected virtual void SetStateVariablesOnEntry()
+    /// <summary>
+    /// Base: Called in Enter().
+    /// </summary>
+    protected virtual void SetVariablesOnEntry()
     {
         stateEntryTimeStamp = Time.time;
     }
@@ -69,7 +72,7 @@ public abstract class CharacterState
     //=//-----|Flow Control|---------------------------------------//=//
     public virtual void Enter()
     {
-        SetStateVariablesOnEntry();
+        SetVariablesOnEntry();
 
         LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
     }
@@ -88,7 +91,7 @@ public abstract class CharacterState
     {
         if (exitOnExitAllowed)
         {
-            ch.TrySetState(defaultExitState, 1);
+            ch.PushState(defaultExitState, 1);
         }
     }
     protected virtual void TryRouteStateFixed()

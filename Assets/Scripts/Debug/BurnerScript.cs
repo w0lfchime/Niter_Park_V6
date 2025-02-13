@@ -1,190 +1,57 @@
-using UnityEngine;
+//using System;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-public class PhysicalState22 : CharacterState
-{
-    //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+//public class Character333 : MonoBehaviour
+//{
+//    private readonly Queue<(int frame, Action action)> actionQueue = new();
+//    private readonly Queue<(int frame, Action<object> action, object param)> paramActionQueue = new();
+//    private int currentFrame = 0;
 
-    //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
-    //=//-----|Setup|----------------------------------------------------//=//
-    public PhysicalState22(Character character) : base(character)
-    {
-        //nothing yet
-    }
-    protected override void SetStateReferences()
-    {
-        base.SetStateReferences();
-        //...
-    }
-    protected override void SetStateParameters()
-    {
-        base.SetStateParameters();
-        //...D
-    }
-    //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetStateVariablesOnEntry()
-    {
-        base.SetStateVariablesOnEntry();
-        //...
-    }
-    //=//-----|Flow Control|---------------------------------------------//=//
-    public override void Enter()
-    {
-        base.Enter();
-        //... 
-    }
-    public override void Exit()
-    {
-        base.Exit();
-        //...
-    }
-    protected override void CheckExitAllowed()
-    {
-         base.CheckExitAllowed();
-        //...
-    }
-    protected override void TryRouteState()
-    {
-        //something, idk what yet
+//    void FixedUpdate()
+//    {
+//        currentFrame++;
 
-        base.TryRouteState();
-    }
+//        // Execute non-param actions
+//        while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFrame)
+//        {
+//            var (_, action) = actionQueue.Dequeue();
+//            action?.Invoke();
+//        }
 
-    protected override void TryRouteStateFixed()
-    {
-        //this only processes grounding in an instant 
-        if (ch.onGrounding)
-        {
-            if (!ch.isGroundedBystate)
-            {
-                ch.TrySetState("IdleGrounded", 2);
-            }
-        }
+//        // Execute param actions
+//        while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFrame)
+//        {
+//            var (_, action, param) = paramActionQueue.Dequeue();
+//            action?.Invoke(param);
+//        }
+//    }
 
-        base.TryRouteStateFixed();
-    }
+//    /// <summary>
+//    /// Schedules an action to run after a set number of frames.
+//    /// </summary>
+//    public void RunAfterFrames(int frames, Action action)
+//    {
+//        if (frames <= 0)
+//        {
+//            action?.Invoke();
+//            return;
+//        }
 
-    //=//-----|MonoBehavior|---------------------------------------------//=//
-    public override void Update()
-    {
-        //...
-        base.Update();
-    }
-    public override void FixedUpdate()
-    {
-        //...
-        base.FixedUpdate();
-    }
-    public override void LateUpdate()
-    {
-        //...
-        base.LateUpdate();
-    }
-    //=//-----|Debug|----------------------------------------------------//=//
-    public override bool VerifyState()
-    {
-        return base.VerifyState();
-    }
+//        actionQueue.Enqueue((currentFrame + frames, action));
+//    }
 
-    //======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
-    //=//-----|Data Management|------------------------------------------//=//
-    protected virtual void PhysicalDataUpdates()
-    {
-        ch.position = ch.transform.position;
+//    /// <summary>
+//    /// Schedules an action with a parameter to run after a set number of frames.
+//    /// </summary>
+//    public void RunAfterFrames<T>(int frames, Action<T> action, T param)
+//    {
+//        if (frames <= 0)
+//        {
+//            action?.Invoke(param);
+//            return;
+//        }
 
-        Vector3 lv = rb.linearVelocity;
-        ch.velocity = lv;
-        ch.velocityX = lv.x;
-        ch.velocityY = lv.y;
-        ch.playerSpeed = lv.magnitude;
-
-        //debug 
-        ch.UpdateDebugVector("Velocity", lv, Color.green);
-
-    }
-    //=//-----|Forces|--------------------------------------------------//=//
-    public virtual void AddForce(string forceName, Vector3 force)
-    {
-        ch.UpdateDebugVector(forceName, force, Color.yellow);
-
-        ch.appliedForce += force;
-    }
-    public virtual void AddImpulseForce(string forceName, Vector3 impulseForce)
-    {
-        ch.StampDebugVector(forceName, impulseForce, Color.red);
-        ch.appliedImpulseForce += impulseForce;
-    }
-
-
-    protected virtual void AddForceByTargetVelocity(string forceName, Vector3 targetVelocity, float forceFactor)
-    {
-        //debug
-        string tvName = $"{forceName}_TargetVelocity";
-        ch.UpdateDebugVector(tvName, targetVelocity, Color.white);
-
-        //force
-        Vector3 forceByTargetVeloity = Vector3.zero;
-        forceByTargetVeloity += targetVelocity - ch.velocity;
-        forceByTargetVeloity *= forceFactor;
-        AddForce(forceName, forceByTargetVeloity);
-    }
-
-    //=//-----|Physical Action|------------------------------------------//=//
-    protected virtual void HandleJump()
-    {
-        if (ch.jumpAllowedByContext && pinput.GetButtonDown("Jump"))
-        {
-            ch.TrySetState("Jump", 4);
-        }
-    }
-    //=//-----|Grounding|-----------------------------------------------//=//
-    protected virtual void CheckGrounded()
-    {
-        float sphereRadius = cc.radius;
-        Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius + 0.1f, 0);
-
-        UnityEngine.Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
-        UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(0.1f, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
-
-        RaycastHit hit;
-
-        if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, ch.acd.groundCheckingDistance, ch.groundLayer))
-        {
-            ch.distanceToGround = hit.distance - sphereRadius;
-        }
-        else
-        {
-            ch.distanceToGround = ch.acd.groundCheckingDistance;
-        }
-
-        bool newGroundedState = ch.distanceToGround < ch.acd.isGroundedDistance;
-
-        ch.onGrounding = false;
-        ch.onUngrounding = false;
-
-        if (Time.time - ch.lastGroundedCheckTime >= ch.acd.groundedSwitchCooldown && newGroundedState != ch.isGrounded)
-        {
-            ch.isGrounded = newGroundedState;
-            ch.lastGroundedCheckTime = Time.time;
-
-            //reset jumps on grounded
-            if (ch.isGrounded)
-            {
-                ch.jumpCount = 0;
-                ch.timeSinceLastGrounding = Time.time;
-
-                ch.onGrounding = true;
-
-            }
-            else
-            {
-                ch.onUngrounding = true;
-            }
-        }
-    }
-
-    //======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
-
-    //======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
-
-    //======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
-}
+//        paramActionQueue.Enqueue((currentFrame + frames, (p) => action((T)p), param));
+//    }
+//}

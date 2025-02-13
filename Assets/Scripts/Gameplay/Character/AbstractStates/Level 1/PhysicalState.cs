@@ -2,7 +2,16 @@ using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
+    //=//-----|Static Parameters|-----------------------------------------//=//
+    public static int onGroundingHoldFrames = 2;
+    public static int onUngroundingHoldFrames = 2;
+
     //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+    //=//-----|Parameters|------------------------------------------------//=//
+
+
+    //=//-----|Variables|-------------------------------------------------//=//
+
 
     //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
     //=//-----|Setup|----------------------------------------------------//=//
@@ -18,12 +27,12 @@ public class PhysicalState : CharacterState
     protected override void SetStateParameters()
     {
         base.SetStateParameters();
-        //...D
+        //...
     }
     //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetStateVariablesOnEntry()
+    protected override void SetVariablesOnEntry()
     {
-        base.SetStateVariablesOnEntry();
+        base.SetVariablesOnEntry();
         //...
     }
     //=//-----|Flow Control|---------------------------------------------//=//
@@ -44,21 +53,17 @@ public class PhysicalState : CharacterState
     }
     protected override void TryRouteState()
     {
-        //something, idk what yet
+        //...
+
+        HandleGrounding();
+        HandleJump();
 
         base.TryRouteState();
     }
 
     protected override void TryRouteStateFixed()
     {
-        //this only processes grounding in an instant 
-        if (ch.onGrounding)
-        {
-            if (!ch.isGroundedBystate)
-            {
-                ch.TrySetState("IdleGrounded", 2);
-            }
-        }
+
 
         base.TryRouteStateFixed();
     }
@@ -66,11 +71,16 @@ public class PhysicalState : CharacterState
     //=//-----|MonoBehavior|---------------------------------------------//=//
     public override void Update()
     {
+        PhysicalDataUpdates();
+
         //...
         base.Update();
     }
     public override void FixedUpdate()
     {
+        WatchGrounding();
+        SetGrounding();
+
         //...
         base.FixedUpdate();
     }
@@ -84,9 +94,8 @@ public class PhysicalState : CharacterState
     {
         return base.VerifyState();
     }
-
     //======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
-    //=//-----|Data Management|------------------------------------------//=//
+    //=//-----|Data Management|-----------------------------------------//=//
     protected virtual void PhysicalDataUpdates()
     {
         ch.position = ch.transform.position;
@@ -101,7 +110,7 @@ public class PhysicalState : CharacterState
         ch.UpdateDebugVector("Velocity", lv, Color.green);
 
     }
-    //=//-----|Forces|--------------------------------------------------//=//
+    //=//-----|Force|---------------------------------------------------//=//
     public virtual void AddForce(string forceName, Vector3 force)
     {
         ch.UpdateDebugVector(forceName, force, Color.yellow);
@@ -113,8 +122,6 @@ public class PhysicalState : CharacterState
         ch.StampDebugVector(forceName, impulseForce, Color.red);
         ch.appliedImpulseForce += impulseForce;
     }
-
-
     protected virtual void AddForceByTargetVelocity(string forceName, Vector3 targetVelocity, float forceFactor)
     {
         //debug
@@ -127,17 +134,16 @@ public class PhysicalState : CharacterState
         forceByTargetVeloity *= forceFactor;
         AddForce(forceName, forceByTargetVeloity);
     }
-
-    //=//-----|Physical Action|------------------------------------------//=//
-    protected virtual void HandleJump()
+    protected virtual void ApplyGravity()
     {
-        if (ch.jumpAllowedByContext && pinput.GetButtonDown("Jump"))
-        {
-            ch.TrySetState("Jump", 4);
-        }
+        Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
+        AddForce("Gravity", gravForceVector);
     }
     //=//-----|Grounding|-----------------------------------------------//=//
-    protected virtual void CheckGrounded()
+    /// <summary>
+    /// observes the distance from the ground
+    /// </summary>
+    protected virtual void WatchGrounding()
     {
         float sphereRadius = cc.radius;
         Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius + 0.1f, 0);
@@ -156,31 +162,77 @@ public class PhysicalState : CharacterState
             ch.distanceToGround = ch.acd.groundCheckingDistance;
         }
 
-        bool newGroundedState = ch.distanceToGround < ch.acd.isGroundedDistance;
 
-        ch.onGrounding = false;
-        ch.onUngrounding = false;
+    }
+    /// <summary>
+    /// uses information from WatchGrounding() to set grounding variables
+    /// </summary>
+    public void SetGrounding()
+    {
+        bool groundedByDistance = ch.distanceToGround < ch.acd.isGroundedDistance;
 
-        if (Time.time - ch.lastGroundedCheckTime >= ch.acd.groundedSwitchCooldown && newGroundedState != ch.isGrounded)
+        if (groundedByDistance != ch.isGrounded)
         {
-            ch.isGrounded = newGroundedState;
-            ch.lastGroundedCheckTime = Time.time;
-
-            //reset jumps on grounded
-            if (ch.isGrounded)
+            if (Time.time - ch.lastGroundedCheckTime >= ch.acd.groundedSwitchCooldown)
             {
-                ch.jumpCount = 0;
-                ch.timeSinceLastGrounding = Time.time;
+                ch.isGrounded = groundedByDistance;
+                ch.lastGroundedCheckTime = Time.time;
 
-                ch.onGrounding = true;
+                //reset jumps on grounded
+                if (ch.isGrounded)
+                {
+                    ch.timeSinceLastGrounding = Time.time;
 
-            }
-            else
-            {
-                ch.onUngrounding = true;
+                    ch.onGrounding = true;
+
+                    ch.ScheduleAction(onGroundingHoldFrames, () => ch.onGrounding = false); 
+                }
+                else
+                {
+                    ch.onUngrounding = true;
+
+                    ch.ScheduleAction(onUngroundingHoldFrames, () => ch.onUngrounding = false);
+                }
             }
         }
     }
+
+    //=//-----|State Routes|--------------------------------------------//=//
+    protected virtual void HandleJump()
+    {
+        if (pinput.GetButtonDown("Jump"))
+        {
+            if (!ch.onGrounding)
+            {
+
+
+            }
+        }
+
+
+
+        if (ch.jumpCount >= ch.acd.maxJumps) 
+        {
+            jumpAllowed = false;
+        }
+        
+
+        if ()
+        {
+            ch.PushState("Jump", 4);
+        }
+    }
+    protected virtual void HandleGrounding()
+    {
+        if (ch.onGrounding)
+        {
+            if (!ch.isGroundedBystate)
+            {
+                ch.PushState("IdleGrounded", 2);
+            }
+        }
+    }
+
 
     //======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
 
