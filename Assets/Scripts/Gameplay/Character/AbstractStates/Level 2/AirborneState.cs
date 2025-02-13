@@ -2,67 +2,101 @@ using UnityEngine;
 
 public class AirborneState : PhysicalState
 {
-    //in the player can input and move in the air
-    public bool allowDrift; 
+    //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+    //=//-----|Parameters|------------------------------------------------//=//
 
 
+    //=//-----|Variables|-------------------------------------------------//=//
+    [Header("Drift")]
+    public bool allowDrift;
+
+
+    //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
+    //=//-----|Setup|----------------------------------------------------//=//
     public AirborneState(Character character) : base(character)
     {
 
     }
-    public override void SetStateReferences()
+    protected override void SetStateReferences()
     {
         base.SetStateReferences();
-
-
+        //...
     }
-
-    /// <inheritdoc/>
-    /// <summary>
-    /// meow foonk shawpoi
-    /// </summary>
-    public override void SetStateParameters()
+    protected override void SetStateParameters()
     {
         base.SetStateParameters();
-
-
+        //...
     }
-    public override void SetStateVariablesOnEntry()
+    //=//-----|Data Management|------------------------------------------//=//
+    protected override void SetVariablesOnEntry()
     {
-        base.SetStateVariablesOnEntry();
-
-
+        base.SetVariablesOnEntry();
+        //...
+        allowDrift = true;
     }
-
+    //=//-----|Flow Control|---------------------------------------------//=//
     public override void Enter()
     {
         base.Enter();
+        //... 
 
-        allowDrift = true;  
-
-        ch.isGroundedBystate = false;
     }
-
     public override void Exit()
     {
         base.Exit();
-
+        //...
+    }
+    protected override void CheckExitAllowed()
+    {
+        base.CheckExitAllowed();
+        //...
+    }
+    protected override void TryRouteState()
+    {
+        //...
+        base.TryRouteState();
+    }
+    protected override void TryRouteStateFixed()
+    {
+        //...
+        base.TryRouteStateFixed();
     }
 
+    //=//-----|MonoBehavior|---------------------------------------------//=//
     public override void Update()
     {
+        //...
         base.Update();
-
     }
-
-
     public override void FixedUpdate()
     {
         ApplyGravity();
         HandleDrift();
-        base.FixedUpdate();
 
+        //...
+        base.FixedUpdate();
     }
+    public override void LateUpdate()
+    {
+        //...
+        base.LateUpdate();
+    }
+    //=//-----|Debug|----------------------------------------------------//=//
+    public override bool VerifyState()
+    {
+        return base.VerifyState();
+    }
+
+    //======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
+    //Level 1, Physical State
+    //=//-----|Force|--------------------------------------------------//=//
+    protected override void ApplyGravity()
+    {
+        base.ApplyGravity(); //? different implementation?
+    }
+    //======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
+    //Level 2, Airborne State (this)
+    //=//-----|Local Actions|---------------------------------------//=//
     public virtual void HandleDrift()
     {
         if (allowDrift)
@@ -72,19 +106,10 @@ public class AirborneState : PhysicalState
             AddForceByTargetVelocity("Drift", tv, ch.acd.driftForceFactor);
         }
     }
+    //=//-----|Routes|----------------------------------------------//=//
+    //some sort of function for attacks, 
 
-    protected virtual void ApplyGravity()
-    {
-        Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
-        AddForce("Gravity", gravForceVector);
-    }
+    //======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 
-    /// <summary>
-    /// Use ground checking data to prepar for proper grounding. Accelerate animations, prepare state routing.
-    /// Grounding may not even occur. 
-    /// </summary>
-    protected virtual void WatchGrounding()
-    {
-
-    }
+    //======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
 }

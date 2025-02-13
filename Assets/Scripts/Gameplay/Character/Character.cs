@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine.InputSystem;
-using System.Runtime.InteropServices;
-using UnityEngine.InputSystem.LowLevel;
-using Unity.VisualScripting.Antlr3.Runtime;
+using System;
 
 
 public abstract class Character : MonoBehaviour
 {
-
 	[Header("Meta")]
 	public string characterName;
 	public string characterClassName;
@@ -24,17 +21,24 @@ public abstract class Character : MonoBehaviour
 	public TextMeshPro stateText;
 	public VectorRenderManager vrm;
 
-    [Header("Input")]
-    public PlayerInputHandler inputHandler;
-    private PlayerInput playerInput;
+	[Header("Input")]
+	public PlayerInputHandler inputHandler;
+	private PlayerInput playerInput;
 
-    [Header("Stats (Data)")]
+	[Header("Stats (Data)")]
 	public CharacterData ucd; //Universal
 	public CharacterData bcd; //Base Character Specific
-	public CharacterData acd; //Active Universal+Base+Context 
+	public CharacterData acd; //Active Universal+Base 
 
-	//Character 
-	[Header("State Variable")]
+	[Header("Time and Frames")]
+    private int currentFixedFrame = 0;
+
+	[Header("Action Queue")]
+    private readonly Queue<(int frame, Action action)> actionQueue = new();
+    private readonly Queue<(int frame, Action<object> action, object param)> paramActionQueue = new();
+
+    //Character 
+    [Header("State Variable")]
 	public string currentState = null;
 	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
 	protected Queue<KeyValuePair<string, int>> stateQueue = new Queue<KeyValuePair<string, int>>();
@@ -42,17 +46,13 @@ public abstract class Character : MonoBehaviour
 	[Header("State Parameter")]
 	public int perFrameStateQueueLimit = 10;
 
-    [Header("Component Refs")]
+	[Header("Component Refs")]
 	public Rigidbody rigidBody;
 	public CapsuleCollider capsuleCollider;
 	public Animator animator;
 
 	[Header("Character Dimensions")]
 	public float characterHeight;
-
-
-
-
 
 	[Header("Movement Variables")]
 	public float currentMaxSpeed;
@@ -65,8 +65,8 @@ public abstract class Character : MonoBehaviour
 	public LayerMask groundLayer;
 	public bool isGrounded; //is the capsule physically 'grounded'
 	public bool isGroundedBystate; //is the character grounded by state definition
-	public bool onGrounding; //on frame isgrounded is set to false to true
-	public bool onUngrounding; //on frame isgrounded is set from true to false
+	public bool onGrounding; //true a few frames after isgrounded is set to false to true
+	public bool onUngrounding; //true a few frames after isgrounded is set from true to false
 	public float distanceToGround;
 	public float lastGroundedCheckTime = 0.0f;
 	public float timeSinceLastGrounding = 0.0f;
@@ -79,7 +79,6 @@ public abstract class Character : MonoBehaviour
 	public float lastJumpTime;
 	public int jumpCount;
 	public float jumpForceLerp;
-	public bool jumpAllowedByContext = true;
 
 	[Header("Physics Variables")]
 	public Vector3 position;
@@ -97,15 +96,14 @@ public abstract class Character : MonoBehaviour
 
 
 
-
-    // Character Setup - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// Character Setup - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	public virtual void RegisterCommands()
 	{
 		if (GlobalData.characterInitialized)
 		{
 			//register commands here (?)
 
-        }
+		}
 	}
 	
 	public virtual void SetMemberVariables()
@@ -114,12 +112,14 @@ public abstract class Character : MonoBehaviour
 		this.characterName = bcd.characterName;
 		this.characterClassName = GetType().Name;
 
+		//state
+		currentState = null;
+        //HACK: start as null to trigger check state to set as suspended state
+
+
         //debug 
         this.debug = GlobalData.debug;
-
-		//state
-		currentState = null; //HACK: start as null to trigger check state to set as suspended state
-    }
+	}
 
 	public virtual void SetReferences()
 	{
@@ -127,20 +127,20 @@ public abstract class Character : MonoBehaviour
 		playerInput = GetComponent<PlayerInput>();
 		inputHandler = new PlayerInputHandler(playerInput);
 
-        //physics
-        rigidBody = GetComponent<Rigidbody>();
+		//physics
+		rigidBody = GetComponent<Rigidbody>();
 		capsuleCollider = GetComponent<CapsuleCollider>();
 		groundLayer = LayerMask.GetMask("Ground");
 
-        //animation
-        animator = GetComponent<Animator>();
+		//animation
+		animator = GetComponent<Animator>();
 
-        //debug
-        debugParentTransform = transform.Find("Debug");
-        stateText = debugParentTransform.Find("CharacterStateText")?.GetComponent<TextMeshPro>();
+		//debug
+		debugParentTransform = transform.Find("Debug");
+		stateText = debugParentTransform.Find("CharacterStateText")?.GetComponent<TextMeshPro>();
 
-        this.vrm = ServiceLocator.GetService<VectorRenderManager>();
-    }
+		this.vrm = ServiceLocator.GetService<VectorRenderManager>();
+	}
 	public virtual void CharacterInitialization()
 	{
 		//Local init functions
@@ -149,23 +149,25 @@ public abstract class Character : MonoBehaviour
 
 		//The rest
 		RegisterCommands();
-        GlobalData.characterInitialized = true;	//HACK: do we need this?
+		GlobalData.characterInitialized = true;	//HACK: do we need this?
 
-        //wiring data
-        UpdateActiveCharacterData();
+		//wiring data
+		UpdateActiveCharacterData();
 
 		//misc character data
 		SetCharacterDimensions();
 
-        //state
-        RegisterCharacterStates();
+		//state
+		RegisterCharacterStates();
 		LogCore.Log("CharacterSetupHighDetail", $"Regsitered character states. Number of states: {stateDict.Count}");
+
+		//Testing and Verification 
 		VerifyCharacterStates();
 		
 		LogCore.Log("Character", $"Character initialized: {characterName}");
-    }
+	}
 
-    /// <summary>
+	/// <summary>
 	/// Some states have truly universal implementation and can be registered in base character class
 	/// </summary>
 	protected virtual void RegisterCharacterStates()
@@ -180,11 +182,11 @@ public abstract class Character : MonoBehaviour
 	}
 
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
-    // Character Data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    public virtual void ProcessInput()
+	// Character Data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	public virtual void ProcessInput()
 	{
 		//reset
 		inputMoveDirection = Vector3.zero;
@@ -196,38 +198,38 @@ public abstract class Character : MonoBehaviour
 		{
 			inputMoveDirection += Vector3.up;
 		}
-        if (inputHandler.GetButtonHold("MoveRight"))
-        {
+		if (inputHandler.GetButtonHold("MoveRight"))
+		{
 			inputMoveDirection += Vector3.right;
-        }
-        if (inputHandler.GetButtonHold("MoveDown"))
-        {
+		}
+		if (inputHandler.GetButtonHold("MoveDown"))
+		{
 			inputMoveDirection += Vector3.down;
-        }
-        if (inputHandler.GetButtonHold("MoveLeft"))
-        {
+		}
+		if (inputHandler.GetButtonHold("MoveLeft"))
+		{
 			inputMoveDirection += Vector3.left;
-        }
+		}
 		inputMoveDirection.Normalize();
 
 
 		//"looking" input
-        if (inputHandler.GetButtonHold("LookUp"))
-        {
+		if (inputHandler.GetButtonHold("LookUp"))
+		{
 			inputLookDirection += Vector3.up;
-        }
-        if (inputHandler.GetButtonHold("LookRight"))
-        {
+		}
+		if (inputHandler.GetButtonHold("LookRight"))
+		{
 			inputLookDirection += Vector3.right;
-        }
-        if (inputHandler.GetButtonHold("LookDown"))
-        {
+		}
+		if (inputHandler.GetButtonHold("LookDown"))
+		{
 			inputLookDirection += Vector3.down;
-        }
-        if (inputHandler.GetButtonHold("LookLeft"))
-        {
+		}
+		if (inputHandler.GetButtonHold("LookLeft"))
+		{
 			inputLookDirection += Vector3.left;
-        }
+		}
 		inputLookDirection.Normalize();
 
 		// DEBUG: 
@@ -238,10 +240,10 @@ public abstract class Character : MonoBehaviour
 			{
 				if (currentState == "Flight")
 				{
-					TrySetState("IdleAirborne", 5);
+					PushState("IdleAirborne", 5);
 				} else
 				{
-					TrySetState("Flight", 5);
+					PushState("Flight", 5);
 				}
 			}
 			if (Input.GetKeyDown(KeyCode.U))
@@ -299,10 +301,54 @@ public abstract class Character : MonoBehaviour
 
 		// Other data
 	}
+
+	//TODO: better name 
 	public virtual void UpdateCharacterData()
 	{
 
+	}
+
+    // Actions & Action Queue - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	private void ProcessActionQueue()
+	{
+        // Execute non-param actions
+        while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFixedFrame)
+        {
+            var (_, action) = actionQueue.Dequeue();
+            action?.Invoke();
+        }
+
+        // Execute param actions
+        while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFixedFrame)
+        {
+            var (_, action, param) = paramActionQueue.Dequeue();
+            action?.Invoke(param);
+        }
     }
+
+    public void ScheduleAction(int framesFromNow, Action action)
+    {
+        if (framesFromNow <= 0)
+        {
+            action?.Invoke();
+            return;
+        }
+
+        actionQueue.Enqueue((currentFixedFrame + framesFromNow, action));
+    }
+    public void ScheduleAction<T>(int framesFromNow, Action<T> action, T param)
+    {
+        if (framesFromNow <= 0)
+        {
+            action?.Invoke(param);
+            return;
+        }
+
+        paramActionQueue.Enqueue((currentFixedFrame + framesFromNow, (p) => action((T)p), param));
+    }
+	
+
+
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
@@ -310,19 +356,19 @@ public abstract class Character : MonoBehaviour
     // State Control - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-	/// <summary>
-	/// Attempts to set the state of the character. The state must first be approved, then 
-	/// have the highest priority in the queue at the end of the frame. 
-	/// Priorities:
-	/// 0, 1, 2 - lowest importance. basic defaulting and error prevention, etc..
-	/// 3, 4 - general states.
-	/// 5, 6, 7 - important states. Responsive controls, grounding, etc..
-	/// 8, 9, 10 - critical states. Damage, flinching, getting grabbed, etc..
-	/// 10+ - complete overuling states. cutscenes, game ending, dev tools, etc..
-	/// </summary>
-	/// <param name="newState"></param>
-	/// <param name="priority"></param>
-    public void TrySetState(string newState, int priority)
+    /// <summary>
+    /// Attempts to set the state of the character. The state must first be approved, then 
+    /// have the highest priority in the queue at the end of the frame. 
+    /// Priorities:
+    /// 0, 1, 2 - lowest importance. basic defaulting and error prevention, etc..
+    /// 3, 4 - general states.
+    /// 5, 6, 7 - important states. Responsive controls, grounding, etc..
+    /// 8, 9, 10 - critical states. Damage, flinching, getting grabbed, etc..
+    /// 10+ - complete overuling states. cutscenes, game ending, dev tools, etc..
+    /// </summary>
+    /// <param name="newState"></param>
+    /// <param name="priority"></param>
+    public void PushState(string newState, int priority)
 	{
 		if (!ApproveState(newState))
 		{
@@ -331,47 +377,46 @@ public abstract class Character : MonoBehaviour
 	
 		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
 		CLog("CharacterStateHighDetail", $"Enqueued state: {newState} with priority {priority}");
-    }
+	}
 
 	/// <summary>
 	/// Checks passed state for null or not registered. Does the same thing as check current state.
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
-    public bool ApproveState(string state)
-    {
-
-        if (state == null)
-        {
-            CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
-            return false;
-        }
-		if (state.Length < 4)
+	public bool ApproveState(string state)
+	{
+		if (state == null)
 		{
-			CLog("CharacterStateError", $"Attempted approval of an empty or overly short state: ->{state}<- Rejected.");
+			CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
 			return false;
 		}
-        if (!stateDict.ContainsKey(state))
-        {
-            CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
-            return false;
-        }
+		if (state.Length < 4)
+		{
+			CLog("CharacterStateError", $"Attempted approval of an empty or oddly named state: ->{state}<- Rejected.");
+			return false;
+		}
+		if (!stateDict.ContainsKey(state))
+		{
+			CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
+			return false;
+		}
 		CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
 
 
-        return true;
-    }
-    public void CheckCurrentState()
-    {
+		return true;
+	}
+	public void CheckCurrentState()
+	{
 
-        if (!ApproveState(currentState))
-        {
-            CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
-            TrySetState("Suspended", 0);
-        }
-    }
+		if (!ApproveState(currentState))
+		{
+			CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
+			PushState("Suspended", 0);
+		}
+	}
 
-    public void ProcessStateQueue()
+	public void ProcessStateQueue()
 	{
 		if (stateQueue.Count > 0)
 		{
@@ -413,51 +458,51 @@ public abstract class Character : MonoBehaviour
 			oldState = currentState;
 		}
 
-        currentState = newState;
-        stateDict[currentState].Enter();
+		currentState = newState;
+		stateDict[currentState].Enter();
 
-        CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
+		CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
 
-        //debug
+		//debug
 
-        if (debug && stateText != null)
-        {
-            // Get the current state name from the dictionary
-            string currentStateName = stateDict[currentState].GetType().Name;
+		if (debug && stateText != null)
+		{
+			// Get the current state name from the dictionary
+			string currentStateName = stateDict[currentState].GetType().Name;
 
-            // Remove the character class name prefix if it exists
-            if (currentStateName.StartsWith(characterClassName))
-            {
-                currentStateName = currentStateName.Substring(characterClassName.Length);
-            }
+			// Remove the character class name prefix if it exists
+			if (currentStateName.StartsWith(characterClassName))
+			{
+				currentStateName = currentStateName.Substring(characterClassName.Length);
+			}
 
-            // Update the UI text
-            stateText.text = currentStateName;
-        }
-
-
-
-    }
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+			// Update the UI text
+			stateText.text = currentStateName;
+		}
 
 
 
-    // Monobehaviour - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    private void Awake()
-    {
+	}
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+
+
+	// Monobehaviour - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	private void Awake()
+	{
 		CharacterInitialization();
 		CharacterStart();
 
 	}
-    private void Start()
+	private void Start()
 	{
 		CheckCurrentState();
 
-    }
+	}
 	private void Update()
 	{
 
-        inputHandler.UpdateInputs();
+		inputHandler.UpdateInputs();
 		ProcessInput();
 		UpdateCharacterData();
 		CharacterUpdate();
@@ -465,19 +510,24 @@ public abstract class Character : MonoBehaviour
 	}
 	private void FixedUpdate()
 	{
-		CharacterFixedUpdate();
-        stateDict[currentState]?.FixedUpdate();
+        currentFixedFrame++; //used by action queue
 
+		ProcessActionQueue();
+
+        CharacterFixedUpdate();
+		stateDict[currentState]?.FixedUpdate();
+
+		ProcessStateQueue();
 	}
-    private void LateUpdate()
-    {
+	private void LateUpdate()
+	{
 		CharacterLateUpdate();
 
 		stateDict[currentState]?.LateUpdate();
 
-        ProcessStateQueue();
-    }
-    private void OnDisable() 
+
+	}
+	private void OnDisable() 
 	{
 		
 	}
@@ -485,12 +535,12 @@ public abstract class Character : MonoBehaviour
 	{
 	
 	}
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
-    // Monobehavior Abstracts - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+	// Monobehavior Abstracts - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
 
-    protected abstract void CharacterStart();
+	protected abstract void CharacterStart();
 	protected abstract void CharacterUpdate();
 	protected abstract void CharacterFixedUpdate();
 	protected abstract void CharacterLateUpdate();
@@ -519,7 +569,7 @@ public abstract class Character : MonoBehaviour
 		}
 	
 	}
-    public void StampDebugVector(string name, Vector3 vector, Color color)
+	public void StampDebugVector(string name, Vector3 vector, Color color)
 	{
 		if (debug)
 		{
@@ -527,12 +577,12 @@ public abstract class Character : MonoBehaviour
 		}
 	}
 
-    public virtual void DrawCharacterDebug()
-    {
+	public virtual void DrawCharacterDebug()
+	{
 
 
 
-    }
+	}
 
 	public virtual void CLog(string category, string message)
 	{
@@ -562,6 +612,6 @@ public abstract class Character : MonoBehaviour
 		}
 	}
 
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 }

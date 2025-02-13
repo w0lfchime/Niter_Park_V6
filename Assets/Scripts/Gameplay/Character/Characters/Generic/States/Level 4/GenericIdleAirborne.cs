@@ -18,9 +18,9 @@ public class GenericIdleAirborne : IdleAirborneState
 
 
     }
-    public override void SetStateVariablesOnEntry()
+    public override void SetVariablesOnEntry()
     {
-        base.SetStateVariablesOnEntry();
+        base.SetVariablesOnEntry();
 
 
     }
