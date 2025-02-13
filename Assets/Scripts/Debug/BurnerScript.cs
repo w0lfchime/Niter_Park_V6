@@ -1,57 +1,46 @@
-//using System;
 //using System.Collections.Generic;
-//using UnityEngine;
+//using System;
 
-//public class Character333 : MonoBehaviour
+//[Header("Action Queue")]
+//private readonly Queue<(int frame, Action action)> actionQueue = new();
+//private readonly Queue<(int frame, Action<object> action, object param)> paramActionQueue = new();
+
+
+////called in fixed update
+//private void ProcessActionQueue()
 //{
-//    private readonly Queue<(int frame, Action action)> actionQueue = new();
-//    private readonly Queue<(int frame, Action<object> action, object param)> paramActionQueue = new();
-//    private int currentFrame = 0;
-
-//    void FixedUpdate()
+//    // Execute non-param actions
+//    while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFixedFrame)
 //    {
-//        currentFrame++;
-
-//        // Execute non-param actions
-//        while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFrame)
-//        {
-//            var (_, action) = actionQueue.Dequeue();
-//            action?.Invoke();
-//        }
-
-//        // Execute param actions
-//        while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFrame)
-//        {
-//            var (_, action, param) = paramActionQueue.Dequeue();
-//            action?.Invoke(param);
-//        }
+//        var (_, action) = actionQueue.Dequeue();
+//        action?.Invoke();
 //    }
 
-//    /// <summary>
-//    /// Schedules an action to run after a set number of frames.
-//    /// </summary>
-//    public void RunAfterFrames(int frames, Action action)
+//    // Execute param actions
+//    while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFixedFrame)
 //    {
-//        if (frames <= 0)
-//        {
-//            action?.Invoke();
-//            return;
-//        }
+//        var (_, action, param) = paramActionQueue.Dequeue();
+//        action?.Invoke(param);
+//    }
+//}
 
-//        actionQueue.Enqueue((currentFrame + frames, action));
+//public void ScheduleAction(int framesFromNow, Action action)
+//{
+//    if (framesFromNow <= 0)
+//    {
+//        action?.Invoke();
+//        return;
 //    }
 
-//    /// <summary>
-//    /// Schedules an action with a parameter to run after a set number of frames.
-//    /// </summary>
-//    public void RunAfterFrames<T>(int frames, Action<T> action, T param)
+//    actionQueue.Enqueue((currentFixedFrame + framesFromNow, action));
+//}
+//public void ScheduleAction<T>(int framesFromNow, Action<T> action, T param)
+//{
+//    if (framesFromNow <= 0)
 //    {
-//        if (frames <= 0)
-//        {
-//            action?.Invoke(param);
-//            return;
-//        }
-
-//        paramActionQueue.Enqueue((currentFrame + frames, (p) => action((T)p), param));
+//        action?.Invoke(param);
+//        return;
 //    }
+
+//    paramActionQueue.Enqueue((currentFixedFrame + framesFromNow, (p) => action((T)p), param));
 //}

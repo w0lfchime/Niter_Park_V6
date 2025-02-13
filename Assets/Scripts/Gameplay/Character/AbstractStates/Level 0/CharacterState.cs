@@ -23,6 +23,7 @@ public abstract class CharacterState
 
     //=//-----|Parameters|-------------------------------------------//=//
     [Header("Flow Control Parameters")]
+
     protected bool exitOnExitAllowed; //set true if state does not have particular exit routing
     protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
     protected float minimumStateDuration;
@@ -30,6 +31,7 @@ public abstract class CharacterState
 
     //=//-----|Variables|--------------------------------------------//=//
     [Header("Flow Control Variables")]
+    public int statePriority;
     protected bool exitAllowed;
     protected float stateEntryTimeStamp;
 
