@@ -13,6 +13,7 @@ public abstract class CharacterState
 
     [Header("Meta")]
     public string stateName;
+    public CState stateType;
 
     [Header("Component Refs")]
     protected Animator anim;
@@ -21,26 +22,28 @@ public abstract class CharacterState
     protected PlayerInputHandler pinput;
 
 
-    //=//-----|Parameters|-------------------------------------------//=//
-    [Header("Flow Control Parameters")]
+    //=//-----|Flow Control|------------------------------------------//=//
+    [Header("Parameters")] //All params could and may be changed at runtime. who knows.
+	public bool exitOnExitAllowed; //set true if state does not have particular exit routing
+	public string defaultExitState; //could also be used as a variable, but under parameter for general clarity
+	public float minimumStateDuration;
+    public bool forceClearStateHeapOnEntry;
 
-    protected bool exitOnExitAllowed; //set true if state does not have particular exit routing
-    protected string defaultExitState; //could also be used as a variable, but under parameter for general clarity
-    protected float minimumStateDuration;
-
-
-    //=//-----|Variables|--------------------------------------------//=//
-    [Header("Flow Control Variables")]
-    public int statePriority;
-    protected bool exitAllowed;
-    protected float stateEntryTimeStamp;
+	[Header("Variables")]
+	public int statePriority;
+	protected bool exitAllowed;
+	protected float stateEntryTimeStamp;
 
 
-    //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
 
-    //=//-----|Setup|------------------------------------------------//=//
-    public CharacterState(Character character)
+
+
+	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+
+
+	//=//-----|Setup|------------------------------------------------//=//
+	public CharacterState(Character character)
     {
         this.ch = character;
 
@@ -58,6 +61,7 @@ public abstract class CharacterState
     protected virtual void SetStateParameters()
     {
         this.stateName = GetType().Name;
+
     }
 
 

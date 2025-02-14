@@ -14,6 +14,16 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System;
 
+public enum CState //Standard state types
+{
+	IdleGrounded,
+	IdleAirborne,
+	Walk,
+	Run,
+	Jump,
+	COUNT
+}
+
 public abstract class Character : MonoBehaviour
 {
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
@@ -106,13 +116,10 @@ public abstract class Character : MonoBehaviour
 	#region state
 	[Header("State")]
 	public string currentState = null;
-	protected Dictionary<string, CharacterState> stateDict = new();
-	private StateSetRequestHeap<StateSetRequest> stateHeap = new();
+	protected CharacterState[] stateArray = new CharacterState[(int)CState.COUNT];
+	protected StateSetRequestHeap<StateSetRequest> stateHeap = new();
 
-
-
-
-	private struct StateSetRequest
+	protected struct StateSetRequest
 	{
 		public string StateName;
 		public int PushForce;
@@ -339,6 +346,10 @@ public abstract class Character : MonoBehaviour
 	#endregion debug_and_safety
 	//=//-----|Public|-----------------------------------------------------------//=//
 	#region public
+	public CharacterState getState(string stateName)
+	{
+		return stateDict[stateName];
+	}
 	public void PushState(string stateName, int pushForce, int lifetime, bool clearOnStateSwitch)
 	{
 		int expirationFrame = currentFrame + lifetime;
@@ -348,7 +359,7 @@ public abstract class Character : MonoBehaviour
 		stateHeap.Enqueue(newRequest, pushForce, currentFrame);
 
 		// Immediate override if the new push force is greater than the current state's priority
-		if (currentState == null || pushForce > currentState.GetPriority())
+		if (currentState == null || pushForce > stateDict[currentState].GetPriority())
 		{
 			SwitchToState(newRequest);
 		}
@@ -382,7 +393,7 @@ public abstract class Character : MonoBehaviour
 			SwitchToState(bestRequest);
 		}
 	}
-	private void SwitchToState(StateRequest newRequest)
+	private void SwitchToState(StateSetRequest newRequest)
 	{
 		if (stateDictionary.TryGetValue(newRequest.StateName, out var newState))
 		{
@@ -450,6 +461,8 @@ public abstract class Character : MonoBehaviour
 
 	//======// /==/==/==/=||[BASE]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region base 
+	//Base methods and their helpers 
+
 	//=//-----|Setup|------------------------------------------------------------//=//
 	#region setup
 	protected virtual void CharacterInitialization()
@@ -519,15 +532,27 @@ public abstract class Character : MonoBehaviour
 
 		this.vrm = ServiceLocator.GetService<VectorRenderManager>();
 	}
+	private void ResgisterState()
+	{
+
+	}
 	protected virtual void RegisterCharacterStates()
 	{
-		stateDict.Add("Suspended", new Suspended(this));
+		foreach (CState stateEnum in Enum.GetValues(typeof(CState)))
+		{
+			string className = $"{this.characterName}{stateEnum}";  // "GenericIdleAirborne", etc.
+			Type classType = Type.GetType(className);
 
-		//HACK: Do we leave flight state abstract? (probably should, what if characters have jetpack? ATD what up)
-		//atd means attention to detail
-		//TODO: register flight state 
-
-		//other...
+			if (classType != null)
+			{
+				CharacterState stateInstance = (CharacterState)Activator.CreateInstance(classType, this);
+				RegisterState(stateEnum, stateInstance);
+			}
+			else
+			{
+				LogCore.Log("CharacterSetup", $"State class not found: {className}");
+			}
+		}
 	}
 	#endregion setup
 	//=//-----|Data|-------------------------------------------------------------//=//
