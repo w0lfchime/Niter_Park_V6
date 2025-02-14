@@ -2,10 +2,9 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-public abstract class CharacterState
+public class CharacterState : PerformanceState
 {
     //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
-
 
     //=//-----|General|----------------------------------------------//=//
     [Header("Parent")]
@@ -76,14 +75,18 @@ public abstract class CharacterState
 
 
     //=//-----|Flow Control|---------------------------------------//=//
-    public virtual void Enter()
+    public override void Enter()
     {
+        base.Enter();
+
         SetVariablesOnEntry();
 
         LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
     }
-    public virtual void Exit()
+    public override void Exit()
     {
+        base.Exit();
+
         LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
     }
     protected virtual void CheckExitAllowed()
@@ -102,13 +105,15 @@ public abstract class CharacterState
     }
     protected virtual void TryRouteStateFixed()
     {
-        //nothing yet SHRUG
+
     }
 
 
     //=//-----|MonoBehavior|---------------------------------------//=//
-    public virtual void Update()
+    public override void Update()
     {
+        base.Update();
+
         CheckExitAllowed();
 
         if (exitAllowed)
@@ -116,51 +121,25 @@ public abstract class CharacterState
             TryRouteState();
         }
     }
-    public virtual void FixedUpdate()
+    public override void FixedUpdate()
     {
+        base.Update();
+
         if (exitAllowed)
         {
             TryRouteStateFixed();
         }
     }
-    public virtual void LateUpdate()
+    public override void LateUpdate()
     {
-        //nothing yet....
+        base.LateUpdate();
+
+
     }
 
 
-    //=//-----|Debug|---------------------------------------------//=//
-    public virtual bool VerifyState()
-    {
-        return CheckStateForNullFields();
-    }
-    protected bool CheckStateForNullFields()
-    {
-        bool passed = true;
 
-        Type type = this.GetType();
 
-        while (type != null && type != typeof(object))
-        {
-            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly);
-
-            foreach (FieldInfo field in fields)
-            {
-                object value = field.GetValue(this);
-                if (value == null)
-                {
-                    passed = false;
-                    string message = $"Critical error in {ch.characterName}. ";
-                    string message2 = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
-                    LogCore.Log("CriticalError", message + message2);
-                }
-            }
-
-            type = type.BaseType;
-        }
-
-        return passed;
-    }
 
 	//=//-----|Get & Set|---------------------------------------------//=//
     public int getPriority()
