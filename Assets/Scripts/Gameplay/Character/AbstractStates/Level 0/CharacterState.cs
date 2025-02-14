@@ -158,4 +158,10 @@ public abstract class CharacterState
         return passed;
     }
 
+	//=//-----|Get & Set|---------------------------------------------//=//
+    public int getPriority()
+    {
+        return statePriority;
+    }
+
 }
