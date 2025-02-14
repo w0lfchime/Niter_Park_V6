@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------
 // Copyright (2025) NITER
 //
-// This code is part of the PARK-v6 Unity Framework and is proprietary software.  
+// This code is part of the PARK-v6 Unity Framework. It is proprietary software.  
 // Unauthorized use, modification, or distribution is not permitted without  
 // explicit permission from the owner.  
 //----------------------------------------------------------------------------------
@@ -42,6 +42,9 @@ public abstract class Character : MonoBehaviour
 	public CharacterData ucd; //Universal
 	public CharacterData bcd; //Base Character Specific
 	public CharacterData acd; //Active Universal+Base 
+
+	[Header("Time")]
+	private int currentFrame = 0;
 	#endregion general
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
@@ -55,8 +58,7 @@ public abstract class Character : MonoBehaviour
 	#endregion input
 	//=//-----|Action Queue|------------------------------------------------------//=//
 	#region action_queue
-	[Header("Time and Frames")]
-	private int currentFixedFrame = 0;
+
 
 	[Header("Action Queue")]
 	private readonly Queue<(int frame, Action action)> actionQueue = new();
@@ -102,12 +104,15 @@ public abstract class Character : MonoBehaviour
 	#endregion gameplay_data
 	//=//-----|State|-------------------------------------------------------------//=//
 	#region state
-	[Header("State Variable")]
+	[Header("State")]
 	public string currentState = null;
-	protected Dictionary<string, CharacterState> stateDict = new Dictionary<string, CharacterState>();
-	protected Queue<KeyValuePair<string, int>> stateQueue = new Queue<KeyValuePair<string, int>>();
+	protected Dictionary<string, CharacterState> stateDict = new();
+	private StateSetRequestHeap<StateSetRequest> stateHeap = new();
 
-	private struct StatePush
+
+
+
+	private struct StateSetRequest
 	{
 		public string StateName;
 		public int PushForce;
@@ -115,7 +120,7 @@ public abstract class Character : MonoBehaviour
 		public bool ClearOnStateSwitch;
 		public int PushFrame; // Used for LIFO sorting
 
-		public StatePush(string stateName, int pushForce, int expirationFrame, bool clearOnStateSwitch, int pushFrame)
+		public StateSetRequest(string stateName, int pushForce, int expirationFrame, bool clearOnStateSwitch, int pushFrame)
 		{
 			StateName = stateName;
 			PushForce = pushForce;
@@ -128,51 +133,11 @@ public abstract class Character : MonoBehaviour
 	[Header("State Parameter")]
 	public int perFrameStateQueueLimit = 10;
 	#endregion state
+	//=//-------------------------------------------------------------------------//=//
 	#endregion fields
+	/////////////////////////////////////////////////////////////////////////////////////
 
 
-	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
-	#region local
-	//=//-----|Action Queue|------------------------------------------------------//=//
-	#region action_queue
-	private void ProcessActionQueue()
-	{
-		// Execute non-param actions
-		while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFixedFrame)
-		{
-			var (_, action) = actionQueue.Dequeue();
-			action?.Invoke();
-		}
-
-		// Execute param actions
-		while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFixedFrame)
-		{
-			var (_, action, param) = paramActionQueue.Dequeue();
-			action?.Invoke(param);
-		}
-	}
-	public void ScheduleAction(int framesFromNow, Action action)
-	{
-		if (framesFromNow <= 0)
-		{
-			action?.Invoke();
-			return;
-		}
-
-		actionQueue.Enqueue((currentFixedFrame + framesFromNow, action));
-	}
-	public void ScheduleAction<T>(int framesFromNow, Action<T> action, T param)
-	{
-		if (framesFromNow <= 0)
-		{
-			action?.Invoke(param);
-			return;
-		}
-
-		paramActionQueue.Enqueue((currentFixedFrame + framesFromNow, (p) => action((T)p), param));
-	}
-	#endregion action_queue
-	#endregion local
 
 	//======// /==/==/==/=||[MONO]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region mono
@@ -189,18 +154,17 @@ public abstract class Character : MonoBehaviour
 		CheckCurrentState();
 
 	}
-	//=//-----|Loop|-------------------------------------------------------------//=//
-	private void Awake()
+	private void OnDisable()
 	{
-		CharacterInitialization();
-		CharacterStart();
 
 	}
-	private void Start()
+	private void OnEnable()
 	{
-		CheckCurrentState();
 
 	}
+	#endregion event
+	//=//-----|Updates|----------------------------------------------------------//=//
+	#region updates
 	private void Update()
 	{
 
@@ -212,14 +176,14 @@ public abstract class Character : MonoBehaviour
 	}
 	private void FixedUpdate()
 	{
-		currentFixedFrame++; //used by action queue
+		currentFrame++; //used by action queue
 
 		ProcessActionQueue();
 
 		CharacterFixedUpdate();
 		stateDict[currentState]?.FixedUpdate();
 
-		ProcessStateQueue();
+		ProcessStateHeap();
 	}
 	private void LateUpdate()
 	{
@@ -227,22 +191,268 @@ public abstract class Character : MonoBehaviour
 
 		stateDict[currentState]?.LateUpdate();
 	}
-	private void OnDisable()
-	{
-
-	}
-	private void OnEnable()
-	{
-
-	}
+	#endregion updates
+	//=//-----|Abstracts|--------------------------------------------------------//=//
+	#region abstracts
+	protected abstract void CharacterAwake();
+	protected abstract void CharacterStart();
+	protected abstract void CharacterUpdate();
+	protected abstract void CharacterFixedUpdate();
+	protected abstract void CharacterLateUpdate();
+	#endregion abstracts
+	//=//------------------------------------------------------------------------//=//
 	#endregion mono
+	/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region local
+	//=//-----|Action Queue|-----------------------------------------------------//=//
+	#region action_queue
+	private void ProcessActionQueue()
+	{
+		// Execute non-param actions
+		while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFrame)
+		{
+			var (_, action) = actionQueue.Dequeue();
+			action?.Invoke();
+		}
+		// Execute param actions
+		while (paramActionQueue.Count > 0 && paramActionQueue.Peek().frame <= currentFrame)
+		{
+			var (_, action, param) = paramActionQueue.Dequeue();
+			action?.Invoke(param);
+		}
+	}
+	public void ScheduleAction(int framesFromNow, Action action)
+	{
+		if (framesFromNow <= 0)
+		{
+			action?.Invoke();
+			return;
+		}
+
+		actionQueue.Enqueue((currentFrame + framesFromNow, action));
+	}
+	public void ScheduleAction<T>(int framesFromNow, Action<T> action, T param)
+	{
+		if (framesFromNow <= 0)
+		{
+			action?.Invoke(param);
+			return;
+		}
+
+		paramActionQueue.Enqueue((currentFrame + framesFromNow, (p) => action((T)p), param));
+	}
+	#endregion action_queue
+	//=//-----|Debug|------------------------------------------------------------//=//	
+	#region debug
+	public virtual void SetDebug(bool isEnabled)
+	{
+		//set debug
+		debug = isEnabled;
+
+		//set other debug components and what not
+		debugParentTransform.gameObject.SetActive(enabled);
+	}
+	public virtual void CLog(string category, string message)
+	{
+		string messageWithName = $"{characterName}: {message}";
+		LogCore.Log(category, message);
+	}
+	public void UpdateDebugVector(string name, Vector3 vector, Color color)
+	{
+		if (debug)
+		{
+			vrm.UpdateVector(name, debugParentTransform, Vector3.zero, vector, color);
+		}
+
+	}
+	public void StampDebugVector(string name, Vector3 vector, Color color)
+	{
+		if (debug)
+		{
+			vrm.StampVector(name, transform.position, vector, color, 1.0f);
+		}
+	}
+	#endregion debug 
+	//=//------------------------------------------------------------------------//=//
+	#endregion local
+	/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+	//======// /==/==/==/=||[STATE MACHINE]||==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region state_machine
+	//=//-----|Debug & Safety|---------------------------------------------------//=//
+	#region debug_and_safety
+	public virtual void VerifyCharacterStates()
+	{
+		bool passed = true;
+		foreach (string key in stateDict.Keys)
+		{
+			if (!stateDict[key].VerifyState())
+			{
+				CLog("Critical", $"State {key} is invlaid.");
+				passed = false;
+			}
+		}
+		if (passed)
+		{
+			CLog("CharacterSetupHighDetail", "Successfully verified all registered character states.");
+		}
+		else
+		{
+			CLog("Critical", "Failed to verify all registered character states.");
+		}
+	}
+	private bool ApproveState(string state)
+	{
+		if (state == null)
+		{
+			CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
+			return false;
+		}
+		if (state.Length < 4)
+		{
+			CLog("CharacterStateError", $"Attempted approval of an empty or oddly named state: ->{state}<- Rejected.");
+			return false;
+		}
+		if (!stateDict.ContainsKey(state))
+		{
+			CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
+			return false;
+		}
+		CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
+
+		return true;
+	}
+	private void CheckCurrentState()
+	{
+		if (!ApproveState(currentState))
+		{
+			CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
+			PushState("Suspended", 0);
+		}
+	}
+	#endregion debug_and_safety
+	//=//-----|Public|-----------------------------------------------------------//=//
+	#region public
+	public void PushState(string stateName, int pushForce, int lifetime, bool clearOnStateSwitch)
+	{
+		int expirationFrame = currentFrame + lifetime;
+		var newRequest = new StateSetRequest(stateName, pushForce, expirationFrame, clearOnStateSwitch, currentFrame);
+
+		// Add new state push to the heap (sorted by push force, then LIFO)
+		stateHeap.Enqueue(newRequest, pushForce, currentFrame);
+
+		// Immediate override if the new push force is greater than the current state's priority
+		if (currentState == null || pushForce > currentState.GetPriority())
+		{
+			SwitchToState(newRequest);
+		}
+	}
+	public void ForceState(string stateName)
+	{
+		if (stateDictionary.TryGetValue(stateName, out var newState))
+		{
+			currentState = newState;
+			currentState.OnEnter();
+			stateHeap.Clear();
+		}
+	}
+	#endregion public 
+	//=//-----|Processing|-------------------------------------------------------//=//
+	private void ProcessStateHeap()
+	{
+		// Remove expired state pushes
+		while (stateHeap.Count > 0 && stateHeap.Peek().ExpirationFrame <= currentFixedFrame)
+		{
+			stateHeap.Dequeue();
+		}
+
+		if (stateHeap.Count == 0) return;
+
+		// Get the highest-priority state (max push force, LIFO tie-breaker)
+		StateRequest bestRequest = stateHeap.Peek();
+
+		if (currentState == null || bestRequest.PushForce > currentState.GetPriority())
+		{
+			SwitchToState(bestRequest);
+		}
+	}
+	private void SwitchToState(StateRequest newRequest)
+	{
+		if (stateDictionary.TryGetValue(newRequest.StateName, out var newState))
+		{
+			currentState = newState;
+			currentState.OnEnter();
+
+			// If the new state forces a clear, wipe the heap
+			if (currentState.ForceClearStateHeapOnEntry)
+			{
+				stateHeap.Clear();
+			}
+			else
+			{
+				// Remove states where ClearOnStateSwitch = false
+				var tempHeap = new MaxHeap<StateRequest>();
+				while (stateHeap.Count > 0)
+				{
+					var request = stateHeap.Dequeue();
+					if (request.ClearOnStateSwitch) tempHeap.Enqueue(request, request.PushForce, request.PushFrame);
+				}
+				stateHeap = tempHeap;
+			}
+		}
+	}
+	public void ForceState(string stateName)
+	{
+		if (stateDictionary.TryGetValue(stateName, out var newState))
+		{
+			currentState = newState;
+			currentState.OnEnter();
+			stateHeap.Clear();
+		}
+	}
+	//Finally,
+	private void SetState(string newState)
+	{
+		string oldState = currentState;
+		stateDict[currentState].Exit();
+		currentState = newState;
+		stateDict[currentState].Enter();
+
+		CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
+
+		if (debug && stateText != null)
+		{
+			// Get the current state name from the dictionary
+			string currentStateName = stateDict[currentState].GetType().Name;
+
+			// Remove the character class name prefix if it exists
+			if (currentStateName.StartsWith(characterClassName))
+			{
+				currentStateName = currentStateName.Substring(characterClassName.Length);
+			}
+
+			// Update the UI text
+			stateText.text = currentStateName;
+		}
+	}
+
+	//=//------------------------------------------------------------------------//=//
+	#endregion state_machine
+	/////////////////////////////////////////////////////////////////////////////////////
+
 
 
 	//======// /==/==/==/=||[BASE]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region base 
 	//=//-----|Setup|------------------------------------------------------------//=//
 	#region setup
-	public virtual void CharacterInitialization()
+	protected virtual void CharacterInitialization()
 	{
 		//Local init functions
 		SetMemberVariables();
@@ -267,7 +477,7 @@ public abstract class Character : MonoBehaviour
 		
 		LogCore.Log("Character", $"Character initialized: {characterName}");
 	}
-	public virtual void RegisterCommands()
+	protected virtual void RegisterCommands()
 	{
 		if (GlobalData.characterInitialized)
 		{
@@ -275,7 +485,7 @@ public abstract class Character : MonoBehaviour
 
 		}
 	}
-	public virtual void SetMemberVariables()
+	protected virtual void SetMemberVariables()
 	{
 		//meta
 		this.characterName = bcd.characterName;
@@ -289,7 +499,7 @@ public abstract class Character : MonoBehaviour
 		//debug 
 		this.debug = GlobalData.debug;
 	}
-	public virtual void SetReferences()
+	protected virtual void SetReferences()
 	{
 		//input
 		playerInput = GetComponent<PlayerInput>();
@@ -320,9 +530,9 @@ public abstract class Character : MonoBehaviour
 		//other...
 	}
 	#endregion setup
-	//=//-----|Data|------------------------------------------------------------//=//
+	//=//-----|Data|-------------------------------------------------------------//=//
 	#region data
-	public virtual void ProcessInput()
+	protected virtual void ProcessInput()
 	{
 		//reset
 		inputMoveDirection = Vector3.zero;
@@ -393,12 +603,12 @@ public abstract class Character : MonoBehaviour
 			SetDebug(!debug);
 		}
 
-	}		
-	public virtual void SetCharacterDimensions()
+	}
+	protected virtual void SetCharacterDimensions()
 	{
 		this.characterHeight = capsuleCollider.height;
 	}
-	public virtual void UpdateActiveCharacterData()
+	protected virtual void UpdateActiveCharacterData()
 	{
 		// ucd + bcd = acd
 
@@ -437,229 +647,17 @@ public abstract class Character : MonoBehaviour
 
 		// Other data
 	}
-	#endregion
-	//TODO: better name 
-	public virtual void UpdateCharacterData()
+	protected virtual void UpdateCharacterData() //TODO: better name 
 	{
 
 	}
+	#endregion data
+
+
+	#endregion base
 
 
 
 
-
-
-	//=//-----|Character State|------------------------------------------------------------//=//
-
-	//OK we're gonna """"push""""" states now
-	//they will pass:
-	// - the state as string
-	// - push lifetime in frames
-	// - thennnn priority
-	//right what the fuck do we do
-	//
-	public void PushState(string newState, int priority)
-	{
-		if (!ApproveState(newState))
-		{
-			return;
-		}
-	
-		stateQueue.Enqueue(new KeyValuePair<string, int>(newState, priority));
-		CLog("CharacterStateHighDetail", $"Enqueued state: {newState} with priority {priority}");
-	}
-
-	public void ForceState()
-	{
-		//clears queue, 
-	}
-
-	/// <summary>
-	/// Checks passed state for null or not registered. Does the same thing as check current state.
-	/// </summary>
-	/// <param name="state"></param>
-	/// <returns></returns>
-	public bool ApproveState(string state)
-	{
-		if (state == null)
-		{
-			CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
-			return false;
-		}
-		if (state.Length < 4)
-		{
-			CLog("CharacterStateError", $"Attempted approval of an empty or oddly named state: ->{state}<- Rejected.");
-			return false;
-		}
-		if (!stateDict.ContainsKey(state))
-		{
-			CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
-			return false;
-		}
-		CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
-
-
-		return true;
-	}
-	public void CheckCurrentState()
-	{
-		if (!ApproveState(currentState))
-		{
-			CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
-			PushState("Suspended", 0);
-		}
-	}
-
-	public void ProcessStateQueue()
-	{
-		if (stateQueue.Count > 0)
-		{
-			string newState = null;
-
-			int limit = perFrameStateQueueLimit;
-			int topPriority = 0;
-
-			CLog("CharacterStateHighDetail", "Processing stateQueue ->");
-
-			while (stateQueue.Count > 0 && limit > 0)
-			{
-				//dequeue state
-				KeyValuePair<string, int> state = stateQueue.Dequeue();
-
-				CLog("CharacterStateHighDetail", $"Dequeued state {state.Key}");
-				//check if highest yet prio
-				if (state.Value >= topPriority)
-				{
-					topPriority = state.Value;
-					newState = state.Key;
-					CLog("CharacterStateHighDetail", $"Top priority: {newState}");
-				}
-				//dec limit
-				limit--;
-			}
-
-			//finally, after being approved, then being dequeued, set the state.
-			SetState(newState);
-		} 
-	}
-
-	private void SetState(string newState)
-	{
-		string oldState = "NULL_STATE";
-		if (ApproveState(currentState))
-		{
-			stateDict[currentState].Exit();
-			oldState = currentState;
-		}
-
-		currentState = newState;
-		stateDict[currentState].Enter();
-
-		CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
-
-		//debug
-
-		if (debug && stateText != null)
-		{
-			// Get the current state name from the dictionary
-			string currentStateName = stateDict[currentState].GetType().Name;
-
-			// Remove the character class name prefix if it exists
-			if (currentStateName.StartsWith(characterClassName))
-			{
-				currentStateName = currentStateName.Substring(characterClassName.Length);
-			}
-
-			// Update the UI text
-			stateText.text = currentStateName;
-		}
-
-
-
-	}
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
-
-	// Monobehaviour - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
-	// Monobehavior Abstracts - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
-
-	protected abstract void CharacterStart();
-	protected abstract void CharacterUpdate();
-	protected abstract void CharacterFixedUpdate();
-	protected abstract void CharacterLateUpdate();
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-
-
-
-
-	// Debug - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	public virtual void SetDebug(bool enabled)
-	{
-		//set debug
-		debug = enabled;
-
-		//set other debug components and what not
-		debugParentTransform.gameObject.SetActive(enabled);
-	}
-
-	//create override with position offset?
-	public void UpdateDebugVector(string name, Vector3 vector, Color color)
-	{
-		if (debug)
-		{
-			vrm.UpdateVector(name, debugParentTransform, Vector3.zero, vector, color);
-		}
-	
-	}
-	public void StampDebugVector(string name, Vector3 vector, Color color)
-	{
-		if (debug)
-		{
-			vrm.StampVector(name, transform.position, vector, color, 1.0f);
-		}
-	}
-
-	public virtual void DrawCharacterDebug()
-	{
-
-
-
-	}
-
-	public virtual void CLog(string category, string message)
-	{
-		string messageWithName = $"{characterName}: {message}";
-		LogCore.Log(category, message);
-	}
-
-	// Debug Tests
-	    
-	public virtual void VerifyCharacterStates()
-	{    
-		bool passed = true;
-		foreach (string key in stateDict.Keys)
-		{
-			if (!stateDict[key].VerifyState())
-			{
-				CLog("Critical", $"State {key} is invlaid.");
-				passed = false;
-			}
-		}
-		if (passed)
-		{
-			CLog("CharacterSetupHighDetail", "Successfully verified all registered character states.");
-		} else
-		{
-			CLog("Critical", "Failed to verify all registered character states.");
-		}
-	}  
-
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 }
