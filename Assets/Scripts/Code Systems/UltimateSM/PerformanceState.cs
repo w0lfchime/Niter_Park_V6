@@ -4,6 +4,15 @@ using UnityEngine;
 
 public abstract class PerformanceState
 {
+	public string stateName;
+
+	protected int priority; 
+
+	public PerformanceState()
+	{
+		this.stateName = GetType().Name;
+	}
+
 
 
     public virtual void Enter()
@@ -29,6 +38,13 @@ public abstract class PerformanceState
 
     }
 
+	//=//-----|Get & Set|---------------------------------------------//=//
+	public int GetPriority()
+	{
+		return priority;
+	}
+
+
 
 	//=//-----|Debug|---------------------------------------------//=//
 	public virtual bool VerifyState()
@@ -53,6 +69,8 @@ public abstract class PerformanceState
 					passed = false;
 					string message = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
 					LogCore.Log("CriticalError", message);
+
+					DebugCore.StopGame(); //fuck that, stop the game 
 				}
 			}
 

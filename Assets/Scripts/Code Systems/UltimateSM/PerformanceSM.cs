@@ -53,7 +53,7 @@ public class PerformanceSM
 		}
 	}
 
-	//=//-----|Setup|---------------------------------------------------------//=//
+	//=//-----|Setup|-----------------------------------------------------------------//=//
 	public PerformanceSM(Enum psNullOfStateTypeID, object owner)
 	{
 		//Some basic Setup
@@ -69,22 +69,25 @@ public class PerformanceSM
 		stateArray = new PerformanceState[stateCount];
 
 		RegisterStates();
+		VerifyStates();
 	}
 
+
+	//=//-----|State Control|---------------------------------------------------------//=//
 	protected PerformanceState GetState(Enum stateID)
 	{
 		int index = Convert.ToInt32(stateID);
 
 		if (index < 0 || index >= stateArray.Length)
 		{
-			LogCore.Log("PSM_Error", $"State ID {stateID} is out of bounds.");
+			LogCore.Log("PSM_Error", $"Attempted to get state for {stateID}, but index is out of bounds.");
 			return null;
 		}
 
 		return stateArray[index];
 	}
 
-	protected void SestState(Enum stateID, PerformanceState state)
+	protected void SetState(Enum stateID, PerformanceState state)
 	{
 		int index = Convert.ToInt32(stateID);
 
@@ -128,17 +131,32 @@ public class PerformanceSM
 			else
 			{
 				object stateInstance = Activator.CreateInstance(stateClass);
-				SetState(stateID, (PerformanceState)stateInstance);
+				SetState(stateID, (PerformanceState)stateInstance); //put the state in the array
 			}
-
-
-
-			//add stateInstance to stateArray
-
-			//how will it be associated with state id for lookup?
-
 		}
 	}
+
+	public virtual void VerifyStates()
+	{
+		bool passed = true;
+		foreach (PerformanceState state in stateArray)
+		{
+			if (!state.VerifyState())
+			{
+				LogCore.Log("PSM_Error", $"State {state.stateName} is invlaid.");
+				passed = false;
+			}
+		}
+		if (passed)
+		{
+			LogCore.Log("PSM_Setup", "Successfully verified all registered character states.");
+		}
+		else
+		{
+			LogCore.Log("PSM_Error", "Failed to verify all registered character states.");
+		}
+	}
+
 	private void ProcessStateHeap()
 	{
 		// Remove expired state pushes
@@ -150,14 +168,15 @@ public class PerformanceSM
 		if (requestHeap.Count == 0) return;
 
 		// Get the highest-priority state (max push force, LIFO tie-breaker)
-		StateRequest bestRequest = requestHeap.Peek();
+		SetStateRequest bestRequest = requestHeap.Peek();
 
-		if (currentState == null || bestRequest.PushForce > currentState.GetPriority())
+		if (bestRequest.PushForce > currentState.GetPriority())
 		{
-			SwitchToState(bestRequest);
+			SetCurrentState(bestRequest.StateID);
 		}
 	}
-	private void SwitchToState(SetStateRequest newRequest)
+
+	private void SetCurrentState(Enum newRequest)
 	{
 		if (stateDictionary.TryGetValue(newRequest.StateName, out var newState))
 		{
@@ -182,29 +201,15 @@ public class PerformanceSM
 			}
 		}
 	}
+
 	public void ForceSetCurrentState(Enum stateName)
 	{
-		if (stateDictionary.TryGetValue(stateName, out var newState))
-		{
-			currentState = newState;
-			currentState.OnEnter();
-			requestHeap.Clear();
-		}
-	}
-	//Difinitively set the state 
-	private void SetCurrentState(Enum newState)
-	{
-		string oldState = currentState;
-		stateDict[currentState].Exit();
-		currentState = newState;
-		stateDict[currentState].Enter();
-
-		CLog("CharacterStateHighDetail", $"Switched to from ->{oldState}<- to ->{currentState}<-");
-
+		PerformanceState newState = GetState(stateName);
 
 	}
 
-	//Monobehaviour
+
+	//Mono
 
 	public void PSMUpdate()
 	{
