@@ -12,7 +12,7 @@ public class CharacterState : PerformanceState
 
     [Header("Meta")]
     public string stateName;
-    public CState stateType;
+    public CStateID stateType;
 
     [Header("Component Refs")]
     protected Animator anim;

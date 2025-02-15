@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class StateSetRequestHeap<T>
+public class SetStateRequestHeap<T>
 {
 	private List<(T item, int priority, int pushFrame)> heap = new();
 
