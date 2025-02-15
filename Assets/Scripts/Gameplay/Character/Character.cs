@@ -14,21 +14,19 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System;
 
-public enum CState //Standard state types
+public enum CStateID //Standard state types
 {
 	//Debug
+	PSNull,
 	Suspended,
 	Flight,
-
 	//Gameplay
-	IdleGrounded,
-	IdleAirborne,
-	Walk,
-	Run,
-	Jump,
+	OO_IdleGrounded,
+	OO_IdleAirborne,
+	OO_Walk,
+	OO_Run,
+	OO_Jump,
 	
-
-	COUNT
 }
 
 public abstract class Character : MonoBehaviour
@@ -158,7 +156,7 @@ public abstract class Character : MonoBehaviour
 	}
 	private void Start()
 	{
-		CheckCurrentState();
+
 
 	}
 	private void OnDisable()
@@ -174,30 +172,25 @@ public abstract class Character : MonoBehaviour
 	#region updates
 	private void Update()
 	{
-
 		inputHandler.UpdateInputs();
 		ProcessInput();
 		UpdateCharacterData();
 		CharacterUpdate();
 
-		//TODO: update state ... fix for all mono
+		csm.PSMUpdate();
 	}
 	private void FixedUpdate()
 	{
-		currentFrame++; //used by action queue
-
 		ProcessActionQueue();
-
 		CharacterFixedUpdate();
-		stateDict[currentState]?.FixedUpdate();
 
-		ProcessStateHeap();
+		csm.PSMFixedUpdate();
 	}
 	private void LateUpdate()
 	{
 		CharacterLateUpdate();
 
-		stateDict[currentState]?.LateUpdate();
+		csm.PSMLateUpdate();
 	}
 	#endregion updates
 	//=//-----|Abstracts|--------------------------------------------------------//=//
@@ -220,6 +213,8 @@ public abstract class Character : MonoBehaviour
 	#region action_queue
 	private void ProcessActionQueue()
 	{
+		currentFrame++;
+
 		// Execute non-param actions
 		while (actionQueue.Count > 0 && actionQueue.Peek().frame <= currentFrame)
 		{
@@ -261,94 +256,95 @@ public abstract class Character : MonoBehaviour
 
 
 
-	//======// /==/==/==/=||[STATE MACHINE]||==/==/==/==/==/==/==/==/==/==/==/ //======//
+
+	//======// /==/==/==/=||[STATE MACHINE]||==/==/==/==/==/==/==/==/==/==/==/ //======// // (OLD)
 	#region state_machine
-	//=//-----|Debug & Safety|---------------------------------------------------//=//
-	#region debug_and_safety
-	public virtual void VerifyCharacterStates()
-	{
-		bool passed = true;
-		foreach (string key in stateDict.Keys)
-		{
-			if (!stateDict[key].VerifyState())
-			{
-				CLog("Critical", $"State {key} is invlaid.");
-				passed = false;
-			}
-		}
-		if (passed)
-		{
-			CLog("CharacterSetupHighDetail", "Successfully verified all registered character states.");
-		}
-		else
-		{
-			CLog("Critical", "Failed to verify all registered character states.");
-		}
-	}
-	private bool ApproveState(string state)
-	{
-		if (state == null)
-		{
-			CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
-			return false;
-		}
-		if (state.Length < 4)
-		{
-			CLog("CharacterStateError", $"Attempted approval of an empty or oddly named state: ->{state}<- Rejected.");
-			return false;
-		}
-		if (!stateDict.ContainsKey(state))
-		{
-			CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
-			return false;
-		}
-		CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
+	////=//-----|Debug & Safety|---------------------------------------------------//=//
+	//#region debug_and_safety
+	//public virtual void VerifyCharacterStates()
+	//{
+	//	bool passed = true;
+	//	foreach (string key in stateDict.Keys)
+	//	{
+	//		if (!stateDict[key].VerifyState())
+	//		{
+	//			CLog("Critical", $"State {key} is invlaid.");
+	//			passed = false;
+	//		}
+	//	}
+	//	if (passed)
+	//	{
+	//		CLog("CharacterSetupHighDetail", "Successfully verified all registered character states.");
+	//	}
+	//	else
+	//	{
+	//		CLog("Critical", "Failed to verify all registered character states.");
+	//	}
+	//}
+	//private bool ApproveState(string state)
+	//{
+	//	if (state == null)
+	//	{
+	//		CLog("CharacterStateError", "Attempted approval a null state. Rejected.");
+	//		return false;
+	//	}
+	//	if (state.Length < 4)
+	//	{
+	//		CLog("CharacterStateError", $"Attempted approval of an empty or oddly named state: ->{state}<- Rejected.");
+	//		return false;
+	//	}
+	//	if (!stateDict.ContainsKey(state))
+	//	{
+	//		CLog("CharacterStateError", $"Attempted approval of state: ->{state}<- which does not exist in stateDict. Rejected.");
+	//		return false;
+	//	}
+	//	CLog("CharacterStateHighDetail", $"Approved state: ->{state}<-");
 
-		return true;
-	}
-	private void CheckCurrentState()
-	{
-		if (!ApproveState(currentState))
-		{
-			CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
-			PushState("Suspended", 0);
-		}
-	}
-	#endregion debug_and_safety
-	//=//-----|Public|-----------------------------------------------------------//=//
-	#region public
-	public CharacterState getState(string stateName)
-	{
-		return stateDict[stateName];
-	}
-	public void PushState(string stateName, int pushForce, int lifetime, bool clearOnStateSwitch)
-	{
-		int expirationFrame = currentFrame + lifetime;
-		var newRequest = new StateSetRequest(stateName, pushForce, expirationFrame, clearOnStateSwitch, currentFrame);
+	//	return true;
+	//}
+	//private void CheckCurrentState()
+	//{
+	//	if (!ApproveState(currentState))
+	//	{
+	//		CLog("CharacterStateError", "Current state is invalid. Setting state to Suspended.");
+	//		PushState("Suspended", 0);
+	//	}
+	//}
+	//#endregion debug_and_safety
+	////=//-----|Public|-----------------------------------------------------------//=//
+	//#region public
+	//public CharacterState getState(string stateName)
+	//{
+	//	return stateDict[stateName];
+	//}
+	//public void PushState(string stateName, int pushForce, int lifetime, bool clearOnStateSwitch)
+	//{
+	//	int expirationFrame = currentFrame + lifetime;
+	//	var newRequest = new StateSetRequest(stateName, pushForce, expirationFrame, clearOnStateSwitch, currentFrame);
 
-		// Add new state push to the heap (sorted by push force, then LIFO)
-		stateHeap.Enqueue(newRequest, pushForce, currentFrame);
+	//	// Add new state push to the heap (sorted by push force, then LIFO)
+	//	stateHeap.Enqueue(newRequest, pushForce, currentFrame);
 
-		// Immediate override if the new push force is greater than the current state's priority
-		if (currentState == null || pushForce > stateDict[currentState].GetPriority())
-		{
-			SwitchToState(newRequest);
-		}
-	}
-	public void ForceState(string stateName)
-	{
-		if (stateDictionary.TryGetValue(stateName, out var newState))
-		{
-			currentState = newState;
-			currentState.OnEnter();
-			stateHeap.Clear();
-		}
-	}
-	#endregion public 
-	//=//-----|Processing|-------------------------------------------------------//=//
+	//	// Immediate override if the new push force is greater than the current state's priority
+	//	if (currentState == null || pushForce > stateDict[currentState].GetPriority())
+	//	{
+	//		SwitchToState(newRequest);
+	//	}
+	//}
+	//public void ForceState(string stateName)
+	//{
+	//	if (stateDictionary.TryGetValue(stateName, out var newState))
+	//	{
+	//		currentState = newState;
+	//		currentState.OnEnter();
+	//		stateHeap.Clear();
+	//	}
+	//}
+	//#endregion public 
+	////=//-----|Processing|-------------------------------------------------------//=//
 
 
-	//=//------------------------------------------------------------------------//=//
+	////=//------------------------------------------------------------------------//=//
 	#endregion state_machine
 	/////////////////////////////////////////////////////////////////////////////////////
 
@@ -377,11 +373,7 @@ public abstract class Character : MonoBehaviour
 		SetCharacterDimensions();
 
 		//state
-		RegisterCharacterStates();
-		LogCore.Log("CharacterSetupHighDetail", $"Regsitered character states. Number of states: {stateDict.Count}");
-
-		//Testing and Verification 
-		VerifyCharacterStates();
+		csm = new PerformanceSM(CStateID.PSNull, characterClassName); //special init proc
 		
 		LogCore.Log("Character", $"Character initialized: {characterName}");
 	}
@@ -398,11 +390,6 @@ public abstract class Character : MonoBehaviour
 		//meta
 		this.characterName = bcd.characterName;
 		this.characterClassName = GetType().Name;
-
-		//state
-		currentState = null;
-		//HACK: start as null to trigger check state to set as suspended state
-
 
 		//debug 
 		this.debug = GlobalData.debug;
