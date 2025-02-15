@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class PerformanceSM
 {
-	//======// /==/==/==/=||[STATE MACHINE]||==/==/==/==/==/==/==/==/==/==/==/ //======//
-	//=//-----|Fields|----------------------------------------------------------//=//
+
+	//======// /==/==/==/=||[CHARACTER STATE MACHINE]||==/==/==/==/==/==/==/ //======//
+	//=//-----|Fields|--------------------------------------------------------//=//
 
 	public Type elementEnumType;
 	public int currentState;

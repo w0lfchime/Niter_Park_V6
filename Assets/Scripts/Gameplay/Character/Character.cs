@@ -81,8 +81,8 @@ public abstract class Character : MonoBehaviour
 	#endregion general
 	//=//-----|State|-------------------------------------------------------------//=//
 	#region state
-	[Header("State")]
-	public PerformanceSM
+	[Header("State Machine")]
+	public PerformanceSM csm = new();
 	#endregion state
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
