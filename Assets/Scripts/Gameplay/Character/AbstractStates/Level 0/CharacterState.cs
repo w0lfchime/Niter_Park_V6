@@ -11,7 +11,6 @@ public class CharacterState : PerformanceState
     protected Character ch;
 
     [Header("Meta")]
-    public string stateName;
     public CStateID stateType;
 
     [Header("Component Refs")]
@@ -29,7 +28,6 @@ public class CharacterState : PerformanceState
     public bool forceClearStateHeapOnEntry;
 
 	[Header("Variables")]
-	public int statePriority;
 	protected bool exitAllowed;
 	protected float stateEntryTimeStamp;
 
@@ -42,7 +40,7 @@ public class CharacterState : PerformanceState
 
 
 	//=//-----|Setup|------------------------------------------------//=//
-	public CharacterState(Character character)
+	public CharacterState(Character character) : base()
     {
         this.ch = character;
 
@@ -59,7 +57,7 @@ public class CharacterState : PerformanceState
     }
     protected virtual void SetStateParameters()
     {
-        this.stateName = GetType().Name;
+        this.priority();
 
     }
 
@@ -141,10 +139,6 @@ public class CharacterState : PerformanceState
 
 
 
-	//=//-----|Get & Set|---------------------------------------------//=//
-    public int getPriority()
-    {
-        return statePriority;
-    }
+
 
 }
