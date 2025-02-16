@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterState : PerformanceState
 {
+
+
     //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
     //=//-----|General|----------------------------------------------//=//
@@ -20,16 +22,7 @@ public class CharacterState : PerformanceState
     protected PlayerInputHandler pinput;
 
 
-    //=//-----|Flow Control|------------------------------------------//=//
-    [Header("Parameters")] //All params could and may be changed at runtime. who knows.
-	public bool exitOnExitAllowed; //set true if state does not have particular exit routing
-	public string defaultExitState; //could also be used as a variable, but under parameter for general clarity
-	public float minimumStateDuration;
-    public bool forceClearStateHeapOnEntry;
 
-	[Header("Variables")]
-	protected bool exitAllowed;
-	protected float stateEntryTimeStamp;
 
 
 
@@ -40,7 +33,7 @@ public class CharacterState : PerformanceState
 
 
 	//=//-----|Setup|------------------------------------------------//=//
-	public CharacterState(Character character) : base()
+	public CharacterState(PerformanceSM sm, Character character) : base(sm)
     {
         this.ch = character;
 
@@ -57,7 +50,7 @@ public class CharacterState : PerformanceState
     }
     protected virtual void SetStateParameters()
     {
-        this.priority();
+        this.priority = 1;
 
     }
 
@@ -96,9 +89,9 @@ public class CharacterState : PerformanceState
     }
     protected virtual void TryRouteState()
     {
-        if (exitOnExitAllowed)
+        if (exitOnPriorityZero)
         {
-            ch.PushState(defaultExitState, 1);
+            ch.PushState(exitState, 1);
         }
     }
     protected virtual void TryRouteStateFixed()

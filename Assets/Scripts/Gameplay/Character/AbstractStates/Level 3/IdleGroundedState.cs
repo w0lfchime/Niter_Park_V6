@@ -9,7 +9,7 @@ public class IdleGroundedState : GroundedState
     //It has no actions of its own, thus is does not require a non-zero min duration. .
     public IdleGroundedState(Character character) : base(character)
     {
-        exitOnExitAllowed = false;
+        exitOnPriorityZero = false;
         minimumStateDuration = 0.0f;
     }
 

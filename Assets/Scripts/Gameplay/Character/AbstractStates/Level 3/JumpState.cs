@@ -8,8 +8,8 @@ public class JumpState : AirborneState
     public JumpState(Character character) : base(character)
     {
         minimumStateDuration = 0.2f;
-        exitOnExitAllowed = true;
-        defaultExitState = "IdleAirborne";
+        exitOnPriorityZero = true;
+        exitState = "IdleAirborne";
     }
 
     public override void Enter()

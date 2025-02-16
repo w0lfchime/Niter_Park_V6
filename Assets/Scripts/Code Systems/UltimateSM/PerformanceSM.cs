@@ -15,12 +15,27 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
+public struct SetStateRequest
+{
+	public Enum StateID;
+	public int PushForce;
+	public bool ClearOnSetState;
+
+	public SetStateRequest(Enum stateID, int pushForce, bool clearOnStateSwitch)
+	{
+		StateID = stateID;
+		PushForce = pushForce;
+		ClearOnSetState = clearOnStateSwitch;
+	}
+}
+
 public class PerformanceSM
 {
 	//=//-----|Fields|--------------------------------------------------------//=//
 
 	//Meta 
-	public object owner; //e.g. the characters name
+	public object machineOwner; //e.g. the characters name
+	public string machineName;
 	public Type stateIDEnum;
 	public int stateCount;
 	public bool debug = true;
@@ -29,29 +44,13 @@ public class PerformanceSM
 	public Enum currentStateID;
 	public PerformanceState currentState;
 	protected PerformanceState[] stateArray;
-	protected SetStateRequestHeap<SetStateRequest> requestHeap = new();
+	protected SetStateRequestHeap requestHeap = new();
 
 	//Frames and Time
 	public int perFrameProcessLimit = 10;
 	private int currentFrame = 0;
 
-	protected struct SetStateRequest
-	{
-		public Enum StateID;
-		public int PushFrame; // Used for LIFO sorting
-		public int PushLifetime;
-		public int PushForce;
-		public bool ClearOnStateSwitch;
 
-		public SetStateRequest(Enum stateID, int pushForce, int expirationFrame, bool clearOnStateSwitch, int pushFrame)
-		{
-			StateID = stateID;
-			PushForce = pushForce;
-			PushLifetime = expirationFrame;
-			ClearOnStateSwitch = clearOnStateSwitch;
-			PushFrame = pushFrame;
-		}
-	}
 
 	//=//-----|Setup|-----------------------------------------------------------------//=//
 	public PerformanceSM(Enum psNullOfStateTypeID, object owner)
@@ -63,75 +62,60 @@ public class PerformanceSM
 		}
 		stateIDEnum = psNullOfStateTypeID.GetType();
 		this.currentStateID = psNullOfStateTypeID;
-		this.owner = owner;
+		this.machineOwner = owner;
 
 		stateCount = Enum.GetValues(stateIDEnum).Length;
 		stateArray = new PerformanceState[stateCount];
+
+		if (machineOwner is Character character)
+		{
+			this.machineName = $"{character.characterName} SM";
+		}
+		else
+		{
+			this.machineName = $"{machineOwner.GetType().Name} SM";
+		}
 
 		RegisterStates();
 		VerifyStates();
 	}
 
-
-	//=//-----|State Control|---------------------------------------------------------//=//
-	protected PerformanceState GetState(Enum stateID)
-	{
-		int index = Convert.ToInt32(stateID);
-
-		if (index < 0 || index >= stateArray.Length)
-		{
-			LogCore.Log("PSM_Error", $"Attempted to get state for {stateID}, but index is out of bounds.");
-			return null;
-		}
-
-		return stateArray[index];
-	}
-
-	protected void SetState(Enum stateID, PerformanceState state)
-	{
-		int index = Convert.ToInt32(stateID);
-
-		if (index < 0 || index >= stateArray.Length)
-		{
-			LogCore.Log("PSM_Error", $"Attempted to set state for {stateID}, but index is out of bounds.");
-			return;
-		}
-
-		stateArray[index] = state;
-	}
-
-
+	//this code is weird as hell. idk why I made this abstract
 	protected virtual void RegisterStates()
 	{
-		string stateOwnerClassName = owner.GetType().Name;
-
-		foreach (Enum stateID in Enum.GetValues(stateIDEnum))
+		if (machineOwner is Character character)
 		{
-			string stateClassName = stateID.ToString();
-			if (stateClassName == "PSNull")
-			{
-				continue;
-			}
-			if (stateClassName.StartsWith("OO_")) //Owner-Override state 
-			{
-				stateClassName = stateClassName.Substring(2);
+			string stateOwnerClassName = machineOwner.GetType().Name;
 
-				stateClassName = stateOwnerClassName + stateClassName;
-			}
-			else
+			foreach (Enum stateID in Enum.GetValues(stateIDEnum))
 			{
-				//good to go 
-			}
+				string stateClassName = stateID.ToString();
+				if (stateClassName == "PSNull")
+				{
+					continue;
+				}
+				if (stateClassName.StartsWith("OO_")) //Owner-Override state 
+				{
+					stateClassName = stateClassName.Substring(2);
 
-			Type stateClass = Type.GetType(stateClassName);
-			if (stateClass == null)
-			{
-				LogCore.Log("PSM_Error", $"Failed to generate state from {stateID.ToString()}.");
-			}
-			else
-			{
-				object stateInstance = Activator.CreateInstance(stateClass);
-				SetState(stateID, (PerformanceState)stateInstance); //put the state in the array
+					stateClassName = stateOwnerClassName + stateClassName;
+				}
+				else
+				{
+					//good to go 
+				}
+
+
+				Type stateClass = Type.GetType(stateClassName);
+				if (stateClass == null)
+				{
+					LogCore.Log("PSM_Error", $"Failed to generate state from {stateID.ToString()}.");
+				}
+				else if (stateClass.IsSubclassOf(typeof(CharacterState)))
+				{
+					CharacterState stateInstance = (CharacterState)Activator.CreateInstance(stateClass, this, character);
+					SetStateArrayState(stateID, stateInstance); //put the state in the array
+				}
 			}
 		}
 	}
@@ -157,14 +141,65 @@ public class PerformanceSM
 		}
 	}
 
+
+
+	//=//-----|State Control|---------------------------------------------------------//=//
+
+	protected PerformanceState GetState(Enum stateID)
+	{
+		int index = Convert.ToInt32(stateID);
+
+		ValidateStateID(stateID); //we dont need this really
+
+		return stateArray[index];
+	}
+
+	protected void SetStateArrayState(Enum stateID, PerformanceState state)
+	{
+		int index = Convert.ToInt32(stateID);
+
+		ValidateStateID(stateID);
+
+
+
+		stateArray[index] = state;
+	}
+
+	protected void ValidateStateID(Enum stateID)
+	{
+		int index = Convert.ToInt32(stateID);
+
+		if (index <= 0 || index >= stateArray.Length)
+		{
+			LogCore.Log("PSM_Error", "Tried to validate a out of bounds state.");
+		}
+	}
+
+	public void PushState(Enum stateID, int pushForce, int lifetime)
+	{
+		bool coss = GetState(stateID).clearOnSetState;
+
+		var newRequest = new SetStateRequest(stateID, pushForce, coss);
+
+		// Add new state push to the heap (sorted by push force, then LIFO)
+		requestHeap.Enqueue(newRequest, lifetime);
+
+		// Immediate override if the new push force is greater than the current state's priority
+		if (currentState == null)
+		{
+			SetCurrentState(stateID);
+		}
+	}
+
+	public void ForcePushState(Enum stateName)
+	{
+
+
+	}
+
+
 	private void ProcessStateHeap()
 	{
-		// Remove expired state pushes
-		while (requestHeap.Count > 0 && requestHeap.Peek().PushLifetime <= currentFrame)
-		{
-			requestHeap.Dequeue();
-		}
-
 		if (requestHeap.Count == 0) return;
 
 		// Get the highest-priority state (max push force, LIFO tie-breaker)
@@ -176,55 +211,47 @@ public class PerformanceSM
 		}
 	}
 
-	private void SetCurrentState(Enum newRequest)
+	private void SetCurrentState(Enum newStateID)
 	{
-		if (stateDictionary.TryGetValue(newRequest.StateName, out var newState))
+		Enum oldStateID = currentStateID;
+
+		currentState.Exit();
+		currentState = GetState(newStateID);
+		currentStateID = newStateID;
+
+		//state heap
+		if (currentState.forceClearStateHeapOnEntry)
 		{
-			currentState = newState;
-			currentState.OnEnter();
-
-			// If the new state forces a clear, wipe the heap
-			if (currentState.ForceClearStateHeapOnEntry)
-			{
-				requestHeap.Clear();
-			}
-			else
-			{
-				// Remove states where ClearOnStateSwitch = false
-				var tempHeap = new MaxHeap<StateRequest>();
-				while (requestHeap.Count > 0)
-				{
-					var request = requestHeap.Dequeue();
-					if (request.ClearOnStateSwitch) tempHeap.Enqueue(request, request.PushForce, request.PushFrame);
-				}
-				requestHeap = tempHeap;
-			}
+			requestHeap.Clear();
 		}
+		requestHeap.ClearClearOnSetState();
+
+		//good to go
+		currentState.Enter();
+
+		LogCore.Log("PSM_Detail", $"Switched from {oldStateID.ToString()} to {currentStateID.ToString()}");
 	}
 
-	public void ForceSetCurrentState(Enum stateName)
-	{
-		PerformanceState newState = GetState(stateName);
 
-	}
 
 
 	//Mono
 
 	public void PSMUpdate()
 	{
-
+		//...
+		currentState.Update();
 	}
 	public void PSMFixedUpdate()
 	{
 		currentFrame++;
-
-
+		requestHeap.FixedUpdate();
+		//...
+		currentState.FixedUpdate();
 	}
 	public void PSMLateUpdate()
 	{
-
+		//...
+		currentState.LateUpdate();
 	}
-	/
-
 }

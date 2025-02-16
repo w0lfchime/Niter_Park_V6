@@ -38,6 +38,10 @@ public static class LogCore
             if (category.Contains("Error", StringComparison.OrdinalIgnoreCase))
             {
                 Debug.LogError(formattedMessage);
+
+                //Deadass stop the program. I dont want that shit sliding. 
+
+                DebugCore.StopGame();
             }
             else if (category.Contains("Warning", StringComparison.OrdinalIgnoreCase))
             {

@@ -4,7 +4,7 @@ public class Suspended : CharacterState
 {
 	public Suspended(Character character) : base(character)
 	{
-		exitOnExitAllowed = true;
+		exitOnPriorityZero = true;
 		minimumStateDuration = 0.2f; 
 	}
 	public override void Enter()

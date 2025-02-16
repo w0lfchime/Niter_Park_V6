@@ -4,13 +4,28 @@ using UnityEngine;
 
 public abstract class PerformanceState
 {
+	//meta
 	public string stateName;
 
-	protected int priority; 
 
-	public PerformanceState()
+	//refs
+	public PerformanceSM stateMachine;
+	//=//-----|Flow Control|------------------------------------------//=//
+
+	[Header("Parameters")] 
+	public Enum exitState; 
+	public bool clearOnSetState;
+	public bool forceClearStateHeapOnEntry;
+
+	[Header("Variables")]
+	protected float stateEntryTimeStamp;
+	public int priority;
+
+
+	public PerformanceState(PerformanceSM sm)
 	{
 		this.stateName = GetType().Name;
+		this.stateMachine = sm;
 	}
 
 
@@ -69,8 +84,6 @@ public abstract class PerformanceState
 					passed = false;
 					string message = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
 					LogCore.Log("CriticalError", message);
-
-					DebugCore.StopGame(); //fuck that, stop the game 
 				}
 			}
 
