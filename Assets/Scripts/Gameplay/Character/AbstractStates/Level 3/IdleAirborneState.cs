@@ -27,10 +27,10 @@ public class IdleAirborneState : AirborneState
 
     }
 
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
 
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
 
     }
 }

@@ -30,7 +30,7 @@ public class SetStateRequestHeap
 		return heap[0].request;
 	}
 
-	public void FixedUpdate()
+	public void FixedFrameUpdate()
 	{
 		for (int i = heap.Count - 1; i >= 0; i--)
 		{

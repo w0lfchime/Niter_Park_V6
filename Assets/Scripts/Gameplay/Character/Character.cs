@@ -26,26 +26,12 @@ public enum CStateID //Standard state types
 	OO_Walk,
 	OO_Run,
 	OO_Jump,
-	
 }
 
-public abstract class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour, IGameUpdate
 {
 
-		//if (debug && stateText != null)
-		//{
-		//	// Get the current state name from the dictionary
-		//	string currentStateName = stateDict[currentState].GetType().Name;
 
-		//	// Remove the character class name prefix if it exists
-		//	if (currentStateName.StartsWith(characterClassName))
-		//	{
-		//		currentStateName = currentStateName.Substring(characterClassName.Length);
-		//	}
-
-
-		//stateText.text = currentStateName;
-		//}
 
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region fields
@@ -80,7 +66,7 @@ public abstract class Character : MonoBehaviour
 	//=//-----|State|-------------------------------------------------------------//=//
 	#region state
 	[Header("State Machine")]
-	public PerformanceSM csm = new();
+	public PerformanceSM csm;
 	#endregion state
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
@@ -150,22 +136,24 @@ public abstract class Character : MonoBehaviour
 	#region event
 	private void Awake()
 	{
-		CharacterInitialization();
-		CharacterStart();
+		CharacterSetup();
 
+		//...
 	}
 	private void Start()
 	{
-
-
-	}
-	private void OnDisable()
-	{
-
+		CharacterStart();
+		//...
 	}
 	private void OnEnable()
 	{
-
+		GameUpdateManager.Register(this);
+		//...
+	}
+	private void OnDisable()
+	{
+		//...
+		GameUpdateManager.Register(this);
 	}
 	#endregion event
 	//=//-----|Updates|----------------------------------------------------------//=//
@@ -177,18 +165,30 @@ public abstract class Character : MonoBehaviour
 		UpdateCharacterData();
 		CharacterUpdate();
 
+		//...
+
 		csm.PSMUpdate();
 	}
-	private void FixedUpdate()
+	public void FixedFrameUpdate()
 	{
 		ProcessActionQueue();
-		CharacterFixedUpdate();
+		CharacterFixedFrameUpdate();
 
-		csm.PSMFixedUpdate();
+		//...
+
+		csm.PSMFixedFrameUpdate();		
+	}
+	private void FixedUpdate() // FixedPhysicsUpdate
+	{
+		//...
+
+		csm.PSMFixedPhysicsUpdate();
 	}
 	private void LateUpdate()
 	{
 		CharacterLateUpdate();
+
+		//...
 
 		csm.PSMLateUpdate();
 	}
@@ -198,7 +198,8 @@ public abstract class Character : MonoBehaviour
 	protected abstract void CharacterAwake();
 	protected abstract void CharacterStart();
 	protected abstract void CharacterUpdate();
-	protected abstract void CharacterFixedUpdate();
+	protected abstract void CharacterFixedFrameUpdate();
+	protected abstract void CharacterFixedPhysicsUpdate();
 	protected abstract void CharacterLateUpdate();
 	#endregion abstracts
 	//=//------------------------------------------------------------------------//=//
@@ -209,6 +210,13 @@ public abstract class Character : MonoBehaviour
 
 	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region local
+	//=//-----|PSM|--------------------------------------------------------------//=//
+	#region psm
+	public void PushState(Enum stateID, )
+	{
+
+	}
+	#endregion psm
 	//=//-----|Action Queue|-----------------------------------------------------//=//
 	#region action_queue
 	private void ProcessActionQueue()
@@ -267,7 +275,7 @@ public abstract class Character : MonoBehaviour
 
 	//=//-----|Setup|------------------------------------------------------------//=//
 	#region setup
-	protected virtual void CharacterInitialization()
+	protected virtual void CharacterSetup()
 	{
 		//Local init functions
 		SetMemberVariables();
@@ -325,7 +333,6 @@ public abstract class Character : MonoBehaviour
 
 		this.vrm = ServiceLocator.GetService<VectorRenderManager>();
 	}
-
 	#endregion setup
 	//=//-----|Data|-------------------------------------------------------------//=//
 	#region data
@@ -449,13 +456,32 @@ public abstract class Character : MonoBehaviour
 
 	}
 	#endregion data
-
-
+	//=//------------------------------------------------------------------------//=//
 	#endregion base
+	/////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 	//======// /==/==/==/=||[DEBUG]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region debug
+	public void OnStateSet()
+	{
+		if (debug && stateText != null)
+		{
+			// Get the current state name from the dictionary
+			CharacterState currentStateName = (CharacterState)csm.GetState();
+
+			// Remove the character class name prefix if it exists
+			if (currentStateName.StartsWith(characterClassName))
+			{
+				currentStateName = currentStateName.Substring(characterClassName.Length);
+			}
+
+
+			stateText.text = currentStateName;
+		}
+	}
 	public virtual void SetDebug(bool isEnabled)
 	{
 		//set debug
@@ -464,10 +490,9 @@ public abstract class Character : MonoBehaviour
 		//set other debug components and what not
 		debugParentTransform.gameObject.SetActive(enabled);
 	}
-	public virtual void CLog(string category, string message)
+	public virtual string CName(string message)
 	{
-		string messageWithName = $"{characterName}: {message}";
-		LogCore.Log(category, message);
+		return $"{characterName}: {message}";
 	}
 	public void UpdateDebugVector(string name, Vector3 vector, Color color)
 	{
@@ -485,6 +510,4 @@ public abstract class Character : MonoBehaviour
 		}
 	}
 	#endregion debug 
-
-
 }

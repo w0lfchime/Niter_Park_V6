@@ -2,44 +2,55 @@ using UnityEngine;
 
 public class Suspended : CharacterState
 {
-	public Suspended(Character character) : base(character)
+	public Suspended(PerformanceSM sm, Character character) : base(sm, character)
 	{
-		exitOnPriorityZero = true;
-		minimumStateDuration = 0.2f; 
+		minimumStateDuration = 120;
 	}
 	public override void Enter()
 	{
-		base.Enter(); //as always, exitAllowed is set to false.
+		base.Enter();
+
+		//...
+
+		LogCore.Log("StateWarning", "Entering the Suspended CState. Something wrong probably happened");
 	}
 
 	public override void Exit()
 	{
 		base.Exit();
+
+		//...
 	}
 
 	public override void Update()
 	{
 		base.Update();
+
+		//...
 	}
 
-	public override void FixedUpdate()
+	public override void FixedFrameUpdate()
 	{
-		base.FixedUpdate(); 
+		base.FixedFrameUpdate(); 
+
+		//...
 
 	}
 
-    public override void CheckExitAllowed()
-    {
-		if (pinput.anyActionAtAll)
-		{
-			exitAllowed = true; //overridden by min state duration below
-		}
+	public override void FixedPhysicsUpdate()
+	{
+		base.FixedPhysicsUpdate();
 
-        base.CheckExitAllowed(); //exit time is a dominant factor in allowing state acesss
-    }
+		//...
 
-    public override void TryRouteState()
-    {
-        base.TryRouteState();
-    }
+	}
+
+	public override void LateUpdate()
+	{
+		base.LateUpdate();
+
+		//...
+	}
+
+
 }

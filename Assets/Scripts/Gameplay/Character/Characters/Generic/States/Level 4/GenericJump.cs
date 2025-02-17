@@ -22,10 +22,10 @@ public class GenericJump : JumpState
         base.Update();
     }
 
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
 
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
 
     }
 }

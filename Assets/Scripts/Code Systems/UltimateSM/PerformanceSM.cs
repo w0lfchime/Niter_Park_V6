@@ -118,6 +118,9 @@ public class PerformanceSM
 				}
 			}
 		}
+
+		//other state machines  
+		//...
 	}
 
 	public virtual void VerifyStates()
@@ -145,23 +148,22 @@ public class PerformanceSM
 
 	//=//-----|State Control|---------------------------------------------------------//=//
 
-	protected PerformanceState GetState(Enum stateID)
+	public PerformanceState GetState(Enum stateID)
 	{
 		int index = Convert.ToInt32(stateID);
-
 		ValidateStateID(stateID); //we dont need this really
-
+		return stateArray[index];
+	}
+	public PerformanceState GetState()
+	{
+		int index = Convert.ToInt32(currentStateID);
 		return stateArray[index];
 	}
 
 	protected void SetStateArrayState(Enum stateID, PerformanceState state)
 	{
 		int index = Convert.ToInt32(stateID);
-
 		ValidateStateID(stateID);
-
-
-
 		stateArray[index] = state;
 	}
 
@@ -193,14 +195,14 @@ public class PerformanceSM
 
 	public void ForcePushState(Enum stateName)
 	{
-
+		//TODO: yeah
 
 	}
 
 
 	private void ProcessStateHeap()
 	{
-		if (requestHeap.Count == 0) return;
+		if (requestHeap.Count == 0 || currentState.exitAllowed) return;
 
 		// Get the highest-priority state (max push force, LIFO tie-breaker)
 		SetStateRequest bestRequest = requestHeap.Peek();
@@ -233,25 +235,32 @@ public class PerformanceSM
 	}
 
 
-
-
 	//Mono
-
 	public void PSMUpdate()
 	{
 		//...
 		currentState.Update();
+		//...
 	}
-	public void PSMFixedUpdate()
+	public void PSMFixedFrameUpdate()
 	{
 		currentFrame++;
-		requestHeap.FixedUpdate();
+		requestHeap.FixedFrameUpdate();
 		//...
-		currentState.FixedUpdate();
+		currentState.FixedFrameUpdate();
+		ProcessStateHeap();
+		//...
+	}
+	public void PSMFixedPhysicsUpdate()
+	{
+		//...
+		currentState.FixedFrameUpdate();
+		//...
 	}
 	public void PSMLateUpdate()
 	{
 		//...
 		currentState.LateUpdate();
+		//...
 	}
 }

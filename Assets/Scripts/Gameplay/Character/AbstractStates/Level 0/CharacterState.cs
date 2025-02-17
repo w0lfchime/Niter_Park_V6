@@ -4,134 +4,111 @@ using UnityEngine;
 
 public class CharacterState : PerformanceState
 {
+	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
+	//=//-----|General|----------------------------------------------//=//
+	[Header("Parent")]
+	protected Character ch;
 
-    //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	[Header("Meta")]
+	public CStateID stateType;
 
-    //=//-----|General|----------------------------------------------//=//
-    [Header("Parent")]
-    protected Character ch;
-
-    [Header("Meta")]
-    public CStateID stateType;
-
-    [Header("Component Refs")]
-    protected Animator anim;
-    protected Rigidbody rb;
-    protected CapsuleCollider cc;
-    protected PlayerInputHandler pinput;
-
-
-
-
-
-
+	[Header("Component Refs")]
+	protected Animator anim;
+	protected Rigidbody rb;
+	protected CapsuleCollider cc;
+	protected PlayerInputHandler pinput;
 
 
 
 	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 
-
 	//=//-----|Setup|------------------------------------------------//=//
 	public CharacterState(PerformanceSM sm, Character character) : base(sm)
-    {
-        this.ch = character;
+	{
+		this.ch = character;
 
-        SetStateReferences();
-        SetStateParameters();
+		SetStateReferences();
+		SetOnEntry();
 
-    }
-    protected virtual void SetStateReferences()
-    {
-        this.anim = ch.animator;
-        this.rb = ch.rigidBody;
-        this.cc = ch.capsuleCollider;
-        this.pinput = ch.inputHandler;
-    }
-    protected virtual void SetStateParameters()
-    {
-        this.priority = 1;
+	}
+	protected override void SetStateReferences()
+	{
+		base.SetStateReferences();
 
-    }
+		this.anim = ch.animator;
+		this.rb = ch.rigidBody;
+		this.cc = ch.capsuleCollider;
+		this.pinput = ch.inputHandler;
+	}
 
 
-    //=//-----|Data Management|-------------------------------------//=//
-    /// <summary>
-    /// Base: Called in Enter().
-    /// </summary>
-    protected virtual void SetVariablesOnEntry()
-    {
-        stateEntryTimeStamp = Time.time;
-    }
-
-
-    //=//-----|Flow Control|---------------------------------------//=//
-    public override void Enter()
-    {
-        base.Enter();
-
-        SetVariablesOnEntry();
-
-        LogCore.Log("CharacterStateFlow", $"Entering State {stateName}");
-    }
-    public override void Exit()
-    {
-        base.Exit();
-
-        LogCore.Log("CharacterStateFlow", $"Exting State {stateName}");
-    }
-    protected virtual void CheckExitAllowed()
-    {
-        if (!(Time.time - stateEntryTimeStamp > minimumStateDuration))
-        {
-            exitAllowed = false;
-        }
-    }
-    protected virtual void TryRouteState()
-    {
-        if (exitOnPriorityZero)
-        {
-            ch.PushState(exitState, 1);
-        }
-    }
-    protected virtual void TryRouteStateFixed()
-    {
-
-    }
-
-
-    //=//-----|MonoBehavior|---------------------------------------//=//
-    public override void Update()
-    {
-        base.Update();
-
-        CheckExitAllowed();
-
-        if (exitAllowed)
-        {
-            TryRouteState();
-        }
-    }
-    public override void FixedUpdate()
-    {
-        base.Update();
-
-        if (exitAllowed)
-        {
-            TryRouteStateFixed();
-        }
-    }
-    public override void LateUpdate()
-    {
-        base.LateUpdate();
-
-
-    }
+	//=//-----|Data Management|-------------------------------------//=//
+	/// <summary>
+	/// Base: Called in Enter().
+	/// </summary>
+	protected override void SetOnEntry()
+	{
+		this.priority = 1;
+		minimumStateDuration = 5;
+	}
 
 
 
 
+	//=//-----|Flow|---------------------------------------//=//
+	public override void Enter()
+	{
+		base.Enter();
+
+		SetOnEntry();
+	}
+	public override void Exit()
+	{
+		base.Exit();
+
+
+	}
 
 
 
+	//=//-----|MonoBehavior|---------------------------------------//=//
+	public override void Update()
+	{
+		base.Update();
+
+		//...
+
+		if (exitAllowed)
+		{
+			TryRouteState();
+		}
+	}
+	public override void FixedFrameUpdate()
+	{
+		base.FixedFrameUpdate();
+
+		//...
+
+		if (exitAllowed)
+		{
+			TryRouteStateFixed();
+		}
+	}
+	public override void FixedPhysicsUpdate()
+	{
+		base.FixedPhysicsUpdate();
+
+		//...
+	}
+	public override void LateUpdate()
+	{
+		base.LateUpdate();
+
+		//...
+	}
+	//======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
+	//=//-----|Routing|-------------------------------------------------//=//
+
+	//=//---------------------------------------------------------------//=//
 }
