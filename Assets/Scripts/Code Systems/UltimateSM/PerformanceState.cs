@@ -12,14 +12,17 @@ public abstract class PerformanceState
 	public PerformanceSM stateMachine;
 	//=//-----|Flow Control|------------------------------------------//=//
 
-	[Header("Parameters")] 
+	//Flow
 	public Enum exitState; 
 	public bool clearOnSetState;
 	public bool forceClearStateHeapOnEntry;
-
-	[Header("Variables")]
-	protected float stateEntryTimeStamp;
 	public int priority;
+	public int stateDuration; //0, if indefinite 
+	public int minimumStateDuration; //anti fluttering
+	public int currentFrame;
+	public bool exitAllowed; //overules priority
+	public bool stateComplete;
+	public bool exitOnStateComplete;
 
 
 	public PerformanceState(PerformanceSM sm)
@@ -28,30 +31,87 @@ public abstract class PerformanceState
 		this.stateMachine = sm;
 	}
 
+	//Data
 
+	protected virtual void SetStateReferences()
+	{
+		//...
+	}
 
-    public virtual void Enter()
+	protected virtual void SetOnEntry()
+	{
+		exitAllowed = false;
+		currentFrame = 0;
+
+	}
+	//Time
+	/// <summary>
+	/// frame related processes and decision
+	/// </summary>
+	protected virtual void PerFrame()
+	{
+		currentFrame++;
+
+		if (currentFrame > minimumStateDuration)
+		{
+			exitAllowed = true;
+			stateComplete = false;
+		}
+		if (stateDuration == 0 || currentFrame >= stateDuration)
+		{
+			stateComplete = true;
+		}
+
+		//...
+	}
+
+	//General
+
+	public virtual void Enter()
     {
+		LogCore.Log("PSM_Flow", $"Entering State {stateName}");
 
+		SetOnEntry();
+
+		//...
     }
     public virtual void Exit()
     {
+		LogCore.Log("PSM_Flow", $"Exting State {stateName}");
 
-    }
-
-
+		//...
+	}
     public virtual void Update()
     {
 
-    }
-    public virtual void FixedUpdate()
+	}
+    public virtual void FixedFrameUpdate()
     {
-
+		PerFrame();
+		//...
     }
+	public virtual void FixedPhysicsUpdate()
+	{
+
+	}
     public virtual void LateUpdate()
     {
 
     }
+
+
+
+	//=//-----|Routing|---------------------------------------------//=//
+
+	protected virtual void TryRouteState()
+	{
+		//...
+	}
+	protected virtual void TryRouteStateFixed()
+	{
+		//...
+	}
+
 
 	//=//-----|Get & Set|---------------------------------------------//=//
 	public int GetPriority()
@@ -59,13 +119,14 @@ public abstract class PerformanceState
 		return priority;
 	}
 
-
+	
 
 	//=//-----|Debug|---------------------------------------------//=//
 	public virtual bool VerifyState()
 	{
 		return CheckStateForNullFields();
 	}
+
 	protected bool CheckStateForNullFields()
 	{
 		bool passed = true;

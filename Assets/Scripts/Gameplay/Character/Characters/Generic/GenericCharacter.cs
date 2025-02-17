@@ -30,7 +30,7 @@ public class GenericCharacter : Character
 
 	}
 
-	protected override void CharacterFixedUpdate()
+	protected override void CharacterFixedFrameUpdate()
 	{
 		// Implement character-specific physics update logic here
 	}
@@ -40,9 +40,9 @@ public class GenericCharacter : Character
         
     }
 
-    public override void CharacterInitialization()
+    public override void CharacterSetup()
 	{
-		base.CharacterInitialization();
+		base.CharacterSetup();
 
 
 		//Addtional code pretaining to character

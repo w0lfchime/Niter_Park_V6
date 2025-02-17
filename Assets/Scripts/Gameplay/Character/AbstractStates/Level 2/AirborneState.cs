@@ -28,9 +28,9 @@ public class AirborneState : PhysicalState
         //...
     }
     //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetVariablesOnEntry()
+    protected override void SetOnEntry()
     {
-        base.SetVariablesOnEntry();
+        base.SetOnEntry();
         //...
         allowDrift = true;
     }
@@ -68,13 +68,13 @@ public class AirborneState : PhysicalState
         //...
         base.Update();
     }
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
         ApplyGravity();
         HandleDrift();
 
         //...
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
     }
     public override void LateUpdate()
     {

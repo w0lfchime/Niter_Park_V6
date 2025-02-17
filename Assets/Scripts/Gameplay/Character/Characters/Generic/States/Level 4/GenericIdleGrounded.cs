@@ -29,10 +29,10 @@ public class GenericIdleGrounded : IdleGroundedState
 
     }
 
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
 
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
 
     }
 }

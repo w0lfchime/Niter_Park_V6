@@ -34,10 +34,10 @@ public class IdleGroundedState : GroundedState
 
     }
 
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
 
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
 
     }
 }

@@ -1,12 +1,23 @@
+using System;
 using UnityEngine;
 
 public class ExampleState : CharacterState
 {
-    //======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+	#region local_fields
+	//=//----------------------------------------------------------------//=//
+	#endregion local_fields
+	/////////////////////////////////////////////////////////////////////////////
 
-    //======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
-    //=//-----|Setup|----------------------------------------------------//=//
-    public ExampleState(Character character) : base(character)
+
+
+
+
+	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region base
+	//=//-----|Setup|----------------------------------------------------//=//
+	#region setup
+	public ExampleState(PerformanceSM sm, Character character) : base(sm, character)
     {
 
     }
@@ -15,19 +26,23 @@ public class ExampleState : CharacterState
         base.SetStateReferences();
         //...
     }
-    protected override void SetStateParameters()
+	#endregion setup
+	//=//-----|Data Management|------------------------------------------//=//
+	#region data_management
+	protected override void SetOnEntry()
     {
-        base.SetStateParameters();
-        //...D
-    }
-    //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetVariablesOnEntry()
-    {
-        base.SetVariablesOnEntry();
+        base.SetOnEntry();
         //...
     }
-    //=//-----|Flow Control|---------------------------------------------//=//
-    public override void Enter()
+	protected override void PerFrame()
+	{
+		base.PerFrame();
+		//...
+	}
+	#endregion data_management
+	//=//-----|Flow|-----------------------------------------------------//=//
+	#region flow
+	public override void Enter()
     {
         base.Enter();
         //... 
@@ -37,49 +52,69 @@ public class ExampleState : CharacterState
         base.Exit();
         //...
     }
-    protected override void CheckExitAllowed()
-    {
-         base.CheckExitAllowed();
-        //...
-    }
-    protected override void TryRouteState()
-    {
-        //...
-        base.TryRouteState();
-    }
-    protected override void TryRouteStateFixed()
-    {
-        //...
-        base.TryRouteStateFixed();
-    }
-
-    //=//-----|MonoBehavior|---------------------------------------------//=//
-    public override void Update()
+	#endregion flow
+	//=//-----|Mono|-----------------------------------------------------//=//
+	#region mono
+	public override void Update()
     {
         //...
         base.Update();
     }
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
         //...
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
     }
-    public override void LateUpdate()
+	public override void FixedPhysicsUpdate()
+	{
+		//...
+		base.FixedPhysicsUpdate();
+	}
+	public override void LateUpdate()
     {
         //...
         base.LateUpdate();
     }
-    //=//-----|Debug|----------------------------------------------------//=//
-    public override bool VerifyState()
+	#endregion mono
+	//=//-----|Routing|--------------------------------------------------//=//
+	#region routing
+	protected override void TryRouteState()
+	{
+		//...
+		base.TryRouteState();
+	}
+	protected override void TryRouteStateFixed()
+	{
+		//...
+		base.TryRouteStateFixed();
+	}
+	#endregion routing
+	//=//-----|Debug|----------------------------------------------------//=//
+	#region debug
+	public override bool VerifyState()
     {
         return base.VerifyState();
     }
+	#endregion debug
+	//=//----------------------------------------------------------------//=//
+	#endregion base
+	/////////////////////////////////////////////////////////////////////////////
 
-    //======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
 
-    //======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
 
-    //======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 
-    //======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
+	//======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_1
+	//=//----------------------------------------------------------------//=//
+	#endregion level_1
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
+
+	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
+
+	//======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
 }

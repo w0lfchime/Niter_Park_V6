@@ -30,9 +30,9 @@ public class PhysicalState : CharacterState
         //...
     }
     //=//-----|Data Management|------------------------------------------//=//
-    protected override void SetVariablesOnEntry()
+    protected override void SetOnEntry()
     {
-        base.SetVariablesOnEntry();
+        base.SetOnEntry();
         //...
     }
     //=//-----|Flow Control|---------------------------------------------//=//
@@ -76,13 +76,13 @@ public class PhysicalState : CharacterState
         //...
         base.Update();
     }
-    public override void FixedUpdate()
+    public override void FixedFrameUpdate()
     {
         WatchGrounding();
         SetGrounding();
 
         //...
-        base.FixedUpdate();
+        base.FixedFrameUpdate();
     }
     public override void LateUpdate()
     {
