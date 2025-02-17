@@ -147,13 +147,13 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	private void OnEnable()
 	{
-		GameUpdateManager.Register(this);
+		GameUpdateDriver.Register(this);
 		//...
 	}
 	private void OnDisable()
 	{
 		//...
-		GameUpdateManager.Register(this);
+		GameUpdateDriver.Register(this);
 	}
 	#endregion event
 	//=//-----|Updates|----------------------------------------------------------//=//
@@ -210,13 +210,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region local
-	//=//-----|PSM|--------------------------------------------------------------//=//
-	#region psm
-	public void PushState(Enum stateID, )
-	{
 
-	}
-	#endregion psm
 	//=//-----|Action Queue|-----------------------------------------------------//=//
 	#region action_queue
 	private void ProcessActionQueue()
@@ -456,6 +450,18 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	}
 	#endregion data
+	//=//-----|PSM|--------------------------------------------------------------//=//
+	#region psm
+	/// <summary>
+	/// For pushing states from states
+	/// </summary>
+	public void StatePushState(Enum stateID, int pushForce, int frameLifetime)
+	{
+		//No base implementation. Do NOT call base.StatePushState(...)
+		csm.PushState(stateID, pushForce, frameLifetime);
+	}
+	#endregion psm
+
 	//=//------------------------------------------------------------------------//=//
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -470,14 +476,13 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		if (debug && stateText != null)
 		{
 			// Get the current state name from the dictionary
-			CharacterState currentStateName = (CharacterState)csm.GetState();
+			string currentStateName = csm.GetState().stateName;
 
 			// Remove the character class name prefix if it exists
 			if (currentStateName.StartsWith(characterClassName))
 			{
 				currentStateName = currentStateName.Substring(characterClassName.Length);
 			}
-
 
 			stateText.text = currentStateName;
 		}
