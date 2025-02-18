@@ -30,9 +30,6 @@ public enum CStateID //Standard state types
 
 public abstract class Character : MonoBehaviour, IGameUpdate
 {
-
-
-
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region fields
 	//=//-----|General|-----------------------------------------------------------//=//
@@ -66,7 +63,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	//=//-----|State|-------------------------------------------------------------//=//
 	#region state
 	[Header("State Machine")]
-	public PerformanceSM csm;
+	public PerformanceCSM csm;
+	public CStateID stateID;
 	#endregion state
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
@@ -137,7 +135,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	private void Awake()
 	{
 		CharacterSetup();
-
 		//...
 	}
 	private void Start()
@@ -164,32 +161,25 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		ProcessInput();
 		UpdateCharacterData();
 		CharacterUpdate();
-
 		//...
-
 		csm.PSMUpdate();
 	}
 	public void FixedFrameUpdate()
 	{
 		ProcessActionQueue();
 		CharacterFixedFrameUpdate();
-
 		//...
-
 		csm.PSMFixedFrameUpdate();		
 	}
 	private void FixedUpdate() // FixedPhysicsUpdate
 	{
 		//...
-
 		csm.PSMFixedPhysicsUpdate();
 	}
 	private void LateUpdate()
 	{
 		CharacterLateUpdate();
-
 		//...
-
 		csm.PSMLateUpdate();
 	}
 	#endregion updates
@@ -208,9 +198,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 
 
+
 	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region local
-
 	//=//-----|Action Queue|-----------------------------------------------------//=//
 	#region action_queue
 	private void ProcessActionQueue()
@@ -251,7 +241,20 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		paramActionQueue.Enqueue((currentFrame + framesFromNow, (p) => action((T)p), param));
 	}
 	#endregion action_queue
-
+	//=//-----|csm|--------------------------------------------------------------//=//
+	#region csm
+	/// <summary>
+	/// For pushing states from states
+	/// </summary>
+	public void StatePushState(CStateID stateID, int pushForce, int frameLifetime)
+	{
+		csm.PushState(stateID, pushForce, frameLifetime);
+	}
+	private void CharacterPushState(CStateID stateID, int pushForce, int frameLifetime)
+	{
+		csm.PushState(stateID, pushForce, frameLifetime);
+	}
+	#endregion csm
 	//=//------------------------------------------------------------------------//=//
 	#endregion local
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -259,14 +262,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 
 
-
-
-
-
 	//======// /==/==/==/=||[BASE]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region base 
 	//Base methods and their helpers 
-
 	//=//-----|Setup|------------------------------------------------------------//=//
 	#region setup
 	protected virtual void CharacterSetup()
@@ -286,7 +284,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		SetCharacterDimensions();
 
 		//state
-		csm = new PerformanceSM(CStateID.PSNull, characterClassName); //special init proc
+		csm = new PerformanceCSM(this); //special init proc
 		
 		LogCore.Log("Character", $"Character initialized: {characterName}");
 	}
@@ -376,26 +374,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		}
 		inputLookDirection.Normalize();
 
-		// DEBUG: 
-		//developer input for flight mode  
-		if (debug)
-		{
-			if (Input.GetKeyDown(KeyCode.F))
-			{
-				if (currentState == "Flight")
-				{
-					PushState("IdleAirborne", 5);
-				} else
-				{
-					PushState("Flight", 5);
-				}
-			}
-			if (Input.GetKeyDown(KeyCode.U))
-			{
-				UpdateActiveCharacterData();
-			}
-		}
-
 		if (Input.GetKeyDown(KeyCode.Alpha9))
 		{
 			SetDebug(!debug);
@@ -450,18 +428,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	}
 	#endregion data
-	//=//-----|PSM|--------------------------------------------------------------//=//
-	#region psm
-	/// <summary>
-	/// For pushing states from states
-	/// </summary>
-	public void StatePushState(Enum stateID, int pushForce, int frameLifetime)
-	{
-		//No base implementation. Do NOT call base.StatePushState(...)
-		csm.PushState(stateID, pushForce, frameLifetime);
-	}
-	#endregion psm
-
 	//=//------------------------------------------------------------------------//=//
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -471,6 +437,23 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	//======// /==/==/==/=||[DEBUG]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region debug
+	//=//-----|General|---------------------------------------------------------//=//
+	#region general
+	public virtual void SetDebug(bool isEnabled)
+	{
+		//set debug
+		debug = isEnabled;
+
+		//set other debug components and what not
+		debugParentTransform.gameObject.SetActive(enabled);
+	}
+	public virtual string CName(string message)
+	{
+		return $"{characterName}: {message}";
+	}
+	#endregion general
+	//=//-----|State|----------------------------------------------------------//=//
+	#region state
 	public void OnStateSet()
 	{
 		if (debug && stateText != null)
@@ -487,18 +470,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			stateText.text = currentStateName;
 		}
 	}
-	public virtual void SetDebug(bool isEnabled)
-	{
-		//set debug
-		debug = isEnabled;
-
-		//set other debug components and what not
-		debugParentTransform.gameObject.SetActive(enabled);
-	}
-	public virtual string CName(string message)
-	{
-		return $"{characterName}: {message}";
-	}
+	#endregion state
+	//=//-----|Debug Vectors|----------------------------------------------------------//=//
+	#region debug_vectors
 	public void UpdateDebugVector(string name, Vector3 vector, Color color)
 	{
 		if (debug)
@@ -514,5 +488,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			vrm.StampVector(name, transform.position, vector, color, 1.0f);
 		}
 	}
+	#endregion debug_vectors
+	//=//------------------------------------------------------------------------//=//
 	#endregion debug 
+	/////////////////////////////////////////////////////////////////////////////////////
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Suspended : CharacterState
 {
-	public Suspended(PerformanceSM sm, Character character) : base(sm, character)
+	public Suspended(PerformanceCSM sm, Character character) : base(sm, character)
 	{
 		minimumStateDuration = 120;
 	}

@@ -11,7 +11,7 @@ public abstract class PerformanceState
 	//meta
 	public string stateName;
 	//refs
-	public PerformanceSM stateMachine;
+	public PerformanceCSM stateMachine;
 	//Flow
 	public Enum exitState;
 	public bool clearOnSetState;
@@ -81,7 +81,7 @@ public abstract class PerformanceState
 	#region base
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
-	public PerformanceState(PerformanceSM sm)
+	public PerformanceState(PerformanceCSM sm)
 	{
 		this.stateName = GetType().Name;
 		this.stateMachine = sm;
@@ -102,12 +102,12 @@ public abstract class PerformanceState
 	{
 		currentFrame++;
 
-		if (currentFrame > minimumStateDuration)
+		if (currentFrame < minimumStateDuration)
 		{
-			exitAllowed = true;
+			exitAllowed = false;
 			stateComplete = false;
 		}
-		if (stateDuration == 0 || currentFrame >= stateDuration)
+		if (stateDuration != 0 && currentFrame >= stateDuration)
 		{
 			stateComplete = true;
 		}
@@ -117,8 +117,8 @@ public abstract class PerformanceState
 	#endregion data_management
 	//=//-----|Routing|--------------------------------------------------//=//
 	#region routing
-	protected abstract void StatePushState(Enum stateID, int pushForce, int lifetime); //for push state
-	protected virtual void TryRouteState()
+	protected abstract void StatePushState(CStateID stateID, int pushForce, int lifetime); //for push state
+	protected virtual void RouteState()
 	{
 		//...
 		if (exitOnStateComplete && stateComplete)
@@ -126,7 +126,7 @@ public abstract class PerformanceState
 			StatePushState(exitState, 2, 2);
 		}
 	}
-	protected virtual void TryRouteStateFixed()
+	protected virtual void RouteStateFixed()
 	{
 
 	}
@@ -150,19 +150,13 @@ public abstract class PerformanceState
 	public virtual void Update()
 	{
 		//...
-		if (exitAllowed)
-		{
-			TryRouteState();
-		}
+		RouteState();
 	}
 	public virtual void FixedFrameUpdate()
 	{
 		PerFrame();
 		//...
-		if (exitAllowed)
-		{
-			TryRouteStateFixed();
-		}
+		RouteStateFixed();
 	}
 	public virtual void FixedPhysicsUpdate() { }
 	public virtual void LateUpdate() { }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using UnityEngine;
 
 public class CharacterState : PerformanceState
@@ -17,7 +18,7 @@ public class CharacterState : PerformanceState
 	protected Animator anim;
 	protected Rigidbody rb;
 	protected CapsuleCollider cc;
-	protected PlayerInputHandler pinput;
+	protected PlayerInputHandler ih;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ public class CharacterState : PerformanceState
 	#region base
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
-	public CharacterState(PerformanceSM sm, Character character) : base(sm)
+	public CharacterState(PerformanceCSM sm, Character character) : base(sm)
 	{
 		this.ch = character;
 
@@ -44,7 +45,7 @@ public class CharacterState : PerformanceState
 		this.anim = ch.animator;
 		this.rb = ch.rigidBody;
 		this.cc = ch.capsuleCollider;
-		this.pinput = ch.inputHandler;
+		this.ih = ch.inputHandler;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
@@ -62,19 +63,34 @@ public class CharacterState : PerformanceState
 	#endregion data_management
 	//=//-----|Routing|--------------------------------------------------//=//
 	#region routing
-	protected override void StatePushState(Enum stateID, int pushForce, int lifeTime)
+	protected override void StatePushState(CStateID stateID, int pushForce, int lifeTime)
 	{
 		ch.StatePushState(stateID, pushForce, lifeTime);
 	}
-	protected override void TryRouteState()
+	protected override void RouteState()
 	{
+		if (ch.debug)
+		{
+			//Flight
+			if (Input.GetKeyDown(KeyCode.F))
+			{
+				if (ch.csm.currentStateID == CStateID.Flight)
+				{
+					StatePushState(CStateID.OO_IdleAirborne, 99, 2);
+				}
+				else
+				{
+					StatePushState(CStateID.Flight, 99, 2);
+				}
+			}
+		}
 		//...
-		base.TryRouteState();
+		base.RouteState();
 	}
-	protected override void TryRouteStateFixed()
+	protected override void RouteStateFixed()
 	{
 		//...
-		base.TryRouteStateFixed();
+		base.RouteStateFixed();
 	}
 	#endregion routing
 	//=//-----|Flow|-----------------------------------------------------//=//
@@ -118,7 +134,6 @@ public class CharacterState : PerformanceState
 		base.LateUpdate();
 	}
 	#endregion mono
-
 	//=//-----|Debug|----------------------------------------------------//=//
 	#region debug
 	public override bool VerifyState()
