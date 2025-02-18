@@ -1,77 +1,178 @@
+using System;
 using UnityEngine;
 
-public class JumpState : AirborneState
+public class JumpState : PhysicalState
 {
-    private float minimumExitVelocityY = -0.2f;
-
-    //Exit allowed is true by default.
-    public JumpState(Character character) : base(character)
-    {
-        minimumStateDuration = 0.2f;
-        exitOnPriorityZero = true;
-        exitState = "IdleAirborne";
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-        
-        //clearing vertical velocity 
-        Vector3 newVelocity = ch.rigidBody.linearVelocity;
-        newVelocity.y = 0;
-        ch.rigidBody.linearVelocity = newVelocity;
-
-        Vector3 jumpImpluseForce = Vector3.up;
-        jumpImpluseForce *= ch.acd.jumpForce;
-
-        AddImpulseForce("JumpForce", jumpImpluseForce);
-
-    }
-
-    public override void Exit()
-    {
-
-        base.Exit();
-
-    }
-
-    public override void Update()
-    {
-
-
-        base.Update();
-
-    }
-
-
-
-    public override void FixedFrameUpdate()
-    {
-        base.FixedFrameUpdate();
+	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+	#region local_fields
+	private float minimumExitVelocityY = -0.2f;
+	//=//----------------------------------------------------------------//=//
+	#endregion local_fields
+	/////////////////////////////////////////////////////////////////////////////
 
 
 
 
-    }
+	//======// /==/==/==/=||[LOCAL]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region local
+	//Functions exlcusive to this member of the state heirarchy
 
-    public override void CheckExitAllowed()
-    {
-        if (ch.velocityY < minimumExitVelocityY)
-        {
-            exitAllowed = true;
-        }
-
-        base.CheckExitAllowed();
-
-
-    }
-
-    public override void TryRouteState()
-    {
+	//=//----------------------------------------------------------------//=//
+	#endregion local
+	/////////////////////////////////////////////////////////////////////////////
 
 
 
-        base.TryRouteState();
 
-    }
+	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	//Overrides of the base class, performance state.
+	#region base
+	//=//-----|Setup|----------------------------------------------------//=//
+	#region setup
+	public JumpState(PerformanceCSM sm, Character character) : base(sm, character)
+	{
+		minimumStateDuration = 5;
+		exitState = CStateID.OO_IdleAirborne;
+		exitOnStateComplete = true;
+	}
+	protected override void SetStateReferences()
+	{
+		base.SetStateReferences();
+		//...
+	}
+	#endregion setup
+	//=//-----|Data Management|------------------------------------------//=//
+	#region data_management
+	protected override void SetOnEntry()
+	{
+		base.SetOnEntry();
+		//...
+	}
+	protected override void PerFrame()
+	{
+		base.PerFrame();
+		//...
+	}
+	#endregion data_management
+	//=//-----|Routing|--------------------------------------------------//=//
+	#region routings
+	protected override void RouteState()
+	{
+		if (ch.velocityY < minimumExitVelocityY)
+		{
+			stateComplete = true;
+		}
+
+		//...
+		base.RouteState();
+	}
+	protected override void RouteStateFixed()
+	{
+		//...
+		base.RouteStateFixed();
+	}
+	#endregion routing
+	//=//-----|Flow|-----------------------------------------------------//=//
+	#region flow
+	public override void Enter()
+	{
+		base.Enter();
+
+		//clearing vertical velocity 
+		Vector3 newVelocity = ch.rigidBody.linearVelocity;
+		newVelocity.y = 0;
+		ch.rigidBody.linearVelocity = newVelocity;
+
+		Vector3 jumpImpluseForce = Vector3.up;
+		jumpImpluseForce *= ch.acd.jumpForce;
+
+		AddImpulseForce("JumpForce", jumpImpluseForce);
+	}
+	public override void Exit()
+	{
+		base.Exit();
+		//...
+	}
+	#endregion flow
+	//=//-----|Mono|-----------------------------------------------------//=//
+	#region mono
+	public override void Update()
+	{
+		base.Update();
+		//...
+	}
+	public override void FixedFrameUpdate()
+	{
+		//...
+		base.FixedFrameUpdate();
+	}
+	public override void FixedPhysicsUpdate()
+	{
+		//...
+		base.FixedPhysicsUpdate();
+	}
+	public override void LateUpdate()
+	{
+		//...
+		base.LateUpdate();
+	}
+	#endregion mono
+	//=//-----|Debug|----------------------------------------------------//=//
+	#region debug
+	public override bool VerifyState()
+	{
+		return base.VerifyState();
+	}
+	#endregion debug
+	//=//----------------------------------------------------------------//=//
+	#endregion base
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_1
+	//=//----------------------------------------------------------------//=//
+	#endregion level_1
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_2
+	//=//----------------------------------------------------------------//=//
+	#endregion level_2
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_3
+	//=//----------------------------------------------------------------//=//
+	#endregion level_3
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_4
+	//=//----------------------------------------------------------------//=//
+	#endregion level_4
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 5]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_5
+	//=//----------------------------------------------------------------//=//
+	#endregion level_5
+	/////////////////////////////////////////////////////////////////////////////
 }
