@@ -4,158 +4,44 @@ using UnityEngine;
 
 public abstract class PerformanceState
 {
+	//THE BASE STATE
+
+	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
+	#region local_fields
 	//meta
 	public string stateName;
-
-
 	//refs
 	public PerformanceSM stateMachine;
-
 	//Flow
-	public Enum exitState; 
+	public Enum exitState;
 	public bool clearOnSetState;
 	public bool forceClearStateHeapOnEntry;
 	public int priority;
-
-
-	//Timing
-	public int currentFrame;
-	public bool exitAllowed; //overules priority
 	public int stateDuration; //0, if indefinite 
 	public int minimumStateDuration; //anti fluttering
+	public int currentFrame;
+	public bool exitAllowed; //overules priority
 	public bool stateComplete;
 	public bool exitOnStateComplete;
-
-
-
-	public PerformanceState(PerformanceSM sm)
-	{
-		this.stateName = GetType().Name;
-		this.stateMachine = sm;
-	}
-
-	//Data
-
-	protected virtual void SetStateReferences()
-	{
-		//...
-	}
-
-	protected virtual void SetOnEntry()
-	{
-		exitAllowed = false;
-		currentFrame = 0;
-
-		if (stateDuration == 0)
-		{
-			exitOnStateComplete = false;
-		}
-	}
-
-
-	//Time
-	/// <summary>
-	/// frame related processes and decision
-	/// </summary>
-	protected virtual void PerFrame()
-	{
-		currentFrame++;
-
-		if (currentFrame > minimumStateDuration)
-		{
-			exitAllowed = true;
-			stateComplete = false;
-		}
-		if (stateDuration == 0 || currentFrame >= stateDuration)
-		{
-			stateComplete = true;
-		}
-
-		//...
-	}
-
-
-
-	//General
-
-	public virtual void Enter()
-    {
-		LogCore.Log("PSM_Flow", $"Entering State {stateName}.");
-
-		SetOnEntry();
-
-		//...
-    }
-    public virtual void Exit()
-    {
-		LogCore.Log("PSM_Flow", $"Exting State {stateName}.");
-
-		//...
-	}
-    public virtual void Update()
-    {
-		//...
-
-		if (exitAllowed)
-		{
-			TryRouteState();
-		}
-	}
-    public virtual void FixedFrameUpdate()
-    {
-		PerFrame();
-
-		//...
-
-		if (exitAllowed)
-		{
-			TryRouteStateFixed();
-		}
-    }
-	public virtual void FixedPhysicsUpdate()
-	{
-
-	}
-    public virtual void LateUpdate()
-    {
-
-    }
-	//=//-----|Routing|---------------------------------------------//=//
-
-	protected virtual void TryRouteState()
-	{
-		//...
-		if (exitOnStateComplete && stateComplete)
-		{
-			
-		}
-	}
-	protected virtual void TryRouteStateFixed()
-	{
-
-
-		//...
-	}
+	//=//----------------------------------------------------------------//=//
+	#endregion local_fields
+	/////////////////////////////////////////////////////////////////////////////
 
 
 
 
-
-
-	//=//-----|Get & Set|---------------------------------------------//=//
+	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region local
+	//Methods for only this class 
+	//=//-----|Get & set|------------------------------------------------//=//
+	#region get_and_set
 	public int GetPriority()
 	{
 		return priority;
 	}
-
-	
-
-	//=//-----|Debug|---------------------------------------------//=//
-	public virtual bool VerifyState()
-	{
-		return CheckStateForNullFields();
-	}
-
+	#endregion get_and_set
+	//=//-----|Debug|----------------------------------------------------//=//
+	#region debug
 	protected bool CheckStateForNullFields()
 	{
 		bool passed = true;
@@ -182,4 +68,159 @@ public abstract class PerformanceState
 
 		return passed;
 	}
+	#endregion debug
+	//=//----------------------------------------------------------------//=//
+	#endregion local
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	//Methods from the base class, performance state.
+	#region base
+	//=//-----|Setup|----------------------------------------------------//=//
+	#region setup
+	public PerformanceState(PerformanceSM sm)
+	{
+		this.stateName = GetType().Name;
+		this.stateMachine = sm;
+	}
+	protected virtual void SetStateReferences()
+	{
+		//...
+	}
+	#endregion setup
+	//=//-----|Data Management|------------------------------------------//=//
+	#region data_management
+	protected virtual void SetOnEntry()
+	{
+		exitAllowed = false;
+		currentFrame = 0;
+	}
+	protected virtual void PerFrame()
+	{
+		currentFrame++;
+
+		if (currentFrame > minimumStateDuration)
+		{
+			exitAllowed = true;
+			stateComplete = false;
+		}
+		if (stateDuration == 0 || currentFrame >= stateDuration)
+		{
+			stateComplete = true;
+		}
+
+		//...
+	}
+	#endregion data_management
+	//=//-----|Routing|--------------------------------------------------//=//
+	#region routing
+	protected abstract void StatePushState(Enum stateID, int pushForce, int lifetime); //for push state
+	protected virtual void TryRouteState()
+	{
+		//...
+		if (exitOnStateComplete && stateComplete)
+		{
+			StatePushState(exitState, 2, 2);
+		}
+	}
+	protected virtual void TryRouteStateFixed()
+	{
+
+	}
+	#endregion routing
+	//=//-----|Flow|-----------------------------------------------------//=//
+	#region flow
+	public virtual void Enter()
+	{
+		LogCore.Log("PSM_Flow", $"Entering State {stateName}.");
+		SetOnEntry();
+		//...
+	}
+	public virtual void Exit()
+	{
+		LogCore.Log("PSM_Flow", $"Exting State {stateName}.");
+		//...
+	}
+	#endregion flow
+	//=//-----|Mono|-----------------------------------------------------//=//
+	#region mono
+	public virtual void Update()
+	{
+		//...
+		if (exitAllowed)
+		{
+			TryRouteState();
+		}
+	}
+	public virtual void FixedFrameUpdate()
+	{
+		PerFrame();
+		//...
+		if (exitAllowed)
+		{
+			TryRouteStateFixed();
+		}
+	}
+	public virtual void FixedPhysicsUpdate() { }
+	public virtual void LateUpdate() { }
+	#endregion mono
+	//=//-----|Debug|----------------------------------------------------//=//
+	#region debug
+	public virtual bool VerifyState()
+	{
+		return CheckStateForNullFields();
+	}
+	#endregion debug
+	//=//----------------------------------------------------------------//=//
+	#endregion base
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_1
+	//=//----------------------------------------------------------------//=//
+	#endregion level_1
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_2
+	//=//----------------------------------------------------------------//=//
+	#endregion level_2
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_3
+	//=//----------------------------------------------------------------//=//
+	#endregion level_3
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_4
+	//=//----------------------------------------------------------------//=//
+	#endregion level_4
+	/////////////////////////////////////////////////////////////////////////////
+
+
+
+
+	//======// /==/==/==/==||[LEVEL 5]||==/==/==/==/==/==/==/==/==/==/ //======//
+	#region level_5
+	//=//----------------------------------------------------------------//=//
+	#endregion level_5
+	/////////////////////////////////////////////////////////////////////////////
 }

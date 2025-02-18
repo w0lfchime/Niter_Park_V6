@@ -61,7 +61,11 @@ public class CharacterState : PerformanceState
 	}
 	#endregion data_management
 	//=//-----|Routing|--------------------------------------------------//=//
-	#region routings
+	#region routing
+	protected override void StatePushState(Enum stateID, int pushForce, int lifeTime)
+	{
+		ch.StatePushState(stateID, pushForce, lifeTime);
+	}
 	protected override void TryRouteState()
 	{
 		//...
