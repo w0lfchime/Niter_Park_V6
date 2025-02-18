@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 public abstract class PerformanceState22
@@ -26,24 +27,66 @@ public abstract class PerformanceState22
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
 
+
+
+
 	//======// /==/==/==/=||[LOCAL]||==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region local
 	//Methods for only this class 
+	//=//-----|Get & set|------------------------------------------------//=//
+	#region get_and_set
+	public int GetPriority()
+	{
+		return priority;
+	}
+	#endregion get_and_set
+	//=//-----|Debug|----------------------------------------------------//=//
+	#region debug
+	protected bool CheckStateForNullFields()
+	{
+		bool passed = true;
 
+		Type type = this.GetType();
+
+		while (type != null && type != typeof(object))
+		{
+			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+			foreach (FieldInfo field in fields)
+			{
+				object value = field.GetValue(this);
+				if (value == null)
+				{
+					passed = false;
+					string message = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
+					LogCore.Log("CriticalError", message);
+				}
+			}
+
+			type = type.BaseType;
+		}
+
+		return passed;
+	}
+	#endregion debug
+	//=//----------------------------------------------------------------//=//
 	#endregion local
 	/////////////////////////////////////////////////////////////////////////////
+
+
+
 
 	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	//Methods from the base class, performance state.
 	#region base
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
-	public PerformanceState(PerformanceSM sm)
+	public PerformanceState22(PerformanceSM sm)
 	{
 		this.stateName = GetType().Name;
 		this.stateMachine = sm;
 	}
-	protected override void SetStateReferences()
+	protected virtual void SetStateReferences()
 	{
 		//...
 	}
@@ -73,16 +116,19 @@ public abstract class PerformanceState22
 	}
 	#endregion data_management
 	//=//-----|Routing|--------------------------------------------------//=//
-	#region routings
+	#region routing
+	protected abstract void StatePushState(Enum stateID, int pushForce, int lifetime); //for push state
 	protected virtual void TryRouteState()
 	{
-		
+		//...
+		if (exitOnStateComplete && stateComplete)
+		{
+			StatePushState(exitState, 2, 2);
+		}
 	}
 	protected virtual void TryRouteStateFixed()
 	{
 
-
-		//...
 	}
 	#endregion routing
 	//=//-----|Flow|-----------------------------------------------------//=//
@@ -119,13 +165,13 @@ public abstract class PerformanceState22
 		}
 	}
 	public virtual void FixedPhysicsUpdate() { }
-	public override void LateUpdate() { }
+	public virtual void LateUpdate() { }
 	#endregion mono
 	//=//-----|Debug|----------------------------------------------------//=//
 	#region debug
-	public override bool VerifyState()
+	public virtual bool VerifyState()
 	{
-		return base.VerifyState();
+		return CheckStateForNullFields();
 	}
 	#endregion debug
 	//=//----------------------------------------------------------------//=//
