@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class PerformanceState
@@ -12,17 +13,25 @@ public abstract class PerformanceState
 	public string stateName;
 	//refs
 	public PerformanceCSM stateMachine;
-	//Flow
-	public Enum exitState;
+	//Flow Params
+	public CStateID exitState;
 	public bool clearOnSetState;
 	public bool forceClearStateHeapOnEntry;
 	public int priority;
 	public int stateDuration; //0, if indefinite 
 	public int minimumStateDuration; //anti fluttering
+	public bool exitOnStateComplete;
+	//Flow variables
 	public int currentFrame;
 	public bool exitAllowed; //overules priority
 	public bool stateComplete;
-	public bool exitOnStateComplete;
+
+
+
+
+
+
+
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
