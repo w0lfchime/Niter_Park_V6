@@ -183,15 +183,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		csm.PSMLateUpdate();
 	}
 	#endregion updates
-	//=//-----|Abstracts|--------------------------------------------------------//=//
-	#region abstracts
-	protected abstract void CharacterAwake();
-	protected abstract void CharacterStart();
-	protected abstract void CharacterUpdate();
-	protected abstract void CharacterFixedFrameUpdate();
-	protected abstract void CharacterFixedPhysicsUpdate();
-	protected abstract void CharacterLateUpdate();
-	#endregion abstracts
 	//=//------------------------------------------------------------------------//=//
 	#endregion mono
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -277,11 +268,11 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		RegisterCommands();
 		GlobalData.characterInitialized = true;	//HACK: do we need this?
 
-		//wiring data
-		UpdateActiveCharacterData();
+		//magic numbers
+		UpdateACD();
 
-		//misc character data
-		SetCharacterDimensions();
+		//wiring data (runs in update)
+		UpdateCharacterData();
 
 		//state
 		csm = new PerformanceCSM(this); //special init proc
@@ -333,8 +324,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//reset
 		inputMoveDirection = Vector3.zero;
 		inputLookDirection = Vector3.zero;
-
-
 		//movement input
 		if (inputHandler.GetButtonHold("MoveUp"))
 		{
@@ -353,8 +342,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			inputMoveDirection += Vector3.left;
 		}
 		inputMoveDirection.Normalize();
-
-
 		//"looking" input
 		if (inputHandler.GetButtonHold("LookUp"))
 		{
@@ -373,18 +360,14 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			inputLookDirection += Vector3.left;
 		}
 		inputLookDirection.Normalize();
-
+		//...
 		if (Input.GetKeyDown(KeyCode.Alpha9))
 		{
 			SetDebug(!debug);
 		}
-
+		//...
 	}
-	protected virtual void SetCharacterDimensions()
-	{
-		this.characterHeight = capsuleCollider.height;
-	}
-	protected virtual void UpdateActiveCharacterData()
+	protected virtual void UpdateACD()
 	{
 		// ucd + bcd = acd
 
@@ -425,9 +408,18 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	protected virtual void UpdateCharacterData() //TODO: better name 
 	{
-
+		this.characterHeight = capsuleCollider.height;
 	}
 	#endregion data
+	//=//-----|Mono|-------------------------------------------------------------//=//
+	#region mono_abstracts
+	protected abstract void CharacterAwake();
+	protected abstract void CharacterStart();
+	protected abstract void CharacterUpdate();
+	protected abstract void CharacterFixedFrameUpdate();
+	protected abstract void CharacterFixedPhysicsUpdate();
+	protected abstract void CharacterLateUpdate();
+	#endregion mono_abstracts
 	//=//------------------------------------------------------------------------//=//
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -437,7 +429,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	//======// /==/==/==/=||[DEBUG]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region debug
-	//=//-----|General|---------------------------------------------------------//=//
+	//=//-----|General|----------------------------------------------------------//=//
 	#region general
 	public virtual void SetDebug(bool isEnabled)
 	{
@@ -452,7 +444,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		return $"{characterName}: {message}";
 	}
 	#endregion general
-	//=//-----|State|----------------------------------------------------------//=//
+	//=//-----|State|------------------------------------------------------------//=//
 	#region state
 	public void OnStateSet()
 	{
@@ -471,7 +463,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		}
 	}
 	#endregion state
-	//=//-----|Debug Vectors|----------------------------------------------------------//=//
+	//=//-----|Debug Vectors|----------------------------------------------------//=//
 	#region debug_vectors
 	public void UpdateDebugVector(string name, Vector3 vector, Color color)
 	{

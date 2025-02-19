@@ -14,20 +14,6 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System;
 
-public enum CStateID //Standard state types
-{
-	//Debug
-	PSNull,
-	Suspended,
-	Flight,
-	//Gameplay
-	OO_IdleGrounded,
-	OO_IdleAirborne,
-	OO_Walk,
-	OO_Run,
-	OO_Jump,
-}
-
 public class ExampleCharacter : Character
 {
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
@@ -36,43 +22,6 @@ public class ExampleCharacter : Character
 	#endregion fields
 	/////////////////////////////////////////////////////////////////////////////////////
 
-
-
-	//======// /==/==/==/=||[MONO]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
-	#region mono
-	//=//-----|Events|----------------------------------------------------------//=//
-	#region events
-	protected override void CharacterAwake()
-	{
-
-	}
-	protected override void CharacterStart()
-	{
-
-	}
-	#endregion events
-	//=//-----|Updates|----------------------------------------------------------//=//
-	#region updates 
-	protected override void CharacterUpdate()
-	{
-
-	}
-	protected override void CharacterFixedFrameUpdate()
-	{
-
-	}
-	protected override void CharacterFixedPhysicsUpdate()
-	{
-
-	}
-	protected override void CharacterLateUpdate()
-	{
-
-	}
-	#endregion updates
-	//=//------------------------------------------------------------------------//=//
-	#endregion mono
-	/////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -93,39 +42,70 @@ public class ExampleCharacter : Character
 	#region setup
 	protected override void CharacterSetup()
 	{
-
+		base.CharacterSetup();
+		//...
 	}
 	protected override void RegisterCommands()
 	{
-
+		base.RegisterCommands();
+		//...
 	}
 	protected override void SetMemberVariables()
 	{
-
+		base.SetMemberVariables();
+		//...
 	}
 	protected override void SetReferences()
 	{
-
+		base.SetReferences();
+		//...
 	}
 	#endregion setup
 	//=//-----|Data|-------------------------------------------------------------//=//
 	#region data
 	protected override void ProcessInput()
 	{
+		base.ProcessInput();
+		//...
 	}
-	protected override void SetCharacterDimensions()
+	protected override void UpdateACD()
 	{
-
-	}
-	protected override void UpdateActiveCharacterData()
-	{
-
+		base.UpdateACD();
+		//...
 	}
 	protected override void UpdateCharacterData() //TODO: better name 
 	{
-
+		base.UpdateCharacterData();
+		//...
 	}
 	#endregion data
+	//=//-----|Mono|------------------------------------------------------------//=//
+	#region mono
+	protected override void CharacterAwake()
+	{
+		//...
+	}
+	protected override void CharacterStart()
+	{
+		//...
+	}
+	protected override void CharacterUpdate()
+	{
+		//...
+	}
+	protected override void CharacterFixedFrameUpdate()
+	{
+		//...
+	}
+	protected override void CharacterFixedPhysicsUpdate()
+	{
+		//...
+	}
+	protected override void CharacterLateUpdate()
+	{
+		//...
+	}
+	#endregion mono
 	//=//------------------------------------------------------------------------//=//
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +115,6 @@ public class ExampleCharacter : Character
 
 	//======// /==/==/==/=||[DEBUG]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region debug
-	//=//-----|General|---------------------------------------------------------//=//
 	//=//------------------------------------------------------------------------//=//
 	#endregion debug 
 	/////////////////////////////////////////////////////////////////////////////////////
