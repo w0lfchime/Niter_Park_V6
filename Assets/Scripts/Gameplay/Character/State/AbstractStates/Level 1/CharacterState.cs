@@ -19,6 +19,8 @@ public class CharacterState : PerformanceState
 	protected Rigidbody rb;
 	protected CapsuleCollider cc;
 	protected PlayerInputHandler ih;
+
+
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -46,14 +48,15 @@ public class CharacterState : PerformanceState
 		this.rb = ch.rigidBody;
 		this.cc = ch.capsuleCollider;
 		this.ih = ch.inputHandler;
+
+
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
 	protected override void SetOnEntry()
 	{
-		this.priority = 3; //HACK: simple for now
-		minimumStateDuration = 5; //HACK: simple for now
+
 	}
 	protected override void PerFrame()
 	{

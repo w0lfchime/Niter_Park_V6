@@ -72,7 +72,7 @@ public class PerformanceCSM
 
 	protected virtual void RegisterStates()
 	{
-		string stateOwnerClassName = machineOwner.characterClassName;
+		string stateOwnerClassName = machineOwner.characterStandardName;
 
 		foreach (CStateID stateID in Enum.GetValues(typeof(CStateID)))
 		{
@@ -127,7 +127,7 @@ public class PerformanceCSM
 
 	public void PushState(CStateID stateID, int pushForce, int frameLifetime)
 	{
-		bool coss = GetState(stateID).clearOnSetState;
+		bool coss = GetState(stateID).clearFromQueueOnSetState;
 		var newRequest = new SetStateRequest(stateID, pushForce, coss);
 
 		requestQueue.Add(newRequest, frameLifetime);
@@ -159,7 +159,7 @@ public class PerformanceCSM
 		currentState = GetState(newStateID);
 		currentStateID = newStateID;
 
-		if (currentState.forceClearStateHeapOnEntry)
+		if (currentState.forceClearQueueOnEntry)
 		{
 			requestQueue.Clear();
 		}
