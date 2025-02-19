@@ -36,7 +36,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	#region general
 	[Header("Meta")]
 	public string characterName;
-	public string characterClassName;
+	public string characterStandardName;
 	public bool nonPlayer = false;
 	public Player player;
 
@@ -291,7 +291,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	{
 		//meta
 		this.characterName = bcd.characterName;
-		this.characterClassName = GetType().Name;
+		this.characterStandardName = GetType().Name;
 
 		//debug 
 		this.debug = GlobalData.debug;
@@ -315,6 +315,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		stateText = debugParentTransform.Find("CharacterStateText")?.GetComponent<TextMeshPro>();
 
 		this.vrm = ServiceLocator.GetService<VectorRenderManager>();
+
 	}
 	#endregion setup
 	//=//-----|Data|-------------------------------------------------------------//=//
@@ -454,9 +455,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			string currentStateName = csm.GetState().stateName;
 
 			// Remove the character class name prefix if it exists
-			if (currentStateName.StartsWith(characterClassName))
+			if (currentStateName.StartsWith(characterStandardName))
 			{
-				currentStateName = currentStateName.Substring(characterClassName.Length);
+				currentStateName = currentStateName.Substring(characterStandardName.Length);
 			}
 
 			stateText.text = currentStateName;

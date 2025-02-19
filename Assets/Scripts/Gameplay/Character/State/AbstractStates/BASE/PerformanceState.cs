@@ -15,8 +15,8 @@ public abstract class PerformanceState
 	public PerformanceCSM stateMachine;
 	//Flow Params
 	public CStateID exitState;
-	public bool clearOnSetState;
-	public bool forceClearStateHeapOnEntry;
+	public bool clearFromQueueOnSetState;
+	public bool forceClearQueueOnEntry;
 	public int priority;
 	public int stateDuration; //0, if indefinite 
 	public int minimumStateDuration; //anti fluttering
@@ -26,11 +26,12 @@ public abstract class PerformanceState
 	public bool exitAllowed; //overules priority
 	public bool stateComplete;
 
-
-
-
-
-
+	//clearOnExitState
+	//forceClearStateHeapOnEntry
+	//priority
+	//stateDuration
+	//minimumStateDuration
+	//exitOnStateComplete
 
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
@@ -106,6 +107,7 @@ public abstract class PerformanceState
 	{
 		exitAllowed = false;
 		currentFrame = 0;
+		stateComplete = false;
 	}
 	protected virtual void PerFrame()
 	{

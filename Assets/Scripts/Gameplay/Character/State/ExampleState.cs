@@ -28,7 +28,7 @@ public class ExampleState : CharacterState
 
 	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	//Overrides of the base class, performance state.
-	#region base
+	#region basea
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
 	public ExampleState(PerformanceCSM sm, Character character) : base(sm, character)
