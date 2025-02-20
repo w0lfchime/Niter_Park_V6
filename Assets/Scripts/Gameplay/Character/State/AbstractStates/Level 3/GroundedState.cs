@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class GroundedState : CharacterState
+public class GroundedState : PhysicalState
 {
 	//Level x state
 
@@ -35,6 +35,11 @@ public class GroundedState : CharacterState
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
+		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
 		//...
 	}
 	#endregion setup

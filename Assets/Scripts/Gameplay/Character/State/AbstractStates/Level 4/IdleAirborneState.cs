@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class IdleAirborneState : CharacterState
+public class IdleAirborneState : AirborneState
 {
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
@@ -31,18 +31,24 @@ public class IdleAirborneState : CharacterState
 	#region setup
 	public IdleAirborneState(PerformanceCSM sm, Character character) : base(sm, character)
 	{
-		clearFromQueueOnSetState = true;
-		forceClearQueueOnEntry = false;
-		priority = 2;
-		stateDuration = 0;
-		minimumStateDuration = 1;
-		exitOnStateComplete = false;
 		//...
 	}
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
 		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
+		//...
+		allowDrift = true;
+		clearFromQueueOnSetState = true;
+		forceClearQueueOnEntry = false;
+		priority = 2;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = false;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//

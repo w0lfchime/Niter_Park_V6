@@ -12,8 +12,21 @@ public class GameUpdateDriver : MonoBehaviour
 	private float accumulatedTime = 0f;
 	private static List<IGameUpdate> fixedUpdateObjects = new List<IGameUpdate>();
 
-	public static void Register(IGameUpdate obj) => fixedUpdateObjects.Add(obj);
-	public static void Unregister(IGameUpdate obj) => fixedUpdateObjects.Remove(obj);
+	public static void Register(IGameUpdate obj) 
+	{
+		fixedUpdateObjects.Add(obj);
+		LogCore.Log("GameUpdateDriver", $"Registered a {obj.GetType().Name} to the GameUpdateDriver.");
+	}
+	
+	
+
+	public static void Unregister(IGameUpdate obj)
+	{
+		fixedUpdateObjects.Remove(obj);
+		LogCore.Log("GameUpdateDriver", $"Unregistered a {obj.GetType().Name} from the GameUpdateDriver.");
+	}
+		
+
 
 	void Update()
 	{

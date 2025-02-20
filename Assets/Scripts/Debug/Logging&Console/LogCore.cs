@@ -11,6 +11,8 @@ public static class LogCore
 
     private static LogCategories logCategoriesAsset;
 
+    public static bool loggingEnabled = true;   
+
     static LogCore()
     {
         LoadLogCategoriesAsset();
@@ -31,17 +33,13 @@ public static class LogCore
         [CallerLineNumber] int line = 0,
         [CallerMemberName] string member = "")
     {
-        if (!blacklistedCategories.Contains(category))
+        if (loggingEnabled && !blacklistedCategories.Contains(category))
         {
             string formattedMessage = $"[{category}] {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
 
             if (category.Contains("Error", StringComparison.OrdinalIgnoreCase))
             {
                 Debug.LogError(formattedMessage);
-
-                //Deadass stop the program. I dont want that shit sliding. 
-
-                DebugCore.StopGame();
             }
             else if (category.Contains("Warning", StringComparison.OrdinalIgnoreCase))
             {
@@ -59,7 +57,18 @@ public static class LogCore
         }
     }
 
-    private static void TrackNewCategory(string category)
+	public static void Log(string message)
+	{
+		if (loggingEnabled && !blacklistedCategories.Contains("NoCategory"))
+		{
+			Debug.Log(message);
+			OnLog?.Invoke(message);
+			TrackNewCategory("NoCategory");
+		}
+	}
+
+
+	private static void TrackNewCategory(string category)
     {
         if (logCategoriesAsset != null && !logCategoriesAsset.categories.Contains(category))
         {

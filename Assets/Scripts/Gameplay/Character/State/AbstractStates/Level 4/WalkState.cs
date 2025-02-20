@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class WalkState : CharacterState
+public class WalkState : GroundedState
 {
 	//Level x state
 
@@ -38,6 +38,11 @@ public class WalkState : CharacterState
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
+		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
 		//...
 	}
 	#endregion setup

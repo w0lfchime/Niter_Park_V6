@@ -35,7 +35,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	//=//-----|General|-----------------------------------------------------------//=//
 	#region general
 	[Header("Meta")]
-	public string characterName;
+	public string characterInstanceName;
 	public string characterStandardName;
 	public bool nonPlayer = false;
 	public Player player;
@@ -64,7 +64,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	#region state
 	[Header("State Machine")]
 	public PerformanceCSM csm;
-	public CStateID stateID;
+	public string currentStateName;
+	public int stdMinStateDuration = 2;
 	#endregion state
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
@@ -277,7 +278,12 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//state
 		csm = new PerformanceCSM(this); //special init proc
 		
-		LogCore.Log("Character", $"Character initialized: {characterName}");
+		LogCore.Log("Character", $"Character initialized: {characterInstanceName}");
+
+		if (csm.verified)
+		{
+			CharacterPushState(CStateID.Suspended, 9, 9); 
+		}
 	}
 	protected virtual void RegisterCommands()
 	{
@@ -290,7 +296,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	protected virtual void SetMemberVariables()
 	{
 		//meta
-		this.characterName = bcd.characterName;
+		this.characterInstanceName = bcd.characterName + "_1";
 		this.characterStandardName = GetType().Name;
 
 		//debug 
@@ -402,7 +408,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			}
 		}
 
-		this.characterName = bcd.characterName;
+		this.characterInstanceName = bcd.characterName;
 
 
 		// Other data
@@ -442,18 +448,17 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	public virtual string CName(string message)
 	{
-		return $"{characterName}: {message}";
+		return $"{characterInstanceName}: {message}";
 	}
 	#endregion general
 	//=//-----|State|------------------------------------------------------------//=//
 	#region state
 	public void OnStateSet()
 	{
+		currentStateName = csm.GetState().stateName;
+
 		if (debug && stateText != null)
 		{
-			// Get the current state name from the dictionary
-			string currentStateName = csm.GetState().stateName;
-
 			// Remove the character class name prefix if it exists
 			if (currentStateName.StartsWith(characterStandardName))
 			{

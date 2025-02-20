@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class FlightState : CharacterState
+public class Flight : AirborneState
 {
 	//Level x state
 
@@ -31,7 +31,7 @@ public class FlightState : CharacterState
 	#region base
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
-	public FlightState(PerformanceCSM sm, Character character) : base(sm, character)
+	public Flight(PerformanceCSM sm, Character character) : base(sm, character)
 	{
 		//...
 	}
@@ -39,6 +39,21 @@ public class FlightState : CharacterState
 	{
 		base.SetStateReferences();
 		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
+		//...
+		allowDrift = true;
+		clearFromQueueOnSetState = true;
+		forceClearQueueOnEntry = true;
+		priority = 0;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = false;
+
+
+
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
@@ -129,6 +144,11 @@ public class FlightState : CharacterState
 
 	//======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_2
+	
+	protected override void ApplyGravity()
+	{
+		//do nothin
+	}
 	//=//----------------------------------------------------------------//=//
 	#endregion level_2
 	/////////////////////////////////////////////////////////////////////////////

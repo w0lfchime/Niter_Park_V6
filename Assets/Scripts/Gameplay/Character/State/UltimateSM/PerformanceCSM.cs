@@ -43,10 +43,12 @@ public struct SetStateRequest
 
 public class PerformanceCSM
 {
+	//Character State Machine
 	public Character machineOwner;
 	public string machineName;
 	public int stateCount;
 	public bool debug = true;
+	public bool verified = false;
 
 	public CStateID currentStateID;
 	public PerformanceState currentState;
@@ -64,7 +66,7 @@ public class PerformanceCSM
 		stateCount = Enum.GetValues(typeof(CStateID)).Length;
 		stateArray = new PerformanceState[stateCount];
 
-		machineName = $"{machineOwner.characterName} SM";
+		machineName = $"{machineOwner.characterInstanceName} SM";
 
 		RegisterStates();
 		VerifyStates();
@@ -81,7 +83,7 @@ public class PerformanceCSM
 			string stateClassName = stateID.ToString();
 			if (stateClassName.StartsWith("OO_"))
 			{
-				stateClassName = stateOwnerClassName + stateClassName.Substring(2);
+				stateClassName = stateOwnerClassName + stateClassName.Substring(3);
 			}
 
 			Type stateClass = Type.GetType(stateClassName);
@@ -91,27 +93,37 @@ public class PerformanceCSM
 				continue;
 			}
 
-			if (stateClass.IsSubclassOf(typeof(CharacterState)))
-			{
-				var stateInstance = (CharacterState)Activator.CreateInstance(stateClass, this, machineOwner);
-				SetStateArrayState(stateID, stateInstance);
-			}
+			var stateInstance = (CharacterState)Activator.CreateInstance(stateClass, this, machineOwner);
+			stateInstance.stateType = stateID;
+			stateInstance.SetStateMembers(); //get it in before state verification
+			SetStateArrayState(stateID, stateInstance);
 		}
 	}
 
 	public virtual void VerifyStates()
 	{
 		bool passed = true;
-		foreach (PerformanceState state in stateArray)
+		for (int i = 1; i < stateArray.Length; i++)
 		{
-			if (!state.VerifyState())
+			if (stateArray[i] == null)
 			{
-				LogCore.Log("PSM_Error", $"State {state.stateName} is invalid.");
+				LogCore.Log("CSM_Error", $"Index {i} of {machineOwner.characterInstanceName}'s stateArray is null.");
 				passed = false;
+			}
+			else if (!stateArray[i].VerifyState())
+			{
+				LogCore.Log("CSM_Error", $"State {stateArray[i].stateName} is invalid.");
+				passed = false;
+			} 
+			else
+			{
+				LogCore.Log("CSM_Setup", $"Verified state {stateArray[i].stateName}");
 			}
 		}
 
-		LogCore.Log(passed ? "PSM_Setup" : "PSM_Error",
+		verified = passed;
+
+		LogCore.Log(passed ? "CSM_Setup" : "CSM_Error",
 			passed ? "Successfully verified all registered character states."
 				   : "Failed to verify all registered character states.");
 	}
@@ -122,12 +134,14 @@ public class PerformanceCSM
 
 	protected void SetStateArrayState(CStateID stateID, PerformanceState state)
 	{
-		stateArray[(int)stateID] = state;
+		int index = (int)stateID;
+		LogCore.Log("CSM_Setup", $"Setting index {index} of state array to state {state.stateName}.");
+		stateArray[index] = state;
 	}
 
 	public void PushState(CStateID stateID, int pushForce, int frameLifetime)
 	{
-		bool coss = GetState(stateID).clearFromQueueOnSetState;
+		bool coss = (bool)GetState(stateID).clearFromQueueOnSetState;
 		var newRequest = new SetStateRequest(stateID, pushForce, coss);
 
 		requestQueue.Add(newRequest, frameLifetime);
@@ -140,7 +154,7 @@ public class PerformanceCSM
 
 	private void ProcessStateQueue()
 	{
-		if (requestQueue.Count == 0 || (currentState != null && !currentState.exitAllowed)) return;
+		if (requestQueue.Count == 0 || (currentState != null && currentState.exitAllowed != true)) return;
 
 		if (requestQueue.TryGetHighestPriority(out SetStateRequest bestRequest))
 		{
@@ -159,13 +173,15 @@ public class PerformanceCSM
 		currentState = GetState(newStateID);
 		currentStateID = newStateID;
 
-		if (currentState.forceClearQueueOnEntry)
+		if (currentState.forceClearQueueOnEntry == true)
 		{
 			requestQueue.Clear();
 		}
 
 		requestQueue.ClearClearOnSetState();
 		currentState.Enter();
+
+		machineOwner.OnStateSet();
 
 		LogCore.Log("PSM_Detail", $"Switched from {oldStateID} to {currentStateID}");
 	}
