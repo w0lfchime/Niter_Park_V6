@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class PhysicalState : CharacterState
 {
+	//Level 2 state 
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
-	private int onGroundingHoldFrames = 5;
-	private int onUngroundingHoldFrames = 5;
+	private int? onGroundingHoldFrames = 5;
+	private int? onUngroundingHoldFrames = 5;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -16,8 +17,6 @@ public class PhysicalState : CharacterState
 
 	//======// /==/==/==/=||[LOCAL]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region local
-	//Functions exlcusive to this member of the state heirarchy
-
 	//=//----------------------------------------------------------------//=//
 	#endregion local
 	/////////////////////////////////////////////////////////////////////////////
@@ -37,6 +36,11 @@ public class PhysicalState : CharacterState
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
+		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
 		//...
 	}
 	#endregion setup
@@ -223,13 +227,13 @@ public class PhysicalState : CharacterState
 
 					ch.onGrounding = true;
 
-					ch.ScheduleAction(onGroundingHoldFrames, () => ch.onGrounding = false);
+					ch.ScheduleAction((int)onGroundingHoldFrames, () => ch.onGrounding = false);
 				}
 				else
 				{
 					ch.onUngrounding = true;
 
-					ch.ScheduleAction(onUngroundingHoldFrames, () => ch.onUngrounding = false);
+					ch.ScheduleAction((int)onUngroundingHoldFrames, () => ch.onUngrounding = false);
 				}
 			}
 		}
@@ -265,34 +269,5 @@ public class PhysicalState : CharacterState
 	#endregion routes
 	//=//----------------------------------------------------------------//=//
 	#endregion level_2
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_3
-	//=//----------------------------------------------------------------//=//
-	#endregion level_3
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_4
-	//=//----------------------------------------------------------------//=//
-	#endregion level_4
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 5]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_5
-	//=//----------------------------------------------------------------//=//
-	#endregion level_5
 	/////////////////////////////////////////////////////////////////////////////
 }

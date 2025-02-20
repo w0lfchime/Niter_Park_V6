@@ -7,7 +7,7 @@ public class AirborneState : PhysicalState
 
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
-	public bool allowDrift;
+	public bool? allowDrift;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -40,6 +40,11 @@ public class AirborneState : PhysicalState
 		base.SetStateReferences();
 		//...
 	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
+		//...
+	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
@@ -47,7 +52,6 @@ public class AirborneState : PhysicalState
 	{
 		base.SetOnEntry();
 		//...
-		allowDrift = true;
 	}
 	protected override void PerFrame()
 	{
@@ -144,7 +148,7 @@ public class AirborneState : PhysicalState
 	#region level_3
 	public virtual void HandleDrift()
 	{
-		if (allowDrift)
+		if (allowDrift == true)
 		{
 			Vector3 tv = ch.inputMoveDirection;
 			tv *= ch.acd.driftMaxSpeed;

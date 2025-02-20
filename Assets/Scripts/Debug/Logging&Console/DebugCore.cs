@@ -6,15 +6,22 @@ using UnityEditor;
 
 public static class DebugCore
 {
-
+	private static bool stoppingGame = false;
 
 	public static void StopGame()
 	{
+		if (!stoppingGame)
+		{
+			stoppingGame = true;
+			Debug.Log("Stopping program...");
+			LogCore.loggingEnabled = false;
 #if UNITY_EDITOR
-    EditorApplication.isPlaying = false; // Stops Play Mode
+			EditorApplication.ExitPlaymode();
 #else
-		Application.Quit(); // Stops built game
-#endif
+    Application.Quit();
+#endif 
+		}
 	}
+
 
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class JumpState : PhysicalState
+public class JumpState : AirborneState
 {
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
@@ -38,6 +38,11 @@ public class JumpState : PhysicalState
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
+		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
 		//...
 	}
 	#endregion setup

@@ -26,9 +26,8 @@ public class ExampleState : CharacterState
 
 
 
-	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======//
-	//Overrides of the base class, performance state.
-	#region basea
+	//======// /==/==/==/=||[BASE]||=/==/==/==/==/==/==/==/==/==/==/==/ //======// 
+	#region base
 	//=//-----|Setup|----------------------------------------------------//=//
 	#region setup
 	public ExampleState(PerformanceCSM sm, Character character) : base(sm, character)
@@ -38,6 +37,11 @@ public class ExampleState : CharacterState
 	protected override void SetStateReferences()
 	{
 		base.SetStateReferences();
+		//...
+	}
+	public override void SetStateMembers()
+	{
+		base.SetStateMembers();
 		//...
 	}
 	#endregion setup

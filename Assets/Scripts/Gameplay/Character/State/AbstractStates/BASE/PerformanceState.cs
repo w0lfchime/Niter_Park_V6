@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public abstract class PerformanceState
@@ -15,16 +17,16 @@ public abstract class PerformanceState
 	public PerformanceCSM stateMachine;
 	//Flow Params
 	public CStateID exitState;
-	public bool clearFromQueueOnSetState;
-	public bool forceClearQueueOnEntry;
-	public int priority;
-	public int stateDuration; //0, if indefinite 
-	public int minimumStateDuration; //anti fluttering
-	public bool exitOnStateComplete;
+	public bool? clearFromQueueOnSetState;
+	public bool? forceClearQueueOnEntry;
+	public int? priority;
+	public int? stateDuration; //0, if indefinite 
+	public int? minimumStateDuration; //anti fluttering
+	public bool? exitOnStateComplete;
 	//Flow variables
-	public int currentFrame;
-	public bool exitAllowed; //overules priority
-	public bool stateComplete;
+	public int? currentFrame;
+	public bool? exitAllowed; //overules priority
+	public bool? stateComplete;
 
 	//clearOnExitState
 	//forceClearStateHeapOnEntry
@@ -47,7 +49,7 @@ public abstract class PerformanceState
 	#region get_and_set
 	public int GetPriority()
 	{
-		return priority;
+		return (int)priority;
 	}
 	#endregion get_and_set
 	//=//-----|Debug|----------------------------------------------------//=//
@@ -55,27 +57,37 @@ public abstract class PerformanceState
 	protected bool CheckStateForNullFields()
 	{
 		bool passed = true;
-
 		Type type = this.GetType();
-
+		List<string> unsetFields = new(); //TODO: setup as fuckin hash key value thing to clarify null locations
+		string failedMessage = $" unset field(s) in {type.Name}."; 
 		while (type != null && type != typeof(object))
 		{
-			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.DeclaredOnly);
-
+			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 			foreach (FieldInfo field in fields)
 			{
 				object value = field.GetValue(this);
 				if (value == null)
 				{
 					passed = false;
-					string message = $"Field {field.Name} is null, member of state {type.Name} of the state heirarchy.";
-					LogCore.Log("CriticalError", message);
+					string message = field.Name;
+					if (!unsetFields.Contains(message))
+					{
+						unsetFields.Add(message);
+					}
+
 				}
 			}
-
 			type = type.BaseType;
 		}
-
+		if (passed == false)
+		{
+			LogCore.Log("CriticalError", $"Check FAILED: {unsetFields.Count} {failedMessage}");
+			foreach (string str in unsetFields)
+			{
+				LogCore.Log(str);
+			}
+			DebugCore.StopGame();
+		}
 		return passed;
 	}
 	#endregion debug
@@ -95,9 +107,15 @@ public abstract class PerformanceState
 	{
 		this.stateName = GetType().Name;
 		this.stateMachine = sm;
+		
 	}
 	protected virtual void SetStateReferences()
 	{
+		//...
+	}
+	public virtual void SetStateMembers()
+	{
+		SetOnEntry();
 		//...
 	}
 	#endregion setup
@@ -132,7 +150,7 @@ public abstract class PerformanceState
 	protected virtual void RouteState()
 	{
 		//...
-		if (exitOnStateComplete && stateComplete)
+		if (exitOnStateComplete == true && stateComplete == true)
 		{
 			StatePushState(exitState, 2, 2);
 		}
@@ -183,49 +201,4 @@ public abstract class PerformanceState
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////
 
-
-
-
-	//======// /==/==/==/==||[LEVEL 1]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_1
-	//=//----------------------------------------------------------------//=//
-	#endregion level_1
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 2]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_2
-	//=//----------------------------------------------------------------//=//
-	#endregion level_2
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_3
-	//=//----------------------------------------------------------------//=//
-	#endregion level_3
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 4]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_4
-	//=//----------------------------------------------------------------//=//
-	#endregion level_4
-	/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	//======// /==/==/==/==||[LEVEL 5]||==/==/==/==/==/==/==/==/==/==/ //======//
-	#region level_5
-	//=//----------------------------------------------------------------//=//
-	#endregion level_5
-	/////////////////////////////////////////////////////////////////////////////
 }
