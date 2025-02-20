@@ -42,6 +42,7 @@ public class IdleAirborneState : AirborneState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_IdleAirborne;
 		allowDrift = true;
 		clearFromQueueOnSetState = true;
 		forceClearQueueOnEntry = false;

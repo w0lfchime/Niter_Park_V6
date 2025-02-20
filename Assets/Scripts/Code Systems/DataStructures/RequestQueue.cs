@@ -29,7 +29,7 @@ public class RequestQueue
 	{
 		List<SetStateRequest> toRemove = new();
 
-		foreach (var kvp in stateDict)
+		foreach (var kvp in stateDict.ToList())
 		{
 			int nextFrameLifetime = kvp.Value - 1;
 			if (nextFrameLifetime <= 0)

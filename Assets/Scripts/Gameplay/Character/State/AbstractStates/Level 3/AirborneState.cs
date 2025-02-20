@@ -52,6 +52,7 @@ public class AirborneState : PhysicalState
 	{
 		base.SetOnEntry();
 		//...
+		ch.isGroundedByState = false;
 	}
 	protected override void PerFrame()
 	{
@@ -151,8 +152,13 @@ public class AirborneState : PhysicalState
 		if (allowDrift == true)
 		{
 			Vector3 tv = ch.inputMoveDirection;
-			tv *= ch.acd.driftMaxSpeed;
-			AddForceByTargetVelocity("Drift", tv, ch.acd.driftForceFactor);
+			tv *= ch.acs.aDriftSpeed;
+			//TODO: HERE
+			if (tv != Vector3.zero)
+			{
+				AddForceByTargetVelocity("Drift", tv, ch.acs.aAccFactor);
+			}
+
 		}
 	}
 	//=//----------------------------------------------------------------//=//

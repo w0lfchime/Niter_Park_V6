@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class PhysicalState : CharacterState
@@ -50,6 +51,7 @@ public class PhysicalState : CharacterState
 	{
 		base.SetOnEntry();
 		//...
+		PhysicalDataUpdates(); //call here to prevent nulls or whatever
 	}
 	protected override void PerFrame()
 	{
@@ -92,16 +94,17 @@ public class PhysicalState : CharacterState
 		base.Update();
 		//...
 		PhysicalDataUpdates();
+		HandleNaturalRotation();
 	}
 	public override void FixedFrameUpdate()
 	{
+		SetGrounding();
 		//...
 		base.FixedFrameUpdate();
 	}
 	public override void FixedPhysicsUpdate()
 	{
 		WatchGrounding();
-		SetGrounding();
 		//...
 		base.FixedPhysicsUpdate();
 	}
@@ -175,14 +178,14 @@ public class PhysicalState : CharacterState
 		ch.UpdateDebugVector(tvName, targetVelocity, Color.white);
 
 		//force
-		Vector3 forceByTargetVeloity = Vector3.zero;
-		forceByTargetVeloity += targetVelocity - ch.velocity;
-		forceByTargetVeloity *= forceFactor;
-		AddForce(forceName, forceByTargetVeloity);
+		Vector3 forceByTargetVelocity = Vector3.zero;
+		forceByTargetVelocity += targetVelocity - ch.velocity;
+		forceByTargetVelocity *= forceFactor;
+		AddForce(forceName, forceByTargetVelocity);
 	}
 	protected virtual void ApplyGravity()
 	{
-		Vector3 gravForceVector = Vector3.up * ch.acd.gravityTerminalVelocity;
+		Vector3 gravForceVector = Vector3.up * ch.acs.gravityTerminalVelocity;
 		AddForce("Gravity", gravForceVector);
 	}
 	#endregion force
@@ -193,29 +196,29 @@ public class PhysicalState : CharacterState
 		float sphereRadius = cc.radius;
 		Vector3 capsuleRaycastStart = ch.transform.position + new Vector3(0, sphereRadius + 0.1f, 0);
 
-		UnityEngine.Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acd.groundCheckingDistance, Color.red);
-		UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(0.1f, 0, 0), Vector3.down * ch.acd.isGroundedDistance, Color.blue);
+		UnityEngine.Debug.DrawRay(capsuleRaycastStart, Vector3.down * ch.acs.groundCheckingDistance, Color.red);
+		UnityEngine.Debug.DrawRay(capsuleRaycastStart + new Vector3(0.1f, 0, 0), Vector3.down * ch.acs.isGroundedDistance, Color.blue);
 
 		RaycastHit hit;
 
-		if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, ch.acd.groundCheckingDistance, ch.groundLayer))
+		if (Physics.SphereCast(capsuleRaycastStart, sphereRadius, Vector3.down, out hit, ch.acs.groundCheckingDistance, ch.groundLayer))
 		{
 			ch.distanceToGround = hit.distance - sphereRadius;
 		}
 		else
 		{
-			ch.distanceToGround = ch.acd.groundCheckingDistance;
+			ch.distanceToGround = ch.acs.groundCheckingDistance;
 		}
 
 
 	}
 	public void SetGrounding()
 	{
-		bool groundedByDistance = ch.distanceToGround < ch.acd.isGroundedDistance;
+		bool groundedByDistance = ch.distanceToGround < ch.acs.isGroundedDistance;
 
 		if (groundedByDistance != ch.isGrounded)
 		{
-			if (Time.time - ch.lastGroundedCheckTime >= ch.acd.groundedSwitchCooldown)
+			if (Time.time - ch.lastGroundedCheckTime >= ch.acs.groundedSwitchCooldown)
 			{
 				ch.isGrounded = groundedByDistance;
 				ch.lastGroundedCheckTime = Time.time;
@@ -239,15 +242,64 @@ public class PhysicalState : CharacterState
 		}
 	}
 	#endregion grounding
+	//=//-----|Rotation|------------------------------------------------//=//
+	#region rotation
+	public void HandleNaturalRotation()
+	{
+		ch.facingRight = ch.velocityX > 0;
+
+		ch.clockwiseRotation = ch.facingRight;
+
+		Vector3 directionFacing = ch.facingRight ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
+
+		// Calculate the target rotation on the y-axis
+		Quaternion targetRotation = Quaternion.LookRotation(directionFacing, Vector3.up);
+
+		// Get the current rotation as Euler angles
+		Vector3 currentEuler = ch.rigAndMeshTransform.eulerAngles;
+
+		// Get the target rotation as Euler angles
+		Vector3 targetEuler = targetRotation.eulerAngles;
+
+		// Calculate the shortest direction to rotate on the y-axis
+		float currentY = currentEuler.y;
+		float targetY = targetEuler.y;
+
+		if (ch.clockwiseRotation)
+		{
+			if (currentY < targetY)
+				currentY += 360; // Prevent rotating the long way around
+		}
+		else
+		{
+			if (currentY > targetY)
+				targetY += 360; // Prevent rotating the long way around
+		}
+
+		// Smoothly lerp the y-axis rotation
+		float newY = Mathf.Lerp(currentY, targetY, Time.deltaTime * ch.acs.rotationSpeed);
+
+		// Set the new rotation while preserving other axes
+		ch.rigAndMeshTransform.rotation = Quaternion.Euler(currentEuler.x, newY, currentEuler.z);
+	}
+
+	#endregion rotation
 	//=//-----|Routes|--------------------------------------------------//=//
 	#region routes
 	protected virtual void HandleGrounding()
 	{
 		if (ch.onGrounding)
 		{
-			if (!ch.isGroundedBystate)
+			if (!ch.isGroundedByState)
 			{
-				StatePushState(CStateID.OO_IdleGrounded, 2, 2);
+				StatePushState(CStateID.OO_IdleGrounded, (int)priority + 1, 2);
+			}
+		}
+		if (ch.onUngrounding)
+		{
+			if (ch.isGroundedByState)
+			{
+				StatePushState(CStateID.OO_IdleAirborne, (int)priority + 1, 2);
 			}
 		}
 	}
@@ -255,7 +307,7 @@ public class PhysicalState : CharacterState
 	{
 		//assess
 		bool jumpAllowed = true;
-		if (ch.jumpCount > ch.acd.maxJumps)
+		if (ch.jumpCount > ch.acs.maxJumps)
 		{
 			jumpAllowed = false;
 		}

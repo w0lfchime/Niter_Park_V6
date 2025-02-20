@@ -33,12 +33,6 @@ public class IdleGroundedState : GroundedState
 	#region setup
 	public IdleGroundedState(PerformanceCSM sm, Character character) : base(sm, character)
 	{
-		clearFromQueueOnSetState = true;
-		forceClearQueueOnEntry = false;
-		priority = 2;
-		stateDuration = 0;
-		minimumStateDuration = 1;
-		exitOnStateComplete = false;
 		//...
 	}
 	protected override void SetStateReferences()
@@ -50,6 +44,13 @@ public class IdleGroundedState : GroundedState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_IdleGrounded; //clearly, itself
+		clearFromQueueOnSetState = true;
+		forceClearQueueOnEntry = false;
+		priority = 2;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = true;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
@@ -58,7 +59,7 @@ public class IdleGroundedState : GroundedState
 	{
 		base.SetOnEntry();
 		//...
-		ch.isGroundedBystate = true;
+		ch.isGroundedByState = true;
 	}
 	protected override void PerFrame()
 	{

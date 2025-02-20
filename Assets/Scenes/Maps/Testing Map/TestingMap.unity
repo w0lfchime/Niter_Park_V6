@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 674187939}
   - component: {fileID: 674187938}
   - component: {fileID: 674187937}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,6 +643,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1016326230}
+  - component: {fileID: 1016326231}
   m_Layer: 0
   m_Name: GameBox
   m_TagString: Untagged
@@ -666,6 +667,18 @@ Transform:
   - {fileID: 1011029911}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1016326231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016326229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a96e417c821fecc47b1cebfb437db787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1322918734
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,7 +691,7 @@ GameObject:
   - component: {fileID: 1322918738}
   - component: {fileID: 1322918737}
   - component: {fileID: 1322918736}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -823,7 +836,7 @@ GameObject:
   - component: {fileID: 1399541282}
   - component: {fileID: 1399541281}
   - component: {fileID: 1399541280}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -920,6 +933,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399541278}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1440703085 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4563278932899218135, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+  m_PrefabInstance: {fileID: 2084596220}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2084596220
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -968,6 +986,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6384067146299589893, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+      propertyPath: m_Name
+      value: RigAndMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 6760038376042658275, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+      propertyPath: acs
+      value: 
+      objectReference: {fileID: 11400000, guid: 6f53eef29505875438b0531d64e3966f, type: 2}
+    - target: {fileID: 6760038376042658275, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+      propertyPath: bcs
+      value: 
+      objectReference: {fileID: 11400000, guid: 0d73d567b8cf84b439adf3e44411b3bb, type: 2}
+    - target: {fileID: 6760038376042658275, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+      propertyPath: ucs
+      value: 
+      objectReference: {fileID: 11400000, guid: ca5f7f55e8bde874997d41863e8b828a, type: 2}
+    - target: {fileID: 6760038376042658275, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
+      propertyPath: rigAndMeshTransform
+      value: 
+      objectReference: {fileID: 1440703085}
     - target: {fileID: 6969727892146856842, guid: 7e39de7f42b42114a846b1573a12587a, type: 3}
       propertyPath: m_Name
       value: ParkGen2

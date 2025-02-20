@@ -49,7 +49,7 @@ public class GroundedState : PhysicalState
 	{
 		base.SetOnEntry();
 		//...
-		ch.isGroundedBystate = true; 
+		ch.isGroundedByState = true; 
 	}
 	protected override void PerFrame()
 	{
@@ -142,6 +142,8 @@ public class GroundedState : PhysicalState
 
 	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_3
+	//=//-----|Locomotion|-----------------------------------------------//=//
+
 	//=//----------------------------------------------------------------//=//
 	#endregion level_3
 	/////////////////////////////////////////////////////////////////////////////

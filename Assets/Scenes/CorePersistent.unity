@@ -389,66 +389,49 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1863873326275411024, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -6.1087646
-      objectReference: {fileID: 0}
     - target: {fileID: 2637760397279871982, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2637760397279871982, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061035156
+      value: -0.000091552734
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: fpsText
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: exitButton
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: gameTimeText
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: inputField
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: timeScaleText
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: sendButton
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: wholeTimePanel
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: wholeConsole
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: appSubStateTimeText
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: refreshButton
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: unscaledGameTimeText
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: consoleContent
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 7143983306831396949, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7143983306831396949, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7143983306831396949, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
+    - target: {fileID: 6038360399401317218, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+      propertyPath: consoleScrollRect
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8427582250573849058, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_Value
-      value: 1
+      propertyPath: m_Size
+      value: 0.9998469
       objectReference: {fileID: 0}
-    - target: {fileID: 8494904373020387604, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -759
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2805485069391401878, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects:
-    - {fileID: 3108109491326095421, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
+    - {fileID: 4426779761085884091, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c1ac4d5f9812e745a0118035769c62d, type: 3}
