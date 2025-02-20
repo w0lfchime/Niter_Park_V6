@@ -53,7 +53,7 @@ public class PerformanceCSM
 	public CStateID currentStateID;
 	public PerformanceState currentState;
 	protected PerformanceState[] stateArray;
-	protected RequestQueue requestQueue = new();
+	public RequestQueue requestQueue = new();
 
 	public int perFrameProcessLimit = 10;
 	private int currentFrame = 0;

@@ -44,6 +44,13 @@ public class WalkState : GroundedState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_IdleGrounded;
+		clearFromQueueOnSetState = true;
+		forceClearQueueOnEntry = false;
+		priority = 2;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = true;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//

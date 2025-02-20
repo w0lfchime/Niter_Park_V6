@@ -5,7 +5,12 @@ using System.Runtime.CompilerServices;
 
 public static class LogCore
 {
-    private static HashSet<string> blacklistedCategories = new HashSet<string>();
+    private static HashSet<string> blacklistedCategories = new HashSet<string>
+    {
+        "PSM_Flow",
+    };
+
+    private static int messageCount = 0;
 
     public static event Action<string> OnLog;
 
@@ -35,7 +40,9 @@ public static class LogCore
     {
         if (loggingEnabled && !blacklistedCategories.Contains(category))
         {
-            string formattedMessage = $"[{category}] {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
+            messageCount++;
+
+            string formattedMessage = $"[{category}] {messageCount} {message} (at {System.IO.Path.GetFileName(file)}:{line} in {member})";
 
             if (category.Contains("Error", StringComparison.OrdinalIgnoreCase))
             {

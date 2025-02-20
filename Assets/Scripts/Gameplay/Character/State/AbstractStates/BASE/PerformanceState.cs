@@ -16,7 +16,7 @@ public abstract class PerformanceState
 	//refs
 	public PerformanceCSM stateMachine;
 	//Flow Params
-	public CStateID exitState;
+	public CStateID? exitState;
 	public bool? clearFromQueueOnSetState;
 	public bool? forceClearQueueOnEntry;
 	public int? priority;
@@ -131,10 +131,14 @@ public abstract class PerformanceState
 	{
 		currentFrame++;
 
-		if (currentFrame < minimumStateDuration)
+		if (currentFrame <= minimumStateDuration)
 		{
 			exitAllowed = false;
 			stateComplete = false;
+		}
+		if (currentFrame > minimumStateDuration)
+		{
+			exitAllowed = true;
 		}
 		if (stateDuration != 0 && currentFrame >= stateDuration)
 		{
@@ -146,13 +150,13 @@ public abstract class PerformanceState
 	#endregion data_management
 	//=//-----|Routing|--------------------------------------------------//=//
 	#region routing
-	protected abstract void StatePushState(CStateID stateID, int pushForce, int lifetime); //for push state
+	protected abstract void StatePushState(CStateID? stateID, int pushForce, int lifetime); //for push state
 	protected virtual void RouteState()
 	{
 		//...
 		if (exitOnStateComplete == true && stateComplete == true)
 		{
-			StatePushState(exitState, 2, 2);
+			StatePushState(exitState, (int)priority + 1, 2);
 		}
 	}
 	protected virtual void RouteStateFixed()

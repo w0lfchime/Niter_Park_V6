@@ -44,6 +44,7 @@ public class Flight : AirborneState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_IdleAirborne;
 		allowDrift = true;
 		clearFromQueueOnSetState = true;
 		forceClearQueueOnEntry = true;

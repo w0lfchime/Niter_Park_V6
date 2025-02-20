@@ -13,6 +13,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine.InputSystem;
 using System;
+using System.Runtime.CompilerServices;
 
 public enum CStateID //Standard state types
 {
@@ -43,7 +44,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	[Header("Component Refs")]
 	public Rigidbody rigidBody;
 	public CapsuleCollider capsuleCollider;
-	public Animator animator;
 
 	[Header("Debug")]
 	public bool debug;
@@ -51,11 +51,12 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public Transform debugParentTransform;
 	public TextMeshPro stateText;
 	public VectorRenderManager vrm;
+	public TextMeshPro debugTextPlus;
 
-	[Header("Stats (Data)")]
-	public CharacterData ucd; //Universal
-	public CharacterData bcd; //Base Character Specific
-	public CharacterData acd; //Active Universal+Base 
+	[Header("Stats")]
+	public CharacterStats ucs; //Universal
+	public CharacterStats bcs; //Base Character Specific
+	public CharacterStats acs; //Active Universal+Base 
 
 	[Header("Time")]
 	private int currentFrame = 0;
@@ -66,7 +67,18 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public PerformanceCSM csm;
 	public string currentStateName;
 	public int stdMinStateDuration = 2;
+
+	[Header("CSM debug")]
+	public int requestQueueSize;
+	public bool currStateExitAllowed;
+	public bool currStatePriority;
 	#endregion state
+	//=//-----|Animation|---------------------------------------------------------//=//
+	#region animation
+	[Header("Animation Refs")]
+	public Animator animator;
+	public Transform rigAndMeshTransform;
+	#endregion animation
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
 	[Header("Input")]
@@ -100,14 +112,14 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	[Header("Ground Checking Variables")]
 	public LayerMask groundLayer;
 	public bool isGrounded; //is the capsule physically 'grounded'
-	public bool isGroundedBystate; //is the character grounded by state definition
+	public bool isGroundedByState; //is the character grounded by state definition
 	public bool onGrounding; //true a few frames after isgrounded is set to false to true
 	public bool onUngrounding; //true a few frames after isgrounded is set from true to false
 	public float distanceToGround;
 	public float lastGroundedCheckTime = 0.0f;
 	public float timeSinceLastGrounding = 0.0f;
 
-	[Header("Rotation Variables")]
+	[Header("HandleNaturalRotation Variables")]
 	public bool clockwiseRotation = true;
 	public bool facingRight;
 
@@ -123,6 +135,11 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public Vector3 appliedForce = Vector3.zero;
 	public Vector3 appliedImpulseForce = Vector3.zero;
 	#endregion gameplay_data
+	//=//-----|Character Stats|---------------------------------------------------//=//
+	#region character_stats
+ 
+
+	#endregion character_stats
 	//=//-------------------------------------------------------------------------//=//
 	#endregion fields
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +168,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	private void OnDisable()
 	{
 		//...
-		GameUpdateDriver.Register(this);
+		GameUpdateDriver.Unregister(this);
 	}
 	#endregion event
 	//=//-----|Updates|----------------------------------------------------------//=//
@@ -171,10 +188,13 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		CharacterFixedFrameUpdate();
 		//...
 		csm.PSMFixedFrameUpdate();		
+		CSMDebugUpdate(); //HACK:
 	}
 	private void FixedUpdate() // FixedPhysicsUpdate
 	{
 		//...
+		HandleImpulseForce();
+		HandleRegularForce();
 		csm.PSMFixedPhysicsUpdate();
 	}
 	private void LateUpdate()
@@ -238,15 +258,33 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	/// <summary>
 	/// For pushing states from states
 	/// </summary>
-	public void StatePushState(CStateID stateID, int pushForce, int frameLifetime)
+	public void StatePushState(CStateID? stateID, int pushForce, int frameLifetime)
 	{
-		csm.PushState(stateID, pushForce, frameLifetime);
+		csm.PushState((CStateID)stateID, pushForce, frameLifetime);
 	}
-	private void CharacterPushState(CStateID stateID, int pushForce, int frameLifetime)
+	private void CharacterPushState(CStateID? stateID, int pushForce, int frameLifetime)
 	{
-		csm.PushState(stateID, pushForce, frameLifetime);
+		csm.PushState((CStateID)stateID, pushForce, frameLifetime);
+	}
+	public void CSMDebugUpdate()
+	{
+		requestQueueSize = csm.requestQueue.Count;
+		currStateExitAllowed = csm.currentState.exitAllowed == true;
 	}
 	#endregion csm
+	//=//-----|Physics|----------------------------------------------------------//=//
+	#region physics
+	private void HandleRegularForce()
+	{
+		rigidBody.AddForce(appliedForce, ForceMode.Force);
+		appliedForce = Vector3.zero;
+	}
+	private void HandleImpulseForce()
+	{
+		rigidBody.AddForce(appliedImpulseForce, ForceMode.Impulse);
+		appliedImpulseForce = Vector3.zero;
+	}
+	#endregion physics
 	//=//------------------------------------------------------------------------//=//
 	#endregion local
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -296,8 +334,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	protected virtual void SetMemberVariables()
 	{
 		//meta
-		this.characterInstanceName = bcd.characterName + "_1";
 		this.characterStandardName = GetType().Name;
+		this.characterInstanceName = GetType().Name + "_1";
 
 		//debug 
 		this.debug = GlobalData.debug;
@@ -368,9 +406,15 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		}
 		inputLookDirection.Normalize();
 		//...
+
+
 		if (Input.GetKeyDown(KeyCode.Alpha9))
 		{
 			SetDebug(!debug);
+		}
+		if (debug && Input.GetKeyDown(KeyCode.U))
+		{
+			UpdateACD();
 		}
 		//...
 	}
@@ -378,40 +422,37 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	{
 		// ucd + bcd = acd
 
-		if (ucd == null || bcd == null || acd == null)
+		if (ucs == null || bcs == null || acs == null)
 		{
-			Debug.LogError("Error: ucd, bcd, or acd null.");
+			Debug.LogError("Error: ucs, bcs, or acs null.");
 			return;
 		}
 
 		// Get all fields of the ScriptableObject type
-		FieldInfo[] fields = typeof(CharacterData).GetFields(BindingFlags.Public | BindingFlags.Instance);
+		FieldInfo[] fields = typeof(CharacterStats).GetFields(BindingFlags.Public | BindingFlags.Instance);
 
 		foreach (var field in fields)
 		{
 			// Get the values from the first two objects
-			object value1 = field.GetValue(ucd);
-			object value2 = field.GetValue(bcd);
+			object value1 = field.GetValue(ucs);
+			object value2 = field.GetValue(bcs);
 
 			// Handle addition for specific types
 			if (value1 is int intValue1 && value2 is int intValue2)
 			{
-				field.SetValue(acd, intValue1 + intValue2);
+				field.SetValue(acs, intValue1 + intValue2);
 			}
 			else if (value1 is float floatValue1 && value2 is float floatValue2)
 			{
-				field.SetValue(acd, floatValue1 + floatValue2);
+				field.SetValue(acs, floatValue1 + floatValue2);
 			}
 			else if (value1 is Vector3 vectorValue1 && value2 is Vector3 vectorValue2)
 			{
-				field.SetValue(acd, vectorValue1 + vectorValue2);
+				field.SetValue(acs, vectorValue1 + vectorValue2);
 			}
 		}
 
-		this.characterInstanceName = bcd.characterName;
-
-
-		// Other data
+		this.characterInstanceName = bcs.characterName;
 	}
 	protected virtual void UpdateCharacterData() //TODO: better name 
 	{
@@ -466,6 +507,13 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			}
 
 			stateText.text = currentStateName;
+		}
+	}
+	private void UpdateDebugText()
+	{
+		if (debugTextPlus != null)
+		{
+			//TODO: idk
 		}
 	}
 	#endregion state

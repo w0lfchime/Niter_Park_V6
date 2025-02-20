@@ -31,9 +31,7 @@ public class JumpState : AirborneState
 	#region setup
 	public JumpState(PerformanceCSM sm, Character character) : base(sm, character)
 	{
-		minimumStateDuration = 5;
-		exitState = CStateID.OO_IdleAirborne;
-		exitOnStateComplete = true;
+		
 	}
 	protected override void SetStateReferences()
 	{
@@ -44,6 +42,14 @@ public class JumpState : AirborneState
 	{
 		base.SetStateMembers();
 		//...
+		allowDrift = true;
+		exitState = CStateID.OO_IdleAirborne;
+		clearFromQueueOnSetState = false;
+		forceClearQueueOnEntry = false;
+		priority = 3;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = true;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
@@ -89,7 +95,7 @@ public class JumpState : AirborneState
 		ch.rigidBody.linearVelocity = newVelocity;
 
 		Vector3 jumpImpluseForce = Vector3.up;
-		jumpImpluseForce *= ch.acd.jumpForce;
+		jumpImpluseForce *= ch.acs.jumpForce;
 
 		AddImpulseForce("JumpForce", jumpImpluseForce);
 	}

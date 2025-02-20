@@ -44,6 +44,13 @@ public class RunState : GroundedState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_Run;
+		clearFromQueueOnSetState = true;
+		forceClearQueueOnEntry = false;
+		priority = 2;
+		stateDuration = 0;
+		minimumStateDuration = ch.stdMinStateDuration;
+		exitOnStateComplete = true;
 	}
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//

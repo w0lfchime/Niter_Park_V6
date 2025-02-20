@@ -43,11 +43,12 @@ public class Suspended : CharacterState
 	{
 		base.SetStateMembers();
 		//...
+		exitState = CStateID.OO_IdleAirborne;
 		clearFromQueueOnSetState = true;
 		forceClearQueueOnEntry = true;
 		priority = 0;
 		stateDuration = 0;
-		minimumStateDuration = 120;
+		minimumStateDuration = 10;
 		exitOnStateComplete = false;
 	}
 	#endregion setup
@@ -68,6 +69,10 @@ public class Suspended : CharacterState
 	#region routings
 	protected override void RouteState()
 	{
+		if (exitAllowed == true && ih.anyActionAtAll) 
+		{
+			StatePushState(exitState, 9, 1);
+		}
 		//...
 		base.RouteState();
 	}
