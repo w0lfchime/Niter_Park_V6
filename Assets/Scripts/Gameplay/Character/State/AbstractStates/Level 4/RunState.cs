@@ -55,10 +55,16 @@ public class RunState : GroundedState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
 		//...
+		currMaxSpeed = ch.acs.gRunSpeed;
 	}
 	protected override void PerFrame()
 	{

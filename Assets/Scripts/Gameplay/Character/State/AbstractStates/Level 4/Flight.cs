@@ -7,7 +7,8 @@ public class Flight : AirborneState
 
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
-
+	private int flightSpeed;
+	private int flightAccFactor;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -59,6 +60,11 @@ public class Flight : AirborneState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
@@ -160,6 +166,14 @@ public class Flight : AirborneState
 
 	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_3
+
+	protected override void HandleDrift()
+	{
+		Vector3 tv = ch.inputMoveDirection;
+		tv *= flightSpeed;
+
+		AddForceByTargetVelocity("Flight", tv, flightAccFactor);
+	}
 	//=//----------------------------------------------------------------//=//
 	#endregion level_3
 	/////////////////////////////////////////////////////////////////////////////

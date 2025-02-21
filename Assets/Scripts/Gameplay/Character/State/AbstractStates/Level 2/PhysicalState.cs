@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class PhysicalState : CharacterState
@@ -47,6 +48,11 @@ public class PhysicalState : CharacterState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
@@ -105,6 +111,7 @@ public class PhysicalState : CharacterState
 	public override void FixedPhysicsUpdate()
 	{
 		WatchGrounding();
+		ApplyGravity();
 		//...
 		base.FixedPhysicsUpdate();
 	}
@@ -246,42 +253,29 @@ public class PhysicalState : CharacterState
 	#region rotation
 	public void HandleNaturalRotation()
 	{
+
 		ch.facingRight = ch.velocityX > 0;
 
-		ch.clockwiseRotation = ch.facingRight;
+		if (ch.inputMoveDirection != Vector3.zero)
+		{
+			ch.facingRight = ch.inputMoveDirection.x > 0;
+		}
 
-		Vector3 directionFacing = ch.facingRight ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
+		bool clockwiseRotation = ch.FlipCoin();
 
-		// Calculate the target rotation on the y-axis
+		Vector3 directionFacing = ch.facingRight ? Vector3.right : Vector3.left;
+
+		// Calculate the target rotation
 		Quaternion targetRotation = Quaternion.LookRotation(directionFacing, Vector3.up);
 
-		// Get the current rotation as Euler angles
-		Vector3 currentEuler = ch.rigAndMeshTransform.eulerAngles;
-
-		// Get the target rotation as Euler angles
-		Vector3 targetEuler = targetRotation.eulerAngles;
-
-		// Calculate the shortest direction to rotate on the y-axis
-		float currentY = currentEuler.y;
-		float targetY = targetEuler.y;
-
-		if (ch.clockwiseRotation)
-		{
-			if (currentY < targetY)
-				currentY += 360; // Prevent rotating the long way around
-		}
-		else
-		{
-			if (currentY > targetY)
-				targetY += 360; // Prevent rotating the long way around
-		}
-
-		// Smoothly lerp the y-axis rotation
-		float newY = Mathf.Lerp(currentY, targetY, Time.deltaTime * ch.acs.rotationSpeed);
-
-		// Set the new rotation while preserving other axes
-		ch.rigAndMeshTransform.rotation = Quaternion.Euler(currentEuler.x, newY, currentEuler.z);
+		// Smoothly interpolate the rotation using Slerp
+		ch.rigAndMeshTransform.rotation = Quaternion.Slerp(
+			ch.rigAndMeshTransform.rotation,
+			targetRotation,
+			Time.deltaTime * ch.acs.rotationSpeed
+		);
 	}
+
 
 	#endregion rotation
 	//=//-----|Routes|--------------------------------------------------//=//

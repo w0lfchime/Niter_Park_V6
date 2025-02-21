@@ -48,6 +48,11 @@ public class AirborneState : PhysicalState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
@@ -95,13 +100,13 @@ public class AirborneState : PhysicalState
 	}
 	public override void FixedFrameUpdate()
 	{
-		ApplyGravity();
 		HandleDrift();
 		//...
 		base.FixedFrameUpdate();
 	}
 	public override void FixedPhysicsUpdate()
 	{
+
 		//...
 		base.FixedPhysicsUpdate();
 	}
@@ -147,15 +152,15 @@ public class AirborneState : PhysicalState
 
 	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_3
-	public virtual void HandleDrift()
+	protected virtual void HandleDrift()
 	{
 		if (allowDrift == true)
 		{
 			Vector3 tv = ch.inputMoveDirection;
-			tv *= ch.acs.aDriftSpeed;
-			//TODO: HERE
+			
 			if (tv != Vector3.zero)
 			{
+				tv *= ch.acs.aDriftSpeed;
 				AddForceByTargetVelocity("Drift", tv, ch.acs.aAccFactor);
 			}
 

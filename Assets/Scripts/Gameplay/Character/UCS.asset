@@ -13,22 +13,20 @@ MonoBehaviour:
   m_Name: UCS
   m_EditorClassIdentifier: 
   characterName: 
-  gSneakSpeed: 10
-  gWalkSpeed: 20
-  gRunSpeed: 30
-  gAccFactor: 0.5
-  aDriftSpeed: 40
-  aAccFactor: 1
+  gSneakSpeed: 3
+  gWalkSpeed: 5
+  gRunSpeed: 10
+  gAccFactor: 3
+  aDriftSpeed: 10
+  aAccFactor: 0.5
   groundCheckingDistance: 5
   isGroundedDistance: 0.2
   groundedSwitchCooldown: 0.2
-  allowRotationPlayerSpeedFactor: 0
-  allowRotationTimeAfterGrounding: 0
-  rotationSpeed: 0
+  rotationSpeed: 15
   maxJumpHoldTime: 0.5
   jumpDirectionalInfluenceFactor: 0.5
   maxJumps: 2
-  jumpForce: 25
+  jumpForce: 15
   gravityTerminalVelocity: -25
   gravityForceFactor: 0
   gravityFactorWhileJumping: 0.004

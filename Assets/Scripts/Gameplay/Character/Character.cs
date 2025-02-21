@@ -103,24 +103,21 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public float characterHeight;
 
 	[Header("Movement Variables")]
-	public float currentMaxSpeed;
-	public float currentControlForce;
 	public float playerSpeed;
 	public float velocityX;
 	public float velocityY;
 
 	[Header("Ground Checking Variables")]
 	public LayerMask groundLayer;
-	public bool isGrounded; //is the capsule physically 'grounded'
-	public bool isGroundedByState; //is the character grounded by state definition
-	public bool onGrounding; //true a few frames after isgrounded is set to false to true
-	public bool onUngrounding; //true a few frames after isgrounded is set from true to false
+	public bool isGrounded; 
+	public bool isGroundedByState; 
+	public bool onGrounding; 
+	public bool onUngrounding; 
 	public float distanceToGround;
 	public float lastGroundedCheckTime = 0.0f;
 	public float timeSinceLastGrounding = 0.0f;
 
 	[Header("HandleNaturalRotation Variables")]
-	public bool clockwiseRotation = true;
 	public bool facingRight;
 
 	[Header("Jump Variables")]
@@ -137,8 +134,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	#endregion gameplay_data
 	//=//-----|Character Stats|---------------------------------------------------//=//
 	#region character_stats
- 
-
+	//TODO: what are we doing about this
 	#endregion character_stats
 	//=//-------------------------------------------------------------------------//=//
 	#endregion fields
@@ -386,7 +382,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		{
 			inputMoveDirection += Vector3.left;
 		}
-		inputMoveDirection.Normalize();
 		//"looking" input
 		if (inputHandler.GetButtonHold("LookUp"))
 		{
@@ -404,6 +399,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		{
 			inputLookDirection += Vector3.left;
 		}
+
+		inputMoveDirection.Normalize();
 		inputLookDirection.Normalize();
 		//...
 
@@ -473,7 +470,17 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	/////////////////////////////////////////////////////////////////////////////////////
 
 
+	//======// /==/==/==/=||[UTILITY]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	#region utility
+	public bool FlipCoin()
+	{
+		int randomNumber = UnityEngine.Random.Range(0, 100);
+		return randomNumber < 50;
+	}
 
+	//=//------------------------------------------------------------------------//=//
+	#endregion utility 
+	/////////////////////////////////////////////////////////////////////////////////////
 
 	//======// /==/==/==/=||[DEBUG]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region debug
@@ -485,7 +492,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		debug = isEnabled;
 
 		//set other debug components and what not
-		debugParentTransform.gameObject.SetActive(enabled);
+		debugParentTransform.gameObject.SetActive(debug);
 	}
 	public virtual string CName(string message)
 	{
