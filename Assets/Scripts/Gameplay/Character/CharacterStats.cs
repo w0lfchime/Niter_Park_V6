@@ -7,10 +7,10 @@ public class CharacterStats : ScriptableObject
     public string characterName;
 
 	[Header("Movement")]
-	public float gSneakSpeed = 10;
-	public float gWalkSpeed = 20;
-	public float gRunSpeed = 30;
-	public float gAccFactor = 0.5f;
+	public float gSneakSpeed = 3;
+	public float gWalkSpeed = 5;
+	public float gRunSpeed = 10;
+	public float gAccFactor = 3.0f;
 	public float aDriftSpeed = 10;
 	public float aAccFactor = 0.5f;
 
@@ -20,15 +20,13 @@ public class CharacterStats : ScriptableObject
 	public float groundedSwitchCooldown = 0.2f;
 
 	[Header("HandleNaturalRotation")]
-	public float allowRotationPlayerSpeedFactor = 0;
-	public float allowRotationTimeAfterGrounding = 0;
-	public float rotationSpeed = 0;
+	public float rotationSpeed = 15;
 
 	[Header("Jump")]
 	public float maxJumpHoldTime = 0.5f;
 	public float jumpDirectionalInfluenceFactor = 0.5f;
 	public int maxJumps = 2;
-	public float jumpForce = 25.0f;
+	public float jumpForce = 15.0f;
 
 	[Header("Physics")]
 	public float gravityTerminalVelocity = -25.0f; //Terminal Velocity 

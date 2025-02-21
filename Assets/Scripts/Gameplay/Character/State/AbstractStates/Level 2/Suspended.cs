@@ -54,9 +54,9 @@ public class Suspended : CharacterState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
-	protected override void SetOnEntry()
+	protected override void ProcessInput()
 	{
-		base.SetOnEntry();
+		base.ProcessInput();
 		//...
 	}
 	protected override void PerFrame()

@@ -11,9 +11,6 @@ public class CharacterState : PerformanceState
 	[Header("Parent")]
 	protected Character ch;
 
-	[Header("Meta")]
-	public CStateID stateType;
-
 	[Header("Component Refs")]
 	protected Animator anim;
 	protected Rigidbody rb;
@@ -58,6 +55,11 @@ public class CharacterState : PerformanceState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();

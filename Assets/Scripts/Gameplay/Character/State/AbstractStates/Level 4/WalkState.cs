@@ -55,10 +55,16 @@ public class WalkState : GroundedState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
 		//...
+		currMaxSpeed = ch.acs.gWalkSpeed;
 	}
 	protected override void PerFrame()
 	{

@@ -54,6 +54,11 @@ public class JumpState : AirborneState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected override void ProcessInput()
+	{
+		base.ProcessInput();
+		//...
+	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();

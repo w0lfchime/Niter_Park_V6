@@ -94,7 +94,7 @@ public class PerformanceCSM
 			}
 
 			var stateInstance = (CharacterState)Activator.CreateInstance(stateClass, this, machineOwner);
-			stateInstance.stateType = stateID;
+			stateInstance.stateID = stateID;
 			stateInstance.SetStateMembers(); //get it in before state verification
 			SetStateArrayState(stateID, stateInstance);
 		}

@@ -16,6 +16,7 @@ public abstract class PerformanceState
 	//refs
 	public PerformanceCSM stateMachine;
 	//Flow Params
+	public CStateID? stateID;
 	public CStateID? exitState;
 	public bool? clearFromQueueOnSetState;
 	public bool? forceClearQueueOnEntry;
@@ -121,6 +122,10 @@ public abstract class PerformanceState
 	#endregion setup
 	//=//-----|Data Management|------------------------------------------//=//
 	#region data_management
+	protected virtual void ProcessInput()
+	{
+		//...
+	}
 	protected virtual void SetOnEntry()
 	{
 		exitAllowed = false;
@@ -182,6 +187,7 @@ public abstract class PerformanceState
 	#region mono
 	public virtual void Update()
 	{
+		ProcessInput();
 		//...
 		RouteState();
 	}

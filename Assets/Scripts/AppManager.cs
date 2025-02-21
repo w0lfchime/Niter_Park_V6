@@ -5,11 +5,16 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum PlayableCharacters
+{
+    ParkGen2,
+    Ric,
+    Storm,
+}
+
 public class AppManager : MonoBehaviour
 {
     public static AppManager Instance { get; private set; }
-
-
 
     public Dictionary<string, Player> players { get; private set; }
     public AppState CurrentState { get; private set; }
@@ -18,10 +23,13 @@ public class AppManager : MonoBehaviour
     public string DevLayerScene = "DevLayer";
 
 
-    
     public void AddPlayer(string name)
     {
-        //players.Add(name, new Player(name));
+        
+    }
+    public void AddPlayer()
+    {
+        string name = $""; 
     }
 
     /// <summary>
