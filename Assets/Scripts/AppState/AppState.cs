@@ -1,82 +1,69 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class AppState
 {
-    public string AppStateUIScene;
-    public string AppState3DScene;
+    public string appState3DScene;
+    public string appStateUIScene;
 
     // Service locator references
     protected UIManager _uiManager { get; private set; }
     protected SettingsManager _settingsManager { get; private set; }
 
-    // SubState management
-    private Stack<SubState> _subStateStack = new Stack<SubState>();
-
     public AppState()
     {
-        // Optionally initialize service locators here
-    }
 
-    // Lifecycle Methods
-    public virtual void Enter()
+    }
+	//Scenes
+	#region scenes
+	public void LoadScenes()
     {
-        //LogCore.Log($"");
+		if (appStateUIScene != null)
+		{
+		    SceneManager.LoadScene(appStateUIScene, LoadSceneMode.Additive);
+		}
+		if (appState3DScene != null)
+		{
+			SceneManager.LoadScene(appState3DScene, LoadSceneMode.Additive);
+		}
+    }
+	public void UnloadScenes()
+	{
+		if (appStateUIScene != null)
+		{
+			SceneManager.UnloadSceneAsync(appStateUIScene);
+		}
+		if (appState3DScene != null)
+		{
+			SceneManager.UnloadSceneAsync(appState3DScene);
+		}
+	}
+	#endregion scenes
+
+	// Lifecycle Methods
+	public virtual void Enter()
+    {
+		LoadScenes();
+		//...
     }
 
     public virtual void Exit()
     {
-        Debug.Log($"Exiting AppState: {GetType().Name}");
-        while (_subStateStack.Count > 0)
-        {
-            PopSubState();
-        }
+		//...
+		UnloadScenes();
     }
 
     public virtual void Update()
     {
-        if (_subStateStack.Count > 0)
-        {
-            _subStateStack.Peek().Update();
-        }
+
     }
 
     public virtual void FixedUpdate()
     {
-        if (_subStateStack.Count > 0)
-        {
-            _subStateStack.Peek().FixedUpdate();
-        }
-    }
-
-    // SubState Flow Management
-    public void PushSubState(SubState subState)
-    {
-        if (_subStateStack.Count > 0)
-        {
-            _subStateStack.Peek().Pause();
-        }
-
-        _subStateStack.Push(subState);
-        subState.Enter();
-
 
     }
 
-    public void PopSubState()
-    {
-        if (_subStateStack.Count > 0)
-        {
-            SubState exitingState = _subStateStack.Pop();
-            exitingState.Exit();
-
-            if (_subStateStack.Count > 0)
-            {
-                _subStateStack.Peek().Resume();
-            }
-        }
-    }
-
-    public SubState CurrentSubState => _subStateStack.Count > 0 ? _subStateStack.Peek() : null;
 }

@@ -27,7 +27,7 @@ public class Bootstrap : MonoBehaviour
         ServiceLocator.RegisterService<AudioManager>(GetComponent<AudioManager>());
         ServiceLocator.RegisterService<CameraManager>(GetComponent<CameraManager>());
         //ServiceLocator.RegisterService<InputManager>(GetComponent<InputManager>());
-        ServiceLocator.RegisterService<SceneManager>(GetComponent<SceneManager>());
+
         ServiceLocator.RegisterService<TimeManager>(GetComponent<TimeManager>());
         ServiceLocator.RegisterService<UIManager>(GetComponent<UIManager>());
         ServiceLocator.RegisterService<VectorRenderManager>(GetComponent<VectorRenderManager>());

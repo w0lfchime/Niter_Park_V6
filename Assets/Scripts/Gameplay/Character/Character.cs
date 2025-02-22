@@ -39,7 +39,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public string characterInstanceName;
 	public string characterStandardName;
 	public bool nonPlayer = false;
-	public Player player;
+	public LocalPlayer player;
 
 	[Header("Component Refs")]
 	public Rigidbody rigidBody;

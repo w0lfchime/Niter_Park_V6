@@ -13,24 +13,22 @@ MonoBehaviour:
   m_Name: PG2_acs
   m_EditorClassIdentifier: 
   characterName: 
-  gSneakSpeed: 0
-  gWalkSpeed: 0
-  gRunSpeed: 0
-  gAccFactor: 0
-  aDriftSpeed: 0
-  aAccFactor: 0
-  groundCheckingDistance: 0
-  isGroundedDistance: 0
-  groundedSwitchCooldown: 0
-  allowRotationPlayerSpeedFactor: 0
-  allowRotationTimeAfterGrounding: 0
-  rotationSpeed: 0
-  maxJumpHoldTime: 0
-  jumpDirectionalInfluenceFactor: 0
+  gSneakSpeed: 3
+  gWalkSpeed: 5
+  gRunSpeed: 10
+  gAccFactor: 7
+  aDriftSpeed: 10
+  aAccFactor: 0.5
+  groundCheckingDistance: 5
+  isGroundedDistance: 0.2
+  groundedSwitchCooldown: 0.2
+  rotationSpeed: 15
+  maxJumpHoldTime: 0.5
+  jumpDirectionalInfluenceFactor: 0.5
   maxJumps: 2
-  jumpForce: 0
-  gravityTerminalVelocity: 0
+  jumpForce: 15
+  gravityTerminalVelocity: -25
   gravityForceFactor: 0
-  gravityFactorWhileJumping: 0
-  gravityFactorLerpRate: 0
+  gravityFactorWhileJumping: 0.004
+  gravityFactorLerpRate: 0.1
   meowidk: 0

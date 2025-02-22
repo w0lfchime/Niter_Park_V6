@@ -7,8 +7,8 @@ public class Flight : AirborneState
 
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
-	private int flightSpeed;
-	private int flightAccFactor;
+	private float flightSpeed = 30.0f;
+	private float flightAccFactor = 2.0f;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
