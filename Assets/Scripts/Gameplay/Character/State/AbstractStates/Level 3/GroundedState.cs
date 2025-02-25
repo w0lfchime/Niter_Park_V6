@@ -10,10 +10,6 @@ public class GroundedState : PhysicalState
 	//=//----|Locomotion|------------------------------------------------//=//
 	protected int groundedStateAntiFlutter = 5;
 
-	public float currMaxSpeed;
-	public float currAccFactor;
-	public bool runHold;
-	public bool sneakHold;
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
 	/////////////////////////////////////////////////////////////////////////////
@@ -56,22 +52,13 @@ public class GroundedState : PhysicalState
 	{
 		base.ProcessInput();
 		//...
-		runHold = ih.GetButtonHold("Run");
-		sneakHold = ih.GetButtonHold("Sneak");
-		if (runHold && sneakHold)
-		{
-			runHold = false;
-			sneakHold = false;
-		}
-
 	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
-		//...
-		ch.isGroundedByState = true; 
-		currAccFactor = ch.acs.gAccFactor;
-	}
+        //...
+        ch.isGroundedByState = true;
+    }
 	protected override void PerFrame()
 	{
 		base.PerFrame();
@@ -87,29 +74,6 @@ public class GroundedState : PhysicalState
 	}
 	protected override void RouteStateFixed()
 	{
-		if (ch.inputMoveDirection != Vector3.zero)
-		{
-			if (stateID != CStateID.OO_Run && runHold)
-			{
-				StatePushState(CStateID.OO_Run, (int)priority + 1, 1);
-			}
-			if (sneakHold)
-			{
-				//TODO: sneak implementation
-			} 
-			if (stateID != CStateID.OO_Walk && !runHold && !sneakHold)
-			{
-				StatePushState(CStateID.OO_Walk, (int)priority + 1, 1);
-			}
-		} 
-		else
-		{
-			if (stateID != CStateID.OO_IdleGrounded && Math.Abs(ch.velocityX) < 1.0f)
-			{
-				StatePushState(CStateID.OO_IdleGrounded, (int)priority + 1, 1);
-			}
-		}
-
 		//...
 		base.RouteStateFixed();
 	}
@@ -141,7 +105,7 @@ public class GroundedState : PhysicalState
 	}
 	public override void FixedPhysicsUpdate()
 	{
-		HandleLocomotionForce();
+
 		//...
 		base.FixedPhysicsUpdate();
 	}
@@ -186,16 +150,7 @@ public class GroundedState : PhysicalState
 
 	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_3
-	//=//-----|Locomotion|-----------------------------------------------//=//
-	public virtual void HandleLocomotionForce()
-	{
-		Vector3 tv = ch.inputMoveDirection;
-		tv *= currMaxSpeed;
-		tv.y = 0;
 
-		AddForceByTargetVelocity("Locomotion", tv, currAccFactor);
-	}
-	//=//----------------------------------------------------------------//=//
 	#endregion level_3
 	/////////////////////////////////////////////////////////////////////////////
 

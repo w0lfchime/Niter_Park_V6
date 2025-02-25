@@ -12,10 +12,10 @@ public class CharacterState : PerformanceState
 	protected Character ch;
 
 	[Header("Component Refs")]
-	protected Animator anim;
 	protected Rigidbody rb;
 	protected CapsuleCollider cc;
 	protected PlayerInputHandler ih;
+	protected AAPController aapc;
 
 
 	//=//----------------------------------------------------------------//=//
@@ -40,11 +40,10 @@ public class CharacterState : PerformanceState
 	{
 		base.SetStateReferences();
 
-		this.anim = ch.animator;
 		this.rb = ch.rigidBody;
 		this.cc = ch.capsuleCollider;
 		this.ih = ch.inputHandler;
-
+		this.aapc = ch.aapController;
 
 	}
 	public override void SetStateMembers()
