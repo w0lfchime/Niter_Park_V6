@@ -7,10 +7,10 @@ public class CharacterStats : ScriptableObject
     public string characterName;
 
 	[Header("Movement")]
-	public float gSneakSpeed = 3;
-	public float gWalkSpeed = 5;
+	public float gSneakSpeed = 1;
+	public float gWalkSpeed = 3;
 	public float gRunSpeed = 10;
-	public float gAccFactor = 3.0f;
+	public float gAccFactor = 7.0f;
 	public float aDriftSpeed = 10;
 	public float aAccFactor = 0.5f;
 

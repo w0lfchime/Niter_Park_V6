@@ -61,14 +61,12 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.31f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicWalk.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\ParkGen2.cs" />
     <Compile Include="Assets\Scripts\UI\Dev\ConsoleManager.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\VectorRendering\VectorRenderManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\Scripts\Settings&amp;Metadata\GlobalData.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicRun.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericWalk.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 1\CharacterState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
@@ -80,23 +78,19 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicJump.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericRun.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\JumpState.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\CharacterStats.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Scripts\Debug\BurnerScript.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\TimeManager.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\WalkState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Character.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\States\Level 5\ParkGen2Run.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\IdleAirborneState.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicIdleAirborne.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\CameraManager.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Airborne\Flight.cs" />
     <Compile Include="Assets\Scripts\AppState\Gameplay\GameUpdateDriver.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicIdleGrounded.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\CommandHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\AudioManager.cs" />
@@ -105,12 +99,14 @@
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCategories.cs" />
     <Compile Include="Assets\Scripts\Input\PlayerInputHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\IdleGroundedState.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 2\Suspended.cs" />
     <Compile Include="Assets\Scripts\Code Systems\DataStructures\RequestQueue.cs" />
     <Compile Include="Assets\Scripts\Settings&amp;Metadata\GlobalSettings.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Grounded\GroundedMovementState.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Airborne\JumpState.cs" />
     <Compile Include="Assets\Scripts\UI\Dev\TimePanel.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 2\PhysicalState.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicGroundedMovement.cs" />
     <Compile Include="Assets\Scripts\LocalPlayer.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCore.cs" />
     <Compile Include="Assets\Scripts\AppManager.cs" />
@@ -121,12 +117,11 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\RunState.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\CharacterSystems\AAPController.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ExampleCharacter.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\ExampleState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\States\Level 5\ParkGen2IdleGrounded.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 3\AirborneState.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Scripts\AppState\AppState.cs" />
@@ -140,6 +135,7 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\States\Level 5\ParkGen2Jump.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericIdleGrounded.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\CharacterSystems\PerformanceCSM.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\UIManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 3\GroundedState.cs" />
@@ -152,8 +148,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\UltimateSM\PerformanceCSM.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\States\Level 5\ParkGen2Walk.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Airborne\IdleAirborneState.cs" />
     <Compile Include="Assets\Scripts\UI\UIStylesheet.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\GenericCharacter.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericIdleAirborne.cs" />
@@ -161,9 +156,9 @@
     <Compile Include="Assets\Scripts\AppState\HomeMenu\UI\LocalPlayerTab.cs" />
     <Compile Include="Assets\Scripts\ServiceLocator.cs" />
     <Compile Include="Assets\Scripts\Bootstrap.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Character\Characters\ParkGen2\States\Level 5\ParkGen2GroundedMovement.cs" />
     <Compile Include="Assets\Scripts\AppState\Gameplay\Match.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Flight.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

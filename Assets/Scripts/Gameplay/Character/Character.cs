@@ -14,6 +14,7 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting.FullSerializer;
 
 public enum CStateID //Standard state types
 {
@@ -22,11 +23,11 @@ public enum CStateID //Standard state types
 	Suspended,
 	Flight,
 	//Gameplay
-	OO_IdleGrounded,
-	OO_IdleAirborne,
-	OO_Walk,
-	OO_Run,
+	OO_GroundedMovement,
+	//OO_GroundedDash,
 	OO_Jump,
+	OO_IdleAirborne,
+
 }
 
 public abstract class Character : MonoBehaviour, IGameUpdate
@@ -78,6 +79,11 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	[Header("Animation Refs")]
 	public Animator animator;
 	public Transform rigAndMeshTransform;
+	public AAPController aapController;
+
+	[Header("Params")]
+	public float logicUPS = 60;
+	public float stdFade = 0.2f;
 	#endregion animation
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
@@ -103,7 +109,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public float characterHeight;
 
 	[Header("Movement Variables")]
-	public float playerSpeed;
+	public float characterSpeed;
 	public float velocityX;
 	public float velocityY;
 
@@ -309,11 +315,18 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//wiring data (runs in update)
 		UpdateCharacterData();
 
-		//state
-		csm = new PerformanceCSM(this); //special init proc
+        //animation 
+        aapController = new AAPController(this);
+        aapController.Setup();
+
+
+		//LAST
+        //state
+        csm = new PerformanceCSM(this); //special init proc
 		
 		LogCore.Log("Character", $"Character initialized: {characterInstanceName}");
 
+		//post setup
 		if (csm.verified)
 		{
 			CharacterPushState(CStateID.Suspended, 9, 9); 

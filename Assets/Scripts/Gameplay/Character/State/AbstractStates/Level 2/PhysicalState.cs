@@ -158,7 +158,7 @@ public class PhysicalState : CharacterState
 		ch.velocity = lv;
 		ch.velocityX = lv.x;
 		ch.velocityY = lv.y;
-		ch.playerSpeed = lv.magnitude;
+		ch.characterSpeed = lv.magnitude;
 
 		//debug 
 		ch.UpdateDebugVector("Velocity", lv, Color.green);
@@ -286,7 +286,7 @@ public class PhysicalState : CharacterState
 		{
 			if (!ch.isGroundedByState)
 			{
-				StatePushState(CStateID.OO_IdleGrounded, (int)priority + 1, 2);
+				StatePushState(CStateID.OO_GroundedMovement, (int)priority + 1, 2);
 			}
 		}
 		if (ch.onUngrounding)
