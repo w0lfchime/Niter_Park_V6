@@ -103,6 +103,8 @@ public class JumpState : AirborneState
 		jumpImpluseForce *= ch.acs.jumpForce;
 
 		AddImpulseForce("JumpForce", jumpImpluseForce);
+
+		aapc.SetAnimatorState(STDAnimState.Jump, 0.05f);
 	}
 	public override void Exit()
 	{

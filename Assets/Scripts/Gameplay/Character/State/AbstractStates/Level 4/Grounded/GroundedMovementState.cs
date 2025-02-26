@@ -8,7 +8,8 @@ public enum GLState
 	Walking,
 	Running,
 	SneakIdle,
-	SneakMove
+	SneakMove,
+	Other
 }
 
 public class GroundedMovementState : GroundedState
@@ -96,8 +97,7 @@ public class GroundedMovementState : GroundedState
 	{
 		base.SetOnEntry();
 		//...
-		currGLState = GLState.Idle;
-		aapc.SetAnimatorState("GroundedLocomotion");
+		currGLState = GLState.Other;
 	}
 	protected override void PerFrame()
 	{
@@ -123,8 +123,9 @@ public class GroundedMovementState : GroundedState
 	public override void Enter()
 	{
 		base.Enter();
-		//...
-		DetermineGLState(); //get an extra on in there
+        //...
+        aapc.SetAnimatorState(STDAnimState.GroundedIdle, 0.1f);
+        DetermineGLState(); //get an extra on in there
 	}
 	public override void Exit()
 	{
@@ -202,7 +203,7 @@ public class GroundedMovementState : GroundedState
     //=//------|Locomotion|----------------------------------------------//=//
 	private void DetermineGLState()
 	{
-		bool moveInput = ch.inputMoveDirection != Vector3.zero;
+		bool moveInput = ch.inputMoveDirection.x != 0;
 
 		if (holdSneak)
 		{
@@ -248,6 +249,9 @@ public class GroundedMovementState : GroundedState
 				isLocomotion = false;
 				currSpeed = ch.acs.gSneakSpeed;
                 break;
+			case GLState.Other:
+				isLocomotion = false;
+				break;
 			default:
 				break;
 		}
@@ -267,7 +271,7 @@ public class GroundedMovementState : GroundedState
 
 	private void HandleLocomotionForce()
 	{
-		Vector3 tv = ch.inputMoveDirection;
+		Vector3 tv = ch.inputMoveVectorRaw;
 		tv.y = 0;
 		tv *= currSpeed;
 
@@ -276,17 +280,21 @@ public class GroundedMovementState : GroundedState
 
 	private void AnimationData()
 	{
-		if (onEnterLocomotion)
-		{
-			aapc.SetAnimatorState("GroundedLocomotion");
-		}
-		else if (onExitLocomotion)
-		{
-			aapc.SetAnimatorState("GroundedIdle");
-		}
+		//if (onEnterLocomotion)
+		//{
+		//	aapc.SetAnimatorState(STDAnimState.GroundedLocomotion);
+		//}
+		//else if (onExitLocomotion)
+		//{
+		//	aapc.SetAnimatorState(STDAnimState.GroundedIdle);
+		//}
+
+
 
         if (isLocomotion)
 		{
+			aapc.SoftSetAnimatorState(STDAnimState.GroundedLocomotion);
+
 			float currentSpeed = ch.characterSpeed;
 			float maxSpeed = ch.acs.gRunSpeed;
 			float animGLSpeed = currentSpeed / maxSpeed;
@@ -301,6 +309,10 @@ public class GroundedMovementState : GroundedState
 			{
 				//MORE overdrive
 			} 
+		} 
+		else
+		{
+			aapc.SoftSetAnimatorState(STDAnimState.GroundedIdle);
 		}
 	}
     //=//----------------------------------------------------------------//=//

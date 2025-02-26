@@ -27,6 +27,7 @@ public enum CStateID //Standard state types
 	//OO_GroundedDash,
 	OO_Jump,
 	OO_IdleAirborne,
+	//OO_GroundedForwardBasic,
 
 }
 
@@ -93,13 +94,22 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	[Header("Input Variables")]
 	public Vector3 inputMoveDirection = Vector3.zero;
+	public Vector3 inputMoveVectorRaw = Vector3.zero;
 	public Vector3 inputLookDirection = Vector3.zero;
+	public Vector3 inputLookVectorRaw = Vector3.zero;
 	#endregion input
 	//=//-----|Action Queue|------------------------------------------------------//=//
-	#region action_queue
+	#region hitstop
+
+	public bool isHitstopped;
+	public int hitstopFramesRemaining;
+
+    #endregion hitstop
+    //=//-----|Action Queue|------------------------------------------------------//=//
+    #region action_queue
 
 
-	[Header("Action Queue")]
+    [Header("Action Queue")]
 	private readonly Queue<(int frame, Action action)> actionQueue = new();
 	private readonly Queue<(int frame, Action<object> action, object param)> paramActionQueue = new();
 	#endregion action_queue
@@ -286,20 +296,32 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		rigidBody.AddForce(appliedImpulseForce, ForceMode.Impulse);
 		appliedImpulseForce = Vector3.zero;
 	}
-	#endregion physics
-	//=//------------------------------------------------------------------------//=//
-	#endregion local
-	/////////////////////////////////////////////////////////////////////////////////////
+    #endregion physics
+    //=//-----|Hitstop|----------------------------------------------------------//=//
+    #region hitstop
+    protected void ProcessHitstop()
+	{
+		if
+	}
+
+    public void BeginHitstop()
+    {
+
+    }
+    #endregion hitstop
+    //=//------------------------------------------------------------------------//=//
+    #endregion local
+    /////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
-	//======// /==/==/==/=||[BASE]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
-	#region base 
-	//Base methods and their helpers 
-	//=//-----|Setup|------------------------------------------------------------//=//
-	#region setup
-	protected virtual void CharacterSetup()
+    //======// /==/==/==/=||[BASE]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+    #region base 
+    //Base methods and their helpers 
+    //=//-----|Setup|------------------------------------------------------------//=//
+    #region setup
+    protected virtual void CharacterSetup()
 	{
 		//Local init functions
 		SetMemberVariables();
@@ -413,6 +435,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 			inputLookDirection += Vector3.left;
 		}
 
+		inputMoveVectorRaw = inputMoveDirection;
+		inputLookVectorRaw = inputLookDirection;
+
 		inputMoveDirection.Normalize();
 		inputLookDirection.Normalize();
 		//...
@@ -477,15 +502,16 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	protected abstract void CharacterFixedFrameUpdate();
 	protected abstract void CharacterFixedPhysicsUpdate();
 	protected abstract void CharacterLateUpdate();
-	#endregion mono_abstracts
-	//=//------------------------------------------------------------------------//=//
-	#endregion base
-	/////////////////////////////////////////////////////////////////////////////////////
+    #endregion mono_abstracts
+
+    //=//------------------------------------------------------------------------//=//
+    #endregion base
+    /////////////////////////////////////////////////////////////////////////////////////
 
 
-	//======// /==/==/==/=||[UTILITY]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
-	#region utility
-	public bool FlipCoin()
+    //======// /==/==/==/=||[UTILITY]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+    #region utility
+    public bool FlipCoin()
 	{
 		int randomNumber = UnityEngine.Random.Range(0, 100);
 		return randomNumber < 50;

@@ -2,8 +2,19 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Animations;
 using System.Collections.Generic;
+using System;
 
-//core animation controller 
+
+public enum STDAnimState
+{
+    Other,
+    GroundedIdle,
+    GroundedLocomotion,
+    Jump,
+    IdleAirborne,
+    NearGrounding,
+    OnGrounding,
+}
 
 public class AAPController
 {
@@ -19,6 +30,7 @@ public class AAPController
     private float currentFrame = 0;
     private AnimationClip currentClip;
 
+    public STDAnimState currentAnimatorState;
     public Dictionary<string, (int, float)> animData = new Dictionary<string, (int, float)>();
 
     public AAPController(Character character)
@@ -41,7 +53,7 @@ public class AAPController
         RuntimeAnimatorController controller = animator.runtimeAnimatorController;
         AnimationClip[] clips = controller.animationClips;
 
-        foreach (AnimationClip clip in clips)
+        foreach (AnimationClip clip in clips) //TODO: COMBINE
         {
             if (clip == null) continue;
 
@@ -52,17 +64,12 @@ public class AAPController
             // Populate the dictionary
             animData[clip.name] = (frameDuration, clipLength);
         }
-    }
-    public void PlayInFrames(string anim, int frames)
-    {
-        if (!animData.ContainsKey(anim))
-        {
-            Debug.LogWarning($"Animation '{anim}' not found in dictionary.");
-            return;
-        }
 
+    }
+    public void PlayInFrames(STDAnimState anim, int frames)
+    {
         // Retrieve animation clip length and frame count from dictionary
-        (int clipFrames, float clipLength) = animData[anim];
+        (int clipFrames, float clipLength) = animData[anim.ToString()];
 
         if (clipFrames <= 0 || clipLength <= 0)
         {
@@ -77,21 +84,33 @@ public class AAPController
         float speedMultiplier = clipLength / targetDuration;
 
         // Play animation with adjusted speed
-        animator.CrossFade(anim, owner.stdFade); // Smooth transition (adjust fade time if needed)
+        //animator.CrossFade(anim, owner.stdFade); // Smooth transition (adjust fade time if needed)
+        SetAnimatorState(anim, owner.stdFade);
         animator.speed = speedMultiplier;
     }
 
-    public void SetAnimatorState(string state)
+    public void SetAnimatorState(STDAnimState state)
     {
-        animator.CrossFadeInFixedTime(state, owner.stdFade);
+        currentAnimatorState = state;
+        animator.CrossFadeInFixedTime(state.ToString(), owner.stdFade);
     }
-    public void SetAnimatorState(string state, float cfTime)
+    public void SetAnimatorState(STDAnimState state, float cfTime)
     {
-        animator.CrossFadeInFixedTime(state, cfTime);
+        currentAnimatorState = state;
+        animator.CrossFadeInFixedTime(state.ToString(), cfTime);
     }
-    public bool IsPlaying(string stateName)
+    public void SoftSetAnimatorState(STDAnimState state)
     {
-        return animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+        if (state == currentAnimatorState)
+        {
+            return;
+        }
+        SetAnimatorState(state);
+    }
+    public bool IsPlaying(STDAnimState stateName)
+    {
+        //return animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+        return false; //TODO: USING THIS ?
     }
 
 

@@ -253,8 +253,11 @@ public class PhysicalState : CharacterState
 	#region rotation
 	public void HandleNaturalRotation()
 	{
+		if (ch.isGrounded)
+		{
+            //ch.facingRight = ch.velocityX > 0;
+        }
 
-		ch.facingRight = ch.velocityX > 0;
 
 		if (ch.inputMoveDirection != Vector3.zero)
 		{
@@ -286,6 +289,7 @@ public class PhysicalState : CharacterState
 		{
 			if (!ch.isGroundedByState)
 			{
+				LogCore.Log("MEOW");
 				StatePushState(CStateID.OO_GroundedMovement, (int)priority + 1, 2);
 			}
 		}
