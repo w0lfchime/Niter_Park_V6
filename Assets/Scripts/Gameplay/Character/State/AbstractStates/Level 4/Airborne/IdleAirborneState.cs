@@ -90,7 +90,7 @@ public class IdleAirborneState : AirborneState
 		base.Enter();
 		//...
 
-		aapc.SetAnimatorState(STDAnimState.IdleAirborne);
+		aapc.PlayAnimatorState(STDAnimState.IdleAirborne);
 	}
 	public override void Exit()
 	{
@@ -157,7 +157,7 @@ public class IdleAirborneState : AirborneState
 		{
 			if (aapc.currentAnimatorState != STDAnimState.NearGrounding)
 			{
-				aapc.SetAnimatorState(STDAnimState.NearGrounding, 0.2f);
+				aapc.PlayAnimatorState(STDAnimState.NearGrounding, 0.2f);
 			}
 			aapc.animator.SetFloat("DistanceToGround", dtg);
 		}

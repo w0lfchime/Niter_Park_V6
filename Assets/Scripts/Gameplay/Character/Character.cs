@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using System;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting.FullSerializer;
+using UnityEngine.Rendering;
 
 public enum CStateID //Standard state types
 {
@@ -23,7 +24,9 @@ public enum CStateID //Standard state types
 	Suspended,
 	Flight,
 	//Gameplay
-	OO_GroundedMovement,
+	OO_GroundedIdle,
+	OO_Walk,
+	OO_Run,
 	//OO_GroundedDash,
 	OO_Jump,
 	OO_IdleAirborne,
@@ -103,6 +106,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	public bool isHitstopped;
 	public int hitstopFramesRemaining;
+	public Vector3 hitstopStoredVelocity;
 
     #endregion hitstop
     //=//-----|Action Queue|------------------------------------------------------//=//
@@ -160,8 +164,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 	//======// /==/==/==/=||[MONO]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region mono
-	//=//-----|Event|------------------------------------------------------------//=//
-	#region event
 	private void Awake()
 	{
 		CharacterSetup();
@@ -182,11 +184,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//...
 		GameUpdateDriver.Unregister(this);
 	}
-	#endregion event
-	//=//-----|Updates|----------------------------------------------------------//=//
-	#region updates
 	private void Update()
 	{
+		
 		inputHandler.UpdateInputs();
 		ProcessInput();
 		UpdateCharacterData();
@@ -196,9 +196,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	public void FixedFrameUpdate()
 	{
-		ProcessActionQueue();
+		ProcessHitstop();
 		CharacterFixedFrameUpdate();
-		//...
+		ProcessActionQueue();
 		csm.PSMFixedFrameUpdate();		
 		CSMDebugUpdate(); //HACK:
 	}
@@ -215,7 +215,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//...
 		csm.PSMLateUpdate();
 	}
-	#endregion updates
 	//=//------------------------------------------------------------------------//=//
 	#endregion mono
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +287,11 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	#region physics
 	private void HandleRegularForce()
 	{
-		rigidBody.AddForce(appliedForce, ForceMode.Force);
+		if (!isHitstopped)
+		{
+			rigidBody.AddForce(appliedForce, ForceMode.Force);
+		}
+
 		appliedForce = Vector3.zero;
 	}
 	private void HandleImpulseForce()
@@ -299,15 +302,57 @@ public abstract class Character : MonoBehaviour, IGameUpdate
     #endregion physics
     //=//-----|Hitstop|----------------------------------------------------------//=//
     #region hitstop
-    protected void ProcessHitstop()
+	public void EnableHitstop()
 	{
-		if
-	}
+		if (isHitstopped)
+		{
+			return;
+		}
+		isHitstopped = true;
 
-    public void BeginHitstop()
+		hitstopStoredVelocity = rigidBody.linearVelocity;
+		rigidBody.linearVelocity = Vector3.zero;
+		rigidBody.isKinematic = true;
+
+	}
+	public void DisableHitstop()
+	{
+		if (!isHitstopped)
+		{
+			return;
+		}
+		isHitstopped = false;
+
+		rigidBody.isKinematic = false;
+		rigidBody.linearVelocity = hitstopStoredVelocity;
+		hitstopStoredVelocity = Vector3.zero;
+	}
+    public void AddHitstop(int frames)
     {
+		if (frames <= 0)
+		{
+			return;
+		}
+		hitstopFramesRemaining += frames;
 
     }
+
+	//Per fixed frame update
+    protected void ProcessHitstop()
+	{
+		if (hitstopFramesRemaining <= 0)
+		{
+			DisableHitstop();
+			hitstopFramesRemaining = 0;
+		} 
+		else
+		{
+			EnableHitstop();
+			hitstopFramesRemaining--;
+		}
+	}
+
+
     #endregion hitstop
     //=//------------------------------------------------------------------------//=//
     #endregion local
@@ -450,6 +495,10 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		if (debug && Input.GetKeyDown(KeyCode.U))
 		{
 			UpdateACD();
+		}
+		if (debug && Input.GetKeyDown(KeyCode.H))
+		{
+			AddHitstop(60);
 		}
 		//...
 	}

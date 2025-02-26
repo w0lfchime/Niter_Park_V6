@@ -33,7 +33,26 @@ public class AppManager : MonoBehaviour //WIP
 	//players (local)
 	public List<LocalPlayer> localPlayers = new List<LocalPlayer>();
 
-	
+
+	//HACK: TEMP
+	private string sceneToReload = "Highway"; // The additive scene you want to reload
+
+	public void ReloadGameplayScene()
+	{
+		StartCoroutine(ReloadSceneCoroutine());
+	}
+
+	private IEnumerator ReloadSceneCoroutine()
+	{
+		// Unload the gameplay scene
+		if (SceneManager.GetSceneByName(sceneToReload).isLoaded)
+		{
+			yield return SceneManager.UnloadSceneAsync(sceneToReload);
+		}
+
+		// Load the gameplay scene additively again
+		yield return SceneManager.LoadSceneAsync(sceneToReload, LoadSceneMode.Additive);
+	}
 
 
 	#region mono
@@ -51,7 +70,10 @@ public class AppManager : MonoBehaviour //WIP
 	}
 	private void Update()
 	{
-
+		if (Input.GetKeyDown(KeyCode.Alpha0))
+		{
+			ReloadGameplayScene();
+		}
 	}
 	private void LateUpdate()
 	{

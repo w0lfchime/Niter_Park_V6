@@ -51,6 +51,7 @@ public class PerformanceCSM
 	public bool verified = false;
 
 	public CStateID currentStateID;
+	public CStateID previousStateID;
 	public PerformanceState currentState;
 	protected PerformanceState[] stateArray;
 	public RequestQueue requestQueue = new();
@@ -167,7 +168,7 @@ public class PerformanceCSM
 
 	private void SetCurrentState(CStateID newStateID)
 	{
-		CStateID oldStateID = currentStateID;
+		previousStateID = currentStateID;
 
 		currentState?.Exit();
 		currentState = GetState(newStateID);
@@ -183,7 +184,7 @@ public class PerformanceCSM
 
 		machineOwner.OnStateSet();
 
-		LogCore.Log("PSM_Detail", $"Switched from {oldStateID} to {currentStateID}");
+		LogCore.Log("PSM_Detail", $"Switched from {previousStateID} to {currentStateID}");
 	}
 
 	public void PSMUpdate()

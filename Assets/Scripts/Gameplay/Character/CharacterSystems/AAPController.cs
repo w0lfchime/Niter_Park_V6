@@ -8,7 +8,7 @@ using System;
 public enum STDAnimState
 {
     Other,
-    GroundedIdle,
+    IdleGrounded,
     GroundedLocomotion,
     Jump,
     IdleAirborne,
@@ -68,6 +68,8 @@ public class AAPController
     }
     public void PlayInFrames(STDAnimState anim, int frames)
     {
+        //STOP: STATE CHANGE?
+        
         // Retrieve animation clip length and frame count from dictionary
         (int clipFrames, float clipLength) = animData[anim.ToString()];
 
@@ -85,33 +87,29 @@ public class AAPController
 
         // Play animation with adjusted speed
         //animator.CrossFade(anim, owner.stdFade); // Smooth transition (adjust fade time if needed)
-        SetAnimatorState(anim, owner.stdFade);
+        PlayAnimatorState(anim, owner.stdFade);
         animator.speed = speedMultiplier;
     }
 
-    public void SetAnimatorState(STDAnimState state)
+    public void PlayAnimatorState(STDAnimState state)
     {
         currentAnimatorState = state;
         animator.CrossFadeInFixedTime(state.ToString(), owner.stdFade);
     }
-    public void SetAnimatorState(STDAnimState state, float cfTime)
+    public void PlayAnimatorState(STDAnimState state, float cfTime)
     {
         currentAnimatorState = state;
         animator.CrossFadeInFixedTime(state.ToString(), cfTime);
     }
-    public void SoftSetAnimatorState(STDAnimState state)
+    public void AffirmAnimatorState(STDAnimState state)
     {
         if (state == currentAnimatorState)
         {
             return;
         }
-        SetAnimatorState(state);
+        PlayAnimatorState(state);
     }
-    public bool IsPlaying(STDAnimState stateName)
-    {
-        //return animator.GetCurrentAnimatorStateInfo(0).IsName(stateName);
-        return false; //TODO: USING THIS ?
-    }
+
 
 
 

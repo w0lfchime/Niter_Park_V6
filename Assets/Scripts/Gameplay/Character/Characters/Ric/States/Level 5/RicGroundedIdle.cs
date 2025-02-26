@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class RicGroundedMovement : GroundedMovementState
+public class RicGroundedIdle : GroundedIdleState
 {
     //Level x state
 
@@ -30,7 +30,7 @@ public class RicGroundedMovement : GroundedMovementState
     #region base
     //=//-----|Setup|----------------------------------------------------//=//
     #region setup
-    public RicGroundedMovement(PerformanceCSM sm, Character character) : base(sm, character)
+    public RicGroundedIdle(PerformanceCSM sm, Character character) : base(sm, character)
     {
         //...
     }

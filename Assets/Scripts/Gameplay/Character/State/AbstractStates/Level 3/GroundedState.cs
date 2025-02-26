@@ -8,7 +8,17 @@ public class GroundedState : PhysicalState
 	//======// /==/==/==/=||[LOCAL FIELDS]||==/==/==/==/==/==/==/==/==/ //======//
 	#region local_fields
 	//=//----|Locomotion|------------------------------------------------//=//
+
+	//Param
 	protected int groundedStateAntiFlutter = 5;
+	public bool? isLocomotion;
+
+	//Varaible
+	protected bool runHold;
+	protected bool sneakHold;
+
+	protected float currGLSpeed;
+	protected float currGLAccFactor;
 
 	//=//----------------------------------------------------------------//=//
 	#endregion local_fields
@@ -52,12 +62,16 @@ public class GroundedState : PhysicalState
 	{
 		base.ProcessInput();
 		//...
+
+		runHold = ih.GetButtonHold("Run");
+		sneakHold = ih.GetButtonHold("Sneak");
 	}
 	protected override void SetOnEntry()
 	{
 		base.SetOnEntry();
         //...
         ch.isGroundedByState = true;
+		currGLAccFactor = ch.acs.gAccFactor;
     }
 	protected override void PerFrame()
 	{
@@ -69,6 +83,8 @@ public class GroundedState : PhysicalState
 	#region routings
 	protected override void RouteState()
 	{
+
+
 		//...
 		base.RouteState();
 	}
@@ -100,12 +116,13 @@ public class GroundedState : PhysicalState
 	}
 	public override void FixedFrameUpdate()
 	{
+		HandleGlData();
 		//...
 		base.FixedFrameUpdate();
 	}
 	public override void FixedPhysicsUpdate()
 	{
-
+		HandleGLForce();
 		//...
 		base.FixedPhysicsUpdate();
 	}
@@ -150,7 +167,46 @@ public class GroundedState : PhysicalState
 
 	//======// /==/==/==/==||[LEVEL 3]||==/==/==/==/==/==/==/==/==/==/ //======//
 	#region level_3
+	#region grounded_locomotion
+	private void HandleGLForce()
+	{
+		Vector3 tv = ch.inputMoveVectorRaw;
+		tv.y = 0;
+		tv *= currGLSpeed;
 
+		AddForceByTargetVelocity("GLForce", tv, currGLAccFactor);
+	}
+	private void HandleGlData()
+	{
+		if (isLocomotion == true)
+		{
+			float overdrive = 1.0f;
+			float currentSpeed = Mathf.Abs(ch.velocityX);
+			float maxSpeed = ch.acs.gRunSpeed;
+			float glSpeed = currentSpeed / maxSpeed;
+
+			if (glSpeed > 0 && glSpeed < 1.0005)
+			{
+				aapc.animator.SetFloat("GLSpeed", glSpeed);
+				aapc.animator.SetFloat("GLOverdrive", overdrive);
+			}
+			else if (glSpeed > 1.0005)
+			{
+				//handle overdrive
+			}
+
+
+		}
+
+	}
+
+	//Animation
+
+	private void AnimateGL()
+	{
+		
+	}
+	#endregion grounded_locomotion
 	#endregion level_3
 	/////////////////////////////////////////////////////////////////////////////
 

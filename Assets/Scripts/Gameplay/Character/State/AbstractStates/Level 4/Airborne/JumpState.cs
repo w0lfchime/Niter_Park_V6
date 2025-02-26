@@ -104,7 +104,7 @@ public class JumpState : AirborneState
 
 		AddImpulseForce("JumpForce", jumpImpluseForce);
 
-		aapc.SetAnimatorState(STDAnimState.Jump, 0.05f);
+		aapc.PlayAnimatorState(STDAnimState.Jump, 0.05f);
 	}
 	public override void Exit()
 	{

@@ -290,7 +290,7 @@ public class PhysicalState : CharacterState
 			if (!ch.isGroundedByState)
 			{
 				LogCore.Log("MEOW");
-				StatePushState(CStateID.OO_GroundedMovement, (int)priority + 1, 2);
+				StatePushState(CStateID.OO_GroundedIdle, (int)priority + 1, 2);
 			}
 		}
 		if (ch.onUngrounding)

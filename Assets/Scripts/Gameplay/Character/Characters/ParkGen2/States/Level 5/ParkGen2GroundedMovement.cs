@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ParkGen2GroundedMovement : GroundedMovementState
+public class ParkGen2GroundedMovement : GroundedIdleState
 {
 	//Level x state
 
