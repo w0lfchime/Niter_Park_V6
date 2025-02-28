@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class StormJump : CharacterState
+public class StormJump : JumpState
 {
 	//Level x state
 

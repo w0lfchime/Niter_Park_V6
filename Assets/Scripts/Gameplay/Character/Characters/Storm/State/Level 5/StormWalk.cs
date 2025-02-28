@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class StormWalk : CharacterState
+public class StormWalk : WalkState
 {
 	//Level x state
 

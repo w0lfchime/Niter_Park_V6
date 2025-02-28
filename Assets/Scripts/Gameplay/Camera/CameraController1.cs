@@ -1,37 +1,70 @@
 using UnityEngine;
 
-public class CameraController1 : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
-    public Transform target; // The target GameObject to follow
-    public float smoothSpeed = 5f; // Speed of smoothing
-    public float zoomSpeed = 10f; // Speed of zooming
-    public float minZoom = 2f; // Minimum zoom distance
-    public float maxZoom = 15f; // Maximum zoom distance
+	public Transform player1;
+	public Transform player2;
 
-    private Vector3 offset; // Initial relative position
+	public float smoothSpeedX = 5f; // Speed of smoothing in X
+	public float smoothSpeedY = 5f; // Speed of smoothing in Y
+	public float smoothSpeedZ = 5f; // Speed of smoothing in Z
 
-    void Start()
-    {
-        if (target == null)
-        {
-            Debug.LogError("Camera Controller1: No target assigned");
-            enabled = false;
-            return;
-        }
+	public float zoomSpeed = 10f; // Speed of zooming
+	public float minZoom = 2f; // Minimum zoom distance
+	public float maxZoom = 15f; // Maximum zoom distance
+	public float zoomMultiplier = 1.5f; // Adjusts zoom based on distance between players
 
-        offset = transform.position - target.position;
-    }
+	public Transform leftBound;  // Left boundary (transform position.x)
+	public Transform rightBound; // Right boundary (transform position.x)
 
-    void LateUpdate()
-    {
-        if (target == null) return;
+	private Vector3 initialOffset; // Initial relative position from the midpoint
 
-        // Handle zooming
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        offset = offset.normalized * Mathf.Clamp(offset.magnitude - scrollInput * zoomSpeed, minZoom, maxZoom);
+	void Start()
+	{
+		if (player1 == null || player2 == null)
+		{
+			Debug.LogError("Camera Controller: Players not assigned!");
+			enabled = false;
+			return;
+		}
 
-        // Smoothly follow the target
-        Vector3 desiredPosition = target.position + offset;
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-    }
+		// Set initial offset based on the midpoint of the two players
+		initialOffset = transform.position - GetMidpoint();
+	}
+
+	void LateUpdate()
+	{
+		if (player1 == null || player2 == null) return;
+
+		Vector3 midpoint = GetMidpoint();
+
+		// Adjust zoom based on player distance
+		float playerDistance = Vector3.Distance(player1.position, player2.position);
+		float zoom = Mathf.Clamp(playerDistance * zoomMultiplier, minZoom, maxZoom);
+
+		// Calculate desired position
+		Vector3 desiredPosition = midpoint + initialOffset.normalized * zoom;
+
+		// Apply boundaries to X position
+		if (leftBound != null && rightBound != null)
+		{
+			float minX = leftBound.position.x;
+			float maxX = rightBound.position.x;
+			desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
+		}
+
+		// Smooth movement for each axis separately
+		Vector3 smoothedPosition = new Vector3(
+			Mathf.Lerp(transform.position.x, desiredPosition.x, smoothSpeedX * Time.deltaTime),
+			Mathf.Lerp(transform.position.y, desiredPosition.y, smoothSpeedY * Time.deltaTime),
+			Mathf.Lerp(transform.position.z, desiredPosition.z, smoothSpeedZ * Time.deltaTime)
+		);
+
+		transform.position = smoothedPosition;
+	}
+
+	private Vector3 GetMidpoint()
+	{
+		return (player1.position + player2.position) / 2f;
+	}
 }

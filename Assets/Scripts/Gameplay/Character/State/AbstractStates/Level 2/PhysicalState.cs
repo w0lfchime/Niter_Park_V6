@@ -311,7 +311,7 @@ public class PhysicalState : CharacterState
 		}
 
 		//route 
-		if (ih.GetButtonDown("Jump") && jumpAllowed)
+		if (cih.GetButtonDown("Jump") && jumpAllowed)
 		{
 			StatePushState(CStateID.OO_Jump, 4, 4);
 		}

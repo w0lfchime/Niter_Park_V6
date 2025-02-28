@@ -63,8 +63,8 @@ public class GroundedState : PhysicalState
 		base.ProcessInput();
 		//...
 
-		runHold = ih.GetButtonHold("Run");
-		sneakHold = ih.GetButtonHold("Sneak");
+		runHold = cih.GetButtonHold("Run");
+		sneakHold = cih.GetButtonHold("Sneak");
 	}
 	protected override void SetOnEntry()
 	{

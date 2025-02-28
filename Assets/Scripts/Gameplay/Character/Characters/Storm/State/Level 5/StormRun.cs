@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class StormRun : CharacterState
+public class StormRun : RunState
 {
 	//Level x state
 

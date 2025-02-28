@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class StormIdleAirborne : CharacterState
+public class StormIdleAirborne : IdleAirborneState
 {
 	//Level x state
 

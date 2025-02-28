@@ -14,7 +14,7 @@ public class CharacterState : PerformanceState
 	[Header("Component Refs")]
 	protected Rigidbody rb;
 	protected CapsuleCollider cc;
-	protected PlayerInputHandler ih;
+	protected PlayerInputHandler cih;
 	protected AAPController aapc;
 
 
@@ -42,7 +42,7 @@ public class CharacterState : PerformanceState
 
 		this.rb = ch.rigidBody;
 		this.cc = ch.capsuleCollider;
-		this.ih = ch.inputHandler;
+		this.cih = ch.playerInputHandler;
 		this.aapc = ch.aapController;
 
 	}
@@ -150,6 +150,13 @@ public class CharacterState : PerformanceState
 		return base.VerifyState();
 	}
 	#endregion debug
+	//=//-----|CustomEvents|---------------------------------------------//=//
+	#region custom_events
+	protected virtual void OnReceiveHit()
+	{
+
+	}
+	#endregion custom_events
 	//=//----------------------------------------------------------------//=//
 	#endregion base
 	/////////////////////////////////////////////////////////////////////////////

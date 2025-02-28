@@ -34,7 +34,7 @@ public enum CStateID //Standard state types
 
 }
 
-public abstract class Character : MonoBehaviour, IGameUpdate
+public abstract class Character : MonoBehaviour, IGameUpdate, IHittable
 {
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region fields
@@ -44,7 +44,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	public string characterInstanceName;
 	public string characterStandardName;
 	public bool nonPlayer = false;
-	public LocalPlayer player;
 
 	[Header("Component Refs")]
 	public Rigidbody rigidBody;
@@ -92,7 +91,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	//=//-----|Input|-------------------------------------------------------------//=//
 	#region input
 	[Header("Input")]
-	public PlayerInputHandler inputHandler;
+	public PlayerInputHandler playerInputHandler;
 	private PlayerInput playerInput;
 
 	[Header("Input Variables")]
@@ -162,7 +161,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 
 
 
-	//======// /==/==/==/=||[MONO]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
+	//======// /==/==/==/=||[MONO & INTERFACE]||==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region mono
 	private void Awake()
 	{
@@ -187,7 +186,6 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	private void Update()
 	{
 		
-		inputHandler.UpdateInputs();
 		ProcessInput();
 		UpdateCharacterData();
 		CharacterUpdate();
@@ -215,8 +213,23 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		//...
 		csm.PSMLateUpdate();
 	}
-	//=//------------------------------------------------------------------------//=//
 	#endregion mono
+	#region hittable
+	public void TakeHit(HitData hitData, Character attacker)
+	{
+		// Apply hit effects
+		//ApplyHitstun(hitData.Hitstun);
+		//ApplyKnockback(hitData.KnockbackForce, hitData.KnockbackDirection);
+		//ApplyDamage(hitData.Damage);
+
+		//Debug.Log($"{gameObject.name} took {hitData.Damage} damage from {attacker.gameObject.name}!");
+	}
+	public virtual void ReceiveHit()
+	{
+
+	}
+
+	#endregion hittable
 	/////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -420,7 +433,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	{
 		//input
 		playerInput = GetComponent<PlayerInput>();
-		inputHandler = new PlayerInputHandler(playerInput);
+		playerInputHandler = GetComponent<PlayerInputHandler>();
 
 		//physics
 		rigidBody = GetComponent<Rigidbody>();
@@ -446,36 +459,36 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		inputMoveDirection = Vector3.zero;
 		inputLookDirection = Vector3.zero;
 		//movement input
-		if (inputHandler.GetButtonHold("MoveUp"))
+		if (playerInputHandler.GetButtonHold("MoveUp"))
 		{
 			inputMoveDirection += Vector3.up;
 		}
-		if (inputHandler.GetButtonHold("MoveRight"))
+		if (playerInputHandler.GetButtonHold("MoveRight"))
 		{
 			inputMoveDirection += Vector3.right;
 		}
-		if (inputHandler.GetButtonHold("MoveDown"))
+		if (playerInputHandler.GetButtonHold("MoveDown"))
 		{
 			inputMoveDirection += Vector3.down;
 		}
-		if (inputHandler.GetButtonHold("MoveLeft"))
+		if (playerInputHandler.GetButtonHold("MoveLeft"))
 		{
 			inputMoveDirection += Vector3.left;
 		}
 		//"looking" input
-		if (inputHandler.GetButtonHold("LookUp"))
+		if (playerInputHandler.GetButtonHold("LookUp"))
 		{
 			inputLookDirection += Vector3.up;
 		}
-		if (inputHandler.GetButtonHold("LookRight"))
+		if (playerInputHandler.GetButtonHold("LookRight"))
 		{
 			inputLookDirection += Vector3.right;
 		}
-		if (inputHandler.GetButtonHold("LookDown"))
+		if (playerInputHandler.GetButtonHold("LookDown"))
 		{
 			inputLookDirection += Vector3.down;
 		}
-		if (inputHandler.GetButtonHold("LookLeft"))
+		if (playerInputHandler.GetButtonHold("LookLeft"))
 		{
 			inputLookDirection += Vector3.left;
 		}

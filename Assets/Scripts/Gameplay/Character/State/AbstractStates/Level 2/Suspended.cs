@@ -69,7 +69,7 @@ public class Suspended : CharacterState
 	#region routings
 	protected override void RouteState()
 	{
-		if (exitAllowed == true && ih.anyActionAtAll) 
+		if (exitAllowed == true && cih.anyActionAtAll) 
 		{
 			StatePushState(exitState, 9, 1);
 		}
