@@ -89,6 +89,10 @@ public class Ric : Character
     protected override void CharacterUpdate()
     {
         //...
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            inputEnabled = !inputEnabled;
+        }
     }
     protected override void CharacterFixedFrameUpdate()
     {

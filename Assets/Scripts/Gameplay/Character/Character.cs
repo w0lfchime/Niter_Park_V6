@@ -95,6 +95,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	private PlayerInput playerInput;
 
 	[Header("Input Variables")]
+	public bool inputEnabled = true;
 	public Vector3 inputMoveDirection = Vector3.zero;
 	public Vector3 characterLookDirection = Vector3.zero;
 	#endregion input
@@ -168,6 +169,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	private void Start()
 	{
+		inputEnabled = true;
 		CharacterStart();
 		//...
 	}
@@ -183,8 +185,9 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	private void Update()
 	{
-		
-		ProcessInput();
+
+
+		ProcessInput(); 
 		UpdateCharacterData();
 		CharacterUpdate();
 		//...
@@ -453,18 +456,24 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	#region data
 	protected virtual void ProcessInput()
 	{
-		//reset
-		inputMoveDirection = playerInputHandler.MoveInput;
-		characterLookDirection = playerInputHandler.LookInput;
-		if (!facingRight)
+		if (inputEnabled)
 		{
-			characterLookDirection.x *= -1;
+
+			//reset
+			inputMoveDirection = playerInputHandler.MoveInput;
+			characterLookDirection = playerInputHandler.LookInput;
+
+
+			if (!facingRight)
+			{
+				characterLookDirection.x *= -1;
+			}
+
+			inputMoveDirection.Normalize();
+			characterLookDirection.Normalize();
+			//...
+
 		}
-
-		inputMoveDirection.Normalize();
-		characterLookDirection.Normalize();
-		//...
-
 
 		if (Input.GetKeyDown(KeyCode.Alpha9))
 		{
@@ -477,7 +486,8 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 		if (debug && Input.GetKeyDown(KeyCode.H))
 		{
 			AddHitstop(60);
-		}
+		} 
+		
 		//...
 	}
 	protected virtual void UpdateACD()
@@ -562,7 +572,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	}
 	public virtual string CName(string message)
 	{
-		return $"{characterInstanceName}: {message}";
+		return $"{this.GetType().Name}: {message}";
 	}
 	#endregion general
 	//=//-----|State|------------------------------------------------------------//=//
@@ -596,7 +606,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate
 	{
 		if (debug)
 		{
-			vrm.UpdateVector(name, debugParentTransform, Vector3.zero, vector, color);
+			vrm.UpdateVector(CName(name), debugParentTransform, Vector3.zero, vector, color);
 		}
 
 	}

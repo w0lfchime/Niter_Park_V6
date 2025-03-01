@@ -309,7 +309,10 @@ public class PhysicalState : CharacterState
 		{
 			jumpAllowed = false;
 		}
-
+		if (ch.inputEnabled == false)
+		{
+			jumpAllowed = false;
+		}
 		//route 
 		if (cih.GetButtonDown("Jump") && jumpAllowed)
 		{

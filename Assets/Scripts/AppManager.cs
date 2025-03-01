@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 public class AppManager : MonoBehaviour
 {
@@ -9,6 +11,10 @@ public class AppManager : MonoBehaviour
 
 	public AppState currentState;
 	private string sceneToReload = "Highway"; // The additive scene you want to reload
+
+	private float lastInputTime;
+	private const float inactivityThreshold = 20f; // Time in seconds before reload
+	private bool moved = false;
 
 	private void Awake()
 	{
@@ -22,21 +28,67 @@ public class AppManager : MonoBehaviour
 			return;
 		}
 	}
-    private void Update()
-    {
-        ProcessInput();
-    }
 
-    private void ProcessInput()
+	private void Start()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha0))
+		lastInputTime = Time.time;
+
+		// Register input event for ANY button press (Keyboard, Mouse, or Controller)
+		InputSystem.onAnyButtonPress.Call(_ => ResetInactivityTimer());
+	}
+
+	private void Update()
+	{
+		ProcessInput();
+		CheckControllerActivity(); // Check for analog stick movement
+		if (!moved)
+		{
+			lastInputTime = Time.time;
+		}
+
+		// If inactivity threshold is exceeded, reload the scene
+		if (Time.time - lastInputTime > inactivityThreshold)
+		{
+			ReloadGameplayScene();
+			lastInputTime = Time.time; // Reset timer to avoid multiple reloads
+		}
+	}
+
+	private void ProcessInput()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha0)) // Manual Reload with Key 0
 		{
 			ReloadGameplayScene();
 		}
 	}
 
+	private void CheckControllerActivity()
+	{
+		foreach (var gamepad in Gamepad.all) // Loop through all connected controllers
+		{
+			if (gamepad == null) continue;
+
+			// Detect if ANY stick has moved past a deadzone (prevent accidental drift triggering)
+			if (gamepad.leftStick.ReadValue().magnitude > 0.1f ||
+				gamepad.rightStick.ReadValue().magnitude > 0.1f ||
+				gamepad.dpad.ReadValue().magnitude > 0.1f)
+			{
+				ResetInactivityTimer();
+				moved = true;
+			}
+		}
+	}
+
+	private void ResetInactivityTimer()
+	{
+		lastInputTime = Time.time;
+	}
+
 	public void ReloadGameplayScene()
 	{
+		moved = false;
+		VectorRenderManager vrm = GetComponent<VectorRenderManager>();
+		vrm.ResetVectors();
 		StartCoroutine(ReloadSceneCoroutine());
 	}
 

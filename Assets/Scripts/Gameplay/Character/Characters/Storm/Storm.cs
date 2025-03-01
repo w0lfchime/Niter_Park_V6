@@ -92,6 +92,10 @@ public class Storm : Character
 	protected override void CharacterUpdate()
 	{
 		//...
+		if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+			inputEnabled = !inputEnabled;
+		}
 	}
 	protected override void CharacterFixedFrameUpdate()
 	{

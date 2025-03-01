@@ -66,7 +66,7 @@ BlendTree:
   m_Name: Blend Tree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 0}
+    m_Motion: {fileID: -5729030048419175771, guid: 3908161ef482c0345a8daf1e4a7132d4, type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -74,7 +74,7 @@ BlendTree:
     m_DirectBlendParameter: GLSpeed
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 0}
+    m_Motion: {fileID: 2260388429865029354, guid: 112049caeb14c994a9884e90569b492f, type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -106,7 +106,7 @@ BlendTree:
     m_Mirror: 0
   - serializedVersion: 2
     m_Motion: {fileID: 4906805456422151561, guid: 87526462b4031f94e941c6775bda8e5b, type: 3}
-    m_Threshold: 0.3987952
+    m_Threshold: 0.35952818
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1.4
     m_CycleOffset: 0
@@ -162,7 +162,7 @@ BlendTree:
   m_Name: Blend Tree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 0}
+    m_Motion: {fileID: -5729030048419175771, guid: 3908161ef482c0345a8daf1e4a7132d4, type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -280,7 +280,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 0}
+  m_Motion: {fileID: -4081591188484445165, guid: 377f8c6e55589e042a5926fc6a66a768, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -355,16 +355,16 @@ AnimatorStateMachine:
     m_Position: {x: 380, y: -210, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1007314106164519090}
-    m_Position: {x: 460, y: 250, z: 0}
+    m_Position: {x: 340, y: 230, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1893387960820151189}
     m_Position: {x: 390, y: -50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7592687289678941432}
-    m_Position: {x: 500, y: 80, z: 0}
+    m_Position: {x: 440, y: 80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3809616664798637194}
-    m_Position: {x: -40, y: 40, z: 0}
+    m_Position: {x: -40, y: 80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3654801073094402434}
     m_Position: {x: -40, y: 20, z: 0}

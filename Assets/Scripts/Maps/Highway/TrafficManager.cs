@@ -60,21 +60,33 @@ public class TrafficManager : MonoBehaviour
 		GameObject newVehicle = Instantiate(vehiclePrefab, vehicleParent); // Set parent to "Vehicles"
 
 		VehicleMovement vehicleMovement = newVehicle.AddComponent<VehicleMovement>();
-		float assingedSpeed = baseVehicleSpeed;
+		float assignedSpeed = baseVehicleSpeed;
+
 		switch (laneIndex)
 		{
 			case 0:
-				assingedSpeed *= 1.2f;
+				assignedSpeed *= 1.2f;
 				break;
 			case 1:
-				assingedSpeed *= 1.4f;
+				assignedSpeed *= 1.4f;
 				break;
 			case 2:
-				assingedSpeed *= 1.3f;
+				assignedSpeed *= 1.3f;
 				break;
-			default: 
+			default:
 				break;
 		}
-		vehicleMovement.SetUp(splines, laneIndex, assingedSpeed, laneIndex < 2); // Pass lane index to movement
+
+		// Ensure the vehicle starts in the correct position immediately
+		Spline spline = splines.Splines[laneIndex];
+		float startT = 0f; // Start at the beginning of the spline
+		Vector3 startPosition = spline.EvaluatePosition(startT);
+		Quaternion startRotation = Quaternion.LookRotation(spline.EvaluateTangent(startT));
+
+		newVehicle.transform.position = startPosition;
+		newVehicle.transform.rotation = startRotation;
+
+		vehicleMovement.SetUp(splines, laneIndex, assignedSpeed, laneIndex < 2);
 	}
+
 }
