@@ -170,7 +170,7 @@ public class GroundedState : PhysicalState
 	#region grounded_locomotion
 	private void HandleGLForce()
 	{
-		Vector3 tv = ch.inputMoveVectorRaw;
+		Vector3 tv = ch.inputMoveDirection;
 		tv.y = 0;
 		tv *= currGLSpeed;
 

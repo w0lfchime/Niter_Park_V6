@@ -22,6 +22,18 @@ public class AppManager : MonoBehaviour
 			return;
 		}
 	}
+    private void Update()
+    {
+        ProcessInput();
+    }
+
+    private void ProcessInput()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha0))
+		{
+			ReloadGameplayScene();
+		}
+	}
 
 	public void ReloadGameplayScene()
 	{

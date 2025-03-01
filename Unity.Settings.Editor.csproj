@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2E969F89-2E22-F7E4-FE06-ADC5AD08E40D}</ProjectGuid>
+    <ProjectGuid>{6EAF051A-1C2E-5D78-16F1-1E60547F3619}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Unity.Settings.Editor</AssemblyName>
@@ -61,16 +61,16 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.31f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\SettingsDictionary.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\ISettingsRepository.cs" />
-    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSettingsRepository.cs" />
-    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSettingsProvider.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\SettingsGUILayout.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\PackageSettingsRepository.cs" />
-    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\Attributes.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\ValueWrapper.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\FileSettingsRepository.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\ProjectUserSettings.cs" />
+    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\SettingsDictionary.cs" />
+    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSettingsRepository.cs" />
+    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSettingsProvider.cs" />
+    <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\Attributes.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSetting.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\UserSettings.cs" />
     <Compile Include="Library\PackageCache\com.unity.settings-manager\Editor\Settings.cs" />
@@ -563,6 +563,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>Library\PackageCache\com.unity.collections\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit\net40\unity-custom\nunit.framework.dll</HintPath>
       <Private>False</Private>
@@ -597,6 +601,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
@@ -1110,11 +1118,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="UnityEngine.TestRunner.csproj">
-      <Project>{22E88112-1B07-C9D1-CB14-628ACC88AD87}</Project>
+      <Project>{46EE0196-81FB-F5A3-069A-170F5D4928A3}</Project>
       <Name>UnityEngine.TestRunner</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEditor.TestRunner.csproj">
-      <Project>{ECE23FA2-1D65-B937-D793-5A814D987399}</Project>
+      <Project>{25744823-1E80-8704-6527-A676C7443F31}</Project>
       <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>

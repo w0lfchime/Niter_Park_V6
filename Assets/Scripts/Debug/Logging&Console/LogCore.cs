@@ -8,7 +8,7 @@ public static class LogCore
     private static HashSet<string> blacklistedCategories = new HashSet<string>
     {
         "PSM_Flow",
-        "PSM_Detail",
+        //"PSM_Detail",
     };
 
     private static int messageCount = 0;

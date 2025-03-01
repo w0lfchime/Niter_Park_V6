@@ -84,7 +84,7 @@ public class RunState : GroundedState
 	#region routings
 	protected override void RouteState()
 	{
-		if (ch.inputMoveVectorRaw.x != 0) //HACK: CANT MOVE DETECTION
+		if (ch.inputMoveDirection.x != 0) //HACK: CANT MOVE DETECTION
 		{
 			if (runHold == sneakHold)
 			{

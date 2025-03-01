@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{78ED37F5-F888-F4D1-DED7-82AE47B340ED}</ProjectGuid>
+    <ProjectGuid>{28A20B4B-0899-48D0-0823-7EFCEEC76226}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Unity.VisualScripting.Shared.Editor</AssemblyName>
@@ -551,6 +551,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>Library\PackageCache\com.unity.collections\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit\net40\unity-custom\nunit.framework.dll</HintPath>
       <Private>False</Private>
@@ -585,6 +589,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
@@ -1098,35 +1106,35 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Unity.VisualScripting.Core.Editor.csproj">
-      <Project>{59D574A6-8A45-F920-3CBF-308D737DEA51}</Project>
+      <Project>{57517124-1579-81D9-0BC6-B17BF4A4F7EB}</Project>
       <Name>Unity.VisualScripting.Core.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Flow.Editor.csproj">
-      <Project>{1E39A2EC-7F7C-401C-B02D-F5E213AD1B63}</Project>
+      <Project>{6EFCF743-C1C8-C4B8-FA42-7378F1198A3D}</Project>
       <Name>Unity.VisualScripting.Flow.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.State.Editor.csproj">
-      <Project>{C3638D9D-B4F2-45EB-1A79-0ABB046C9F12}</Project>
+      <Project>{2AFBD54A-7A4C-8471-6CD1-F0CDD9FBCA47}</Project>
       <Name>Unity.VisualScripting.State.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Core.csproj">
-      <Project>{58ABCCF5-5090-6E06-5F58-C26ABAA80EB5}</Project>
+      <Project>{D4C45A41-09F3-90E1-54FC-E8442E173420}</Project>
       <Name>Unity.VisualScripting.Core</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.Flow.csproj">
-      <Project>{300E2085-6842-67CA-306C-65A663576BEA}</Project>
+      <Project>{492BBB71-10D7-9204-0F30-AB8F84D1CF43}</Project>
       <Name>Unity.VisualScripting.Flow</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.State.csproj">
-      <Project>{98E11BDC-560D-36E5-B7BA-50DD24907809}</Project>
+      <Project>{890D6202-7714-B5D7-52D8-07B62A2AD522}</Project>
       <Name>Unity.VisualScripting.State</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEngine.TestRunner.csproj">
-      <Project>{22E88112-1B07-C9D1-CB14-628ACC88AD87}</Project>
+      <Project>{46EE0196-81FB-F5A3-069A-170F5D4928A3}</Project>
       <Name>UnityEngine.TestRunner</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEditor.TestRunner.csproj">
-      <Project>{ECE23FA2-1D65-B937-D793-5A814D987399}</Project>
+      <Project>{25744823-1E80-8704-6527-A676C7443F31}</Project>
       <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>

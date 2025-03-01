@@ -30,11 +30,11 @@ public enum CStateID //Standard state types
 	//OO_GroundedDash,
 	OO_Jump,
 	OO_IdleAirborne,
-	//OO_GroundedForwardBasic,
+	//OO_GroundedForwardChargeAttack,
 
 }
 
-public abstract class Character : MonoBehaviour, IGameUpdate, IHittable
+public abstract class Character : MonoBehaviour, IGameUpdate
 {
 	//======// /==/==/==/=||[FIELDS]||==/==/==/==/==/==/==/==/==/==/==/==/==/==/ //======//
 	#region fields
@@ -96,9 +96,7 @@ public abstract class Character : MonoBehaviour, IGameUpdate, IHittable
 
 	[Header("Input Variables")]
 	public Vector3 inputMoveDirection = Vector3.zero;
-	public Vector3 inputMoveVectorRaw = Vector3.zero;
-	public Vector3 inputLookDirection = Vector3.zero;
-	public Vector3 inputLookVectorRaw = Vector3.zero;
+	public Vector3 characterLookDirection = Vector3.zero;
 	#endregion input
 	//=//-----|Action Queue|------------------------------------------------------//=//
 	#region hitstop
@@ -456,48 +454,15 @@ public abstract class Character : MonoBehaviour, IGameUpdate, IHittable
 	protected virtual void ProcessInput()
 	{
 		//reset
-		inputMoveDirection = Vector3.zero;
-		inputLookDirection = Vector3.zero;
-		//movement input
-		if (playerInputHandler.GetButtonHold("MoveUp"))
+		inputMoveDirection = playerInputHandler.MoveInput;
+		characterLookDirection = playerInputHandler.LookInput;
+		if (!facingRight)
 		{
-			inputMoveDirection += Vector3.up;
+			characterLookDirection.x *= -1;
 		}
-		if (playerInputHandler.GetButtonHold("MoveRight"))
-		{
-			inputMoveDirection += Vector3.right;
-		}
-		if (playerInputHandler.GetButtonHold("MoveDown"))
-		{
-			inputMoveDirection += Vector3.down;
-		}
-		if (playerInputHandler.GetButtonHold("MoveLeft"))
-		{
-			inputMoveDirection += Vector3.left;
-		}
-		//"looking" input
-		if (playerInputHandler.GetButtonHold("LookUp"))
-		{
-			inputLookDirection += Vector3.up;
-		}
-		if (playerInputHandler.GetButtonHold("LookRight"))
-		{
-			inputLookDirection += Vector3.right;
-		}
-		if (playerInputHandler.GetButtonHold("LookDown"))
-		{
-			inputLookDirection += Vector3.down;
-		}
-		if (playerInputHandler.GetButtonHold("LookLeft"))
-		{
-			inputLookDirection += Vector3.left;
-		}
-
-		inputMoveVectorRaw = inputMoveDirection;
-		inputLookVectorRaw = inputLookDirection;
 
 		inputMoveDirection.Normalize();
-		inputLookDirection.Normalize();
+		characterLookDirection.Normalize();
 		//...
 
 

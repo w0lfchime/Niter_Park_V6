@@ -86,7 +86,12 @@ public class GroundedIdleState : GroundedState
 	#region routings
 	protected override void RouteState()
 	{
-		if (ch.inputMoveVectorRaw.x != 0) //HACK: CANT MOVE DETECTION
+		//if (ch.characterLookDirection.x > 0)
+		//{
+		//	StatePushState(CStateID.OO_GroundedForwardChargeAttack, (int)priority + 1, 2);
+		//}
+
+		if (ch.inputMoveDirection.x != 0) //HACK: CANT MOVE DETECTION
 		{
 			if (sneakHold == runHold)
 			{

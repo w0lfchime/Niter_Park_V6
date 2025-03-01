@@ -287,9 +287,9 @@ public class PhysicalState : CharacterState
 	{
 		if (ch.onGrounding)
 		{
+			ch.jumpCount = 0;
 			if (!ch.isGroundedByState)
 			{
-				LogCore.Log("MEOW");
 				StatePushState(CStateID.OO_GroundedIdle, (int)priority + 1, 2);
 			}
 		}
@@ -313,6 +313,7 @@ public class PhysicalState : CharacterState
 		//route 
 		if (cih.GetButtonDown("Jump") && jumpAllowed)
 		{
+			ch.jumpCount++;
 			StatePushState(CStateID.OO_Jump, 4, 4);
 		}
 	}

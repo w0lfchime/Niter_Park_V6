@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{37D9B4D5-205C-839B-B515-0A5F664DEFC3}</ProjectGuid>
+    <ProjectGuid>{12DB83EF-FCEF-782E-29B1-4A27A3F3CDF0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection</AssemblyName>
@@ -63,8 +63,8 @@
   <ItemGroup>
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\MethodBodyReader.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\ByteBuffer.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\Disassembler.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\Instruction.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\Disassembler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Mono.Reflection\Reflection.asmdef" />
@@ -554,6 +554,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>Library\PackageCache\com.unity.collections\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit\net40\unity-custom\nunit.framework.dll</HintPath>
       <Private>False</Private>
@@ -588,6 +592,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
@@ -1101,11 +1109,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="UnityEngine.TestRunner.csproj">
-      <Project>{22E88112-1B07-C9D1-CB14-628ACC88AD87}</Project>
+      <Project>{46EE0196-81FB-F5A3-069A-170F5D4928A3}</Project>
       <Name>UnityEngine.TestRunner</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEditor.TestRunner.csproj">
-      <Project>{ECE23FA2-1D65-B937-D793-5A814D987399}</Project>
+      <Project>{25744823-1E80-8704-6527-A676C7443F31}</Project>
       <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>

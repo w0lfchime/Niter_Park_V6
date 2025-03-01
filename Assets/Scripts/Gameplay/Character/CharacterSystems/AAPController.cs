@@ -14,6 +14,8 @@ public enum STDAnimState
     IdleAirborne,
     NearGrounding,
     OnGrounding,
+    GroundedChargeAttackForwardCharge,
+    GroundedChargeAttackForwardRelease,
 }
 
 public class AAPController
@@ -31,7 +33,6 @@ public class AAPController
     private AnimationClip currentClip;
 
     public STDAnimState currentAnimatorState;
-    public Dictionary<string, (int, float)> animData = new Dictionary<string, (int, float)>();
 
     public AAPController(Character character)
     {
@@ -41,6 +42,8 @@ public class AAPController
     }
 
     // Animator Setup
+    private Dictionary<STDAnimState, AnimationClip> animStateData = new Dictionary<STDAnimState, AnimationClip>();
+
     public void Setup()
     {
         if (animator == null || animator.runtimeAnimatorController == null)
@@ -49,55 +52,40 @@ public class AAPController
             return;
         }
 
-        // Get all animation clips from the Animator Controller
-        RuntimeAnimatorController controller = animator.runtimeAnimatorController;
-        AnimationClip[] clips = controller.animationClips;
+        animStateData.Clear();
 
-        foreach (AnimationClip clip in clips) //TODO: COMBINE
-        {
-            if (clip == null) continue;
-
-            float clipLength = clip.length;    // Duration in seconds
-            float frameRate = clip.frameRate;  // Frames per second (FPS)
-            int frameDuration = Mathf.RoundToInt(clipLength * frameRate); // Total frame count
-
-            // Populate the dictionary
-            animData[clip.name] = (frameDuration, clipLength);
-        }
 
     }
-    public void PlayInFrames(STDAnimState anim, int frames)
-    {
-        //STOP: STATE CHANGE?
-        
-        // Retrieve animation clip length and frame count from dictionary
-        (int clipFrames, float clipLength) = animData[anim.ToString()];
 
-        if (clipFrames <= 0 || clipLength <= 0)
+    public void PlayInFrames(STDAnimState anim, int animFrameDuration, int framesToPlayIn)
+    {
+        // Ensure valid input
+        if (animFrameDuration <= 0 || framesToPlayIn <= 0)
         {
-            Debug.LogWarning($"Invalid animation data for '{anim}'.");
+            Debug.LogWarning("Invalid frame duration or frames to play in.");
             return;
         }
 
-        // Convert the target frame duration to seconds (assuming 60 FPS logic)
-        float targetDuration = frames / ups;
+        // Calculate the speed factor
+        // The animation is animFrameDuration frames long at 30 FPS
+        float animationLength = animFrameDuration / 30f; // Convert frame count to seconds
+        float targetDuration = framesToPlayIn / 60f; // Convert game logic frames to seconds
+        float speed = animationLength > 0 ? animationLength / targetDuration : 1f;
 
-        // Calculate the speed multiplier to match the desired frame duration
-        float speedMultiplier = clipLength / targetDuration;
-
-        // Play animation with adjusted speed
-        //animator.CrossFade(anim, owner.stdFade); // Smooth transition (adjust fade time if needed)
-        PlayAnimatorState(anim, owner.stdFade);
-        animator.speed = speedMultiplier;
+        // Play animation and adjust speed
+        PlayAnimatorState(anim);
+        animator.speed = speed;
     }
 
     public void PlayAnimatorState(STDAnimState state)
     {
+        animator.speed = 1.0f;
         currentAnimatorState = state;
         animator.CrossFadeInFixedTime(state.ToString(), owner.stdFade);
     }
     public void PlayAnimatorState(STDAnimState state, float cfTime)
     {
+        animator.speed = 1.0f;
         currentAnimatorState = state;
         animator.CrossFadeInFixedTime(state.ToString(), cfTime);
     }

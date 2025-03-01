@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{554BD080-D896-9E77-C8BA-1E2F34BD7D29}</ProjectGuid>
+    <ProjectGuid>{1CB92BAE-6DCC-178B-6A5A-51886C44FDB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Unity.TestTools.CodeCoverage.Editor.OpenCover.Model</AssemblyName>
@@ -61,21 +61,21 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.31f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\InstrumentationPoint.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\CoverageSession.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Class.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\SkippedEntity.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\TrackedMethod.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\SummarySkippedEntity.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\BranchPoint.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\IDocumentReference.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\InstrumentationPoint.cs" />
+    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Class.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Method.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\File.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\TrackedMethod.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Module.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\SummarySkippedEntity.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\HelperExtensions.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Summary.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\SequencePoint.cs" />
     <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\SkippedMethod.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\BranchPoint.cs" />
-    <Compile Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\IDocumentReference.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.testtools.codecoverage\Editor\CoverageFormats\OpenCover\Model\Model.asmdef" />
@@ -565,6 +565,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Collections.LowLevel.ILSupport">
+      <HintPath>Library\PackageCache\com.unity.collections\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit\net40\unity-custom\nunit.framework.dll</HintPath>
       <Private>False</Private>
@@ -599,6 +603,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\PackageCache\com.unity.nuget.mono-cecil\Mono.Cecil.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
@@ -1112,11 +1120,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="UnityEngine.TestRunner.csproj">
-      <Project>{22E88112-1B07-C9D1-CB14-628ACC88AD87}</Project>
+      <Project>{46EE0196-81FB-F5A3-069A-170F5D4928A3}</Project>
       <Name>UnityEngine.TestRunner</Name>
     </ProjectReference>
     <ProjectReference Include="UnityEditor.TestRunner.csproj">
-      <Project>{ECE23FA2-1D65-B937-D793-5A814D987399}</Project>
+      <Project>{25744823-1E80-8704-6527-A676C7443F31}</Project>
       <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
