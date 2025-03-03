@@ -15,29 +15,33 @@ public class VehicleMovement : MonoBehaviour
 		splineIndex = laneIndex;
 		speed = moveSpeed;
 		reverse = moveReverse;
-		progress = reverse ? 1f : 0f; // Start at the correct end
+		progress = reverse ? 0.99f : 0.01f;  // Start at the correct end
 	}
+
+	private bool initialized = false;
 
 	void Update()
 	{
+		if (!initialized)
+		{
+			initialized = true; // Skip movement for first frame
+			return;
+		}
+
 		if (splinePath == null || splinePath.Splines.Count <= splineIndex) return;
 
-		// Move along the selected spline
 		float direction = reverse ? -1f : 1f;
 		progress += (speed / splinePath.Splines[splineIndex].GetLength()) * Time.deltaTime * direction;
 
-		// Clamp progress and despawn at the end
 		if ((reverse && progress <= 0f) || (!reverse && progress >= 1f))
 		{
 			Destroy(gameObject);
 			return;
 		}
 
-		// Get position and forward direction from spline
 		transform.position = splinePath.EvaluatePosition(splineIndex, progress);
 		Quaternion forwardRotation = Quaternion.LookRotation(splinePath.EvaluateTangent(splineIndex, progress));
 
-		// If reverse, flip the vehicle 180 degrees
 		if (reverse)
 		{
 			forwardRotation *= Quaternion.Euler(0, 180, 0);
@@ -45,4 +49,5 @@ public class VehicleMovement : MonoBehaviour
 
 		transform.rotation = forwardRotation;
 	}
+
 }

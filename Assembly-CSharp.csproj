@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{4FBCF737-9E70-D088-60E8-C9C84D8325F9}</ProjectGuid>
+    <ProjectGuid>{2067BDB1-7054-7F58-06EC-577F3A8B91D8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -76,6 +76,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Ric\States\Level 5\RicIdleAirborne.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\CharacterSystems\Hits\HitManager.cs" />
+    <Compile Include="Assets\Scripts\AppState\AppManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Airborne\Flight.cs" />
     <Compile Include="Assets\Scripts\Maps\Highway\SpinOnY.cs" />
     <Compile Include="Assets\Scripts\Maps\MatchManager.cs" />
@@ -88,7 +89,6 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Airborne\JumpState.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 2\PhysicalState.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Grounded\RunState.cs" />
-    <Compile Include="Assets\Scripts\AppManager.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\Scripts\Code Systems\DataStructures\SetStateRequestHeap.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
@@ -106,6 +106,7 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Storm\Storm.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\VectorRendering\DebugVector.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\MatchManagement\GameUpdateDriver.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\DebugCore.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericJump.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\CharacterSystems\Hits\HitBox2D.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Storm\State\Level 5\StormJump.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\MatchManagement\GameMode.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Storm\State\Level 5\StormGroundedForwardChargeAttack.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
@@ -138,7 +140,6 @@
     <Compile Include="Assets\Scripts\Gameplay\Character\Character.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\State\AbstractStates\Level 4\Grounded\GroundedChargeAttackState.cs" />
-    <Compile Include="Assets\Scripts\AppState\Gameplay\GameUpdateDriver.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\ServiceManagers\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Debug\Logging&amp;Console\LogCategories.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Assets\Scripts\ServiceManagers\UIManager.cs" />
     <Compile Include="Assets\Scripts\Code Systems\DataStructures\MaxHeap.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\MatchManagement\Map.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\GenericCharacter.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Character\Characters\Generic (OLD)\States\Level 5\GenericIdleAirborne.cs" />
     <Compile Include="Assets\Scripts\AppState\HomeMenu\UI\LocalPlayerTab.cs" />
@@ -1376,7 +1378,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="com.ben-w.erp.csproj">
-      <Project>{75E3CDB5-B8C6-00E4-EF18-47CDF1C73C89}</Project>
+      <Project>{D944F0EC-BFD6-6F99-ABF3-3356B914CC0F}</Project>
       <Name>com.ben-w.erp</Name>
     </ProjectReference>
   </ItemGroup>

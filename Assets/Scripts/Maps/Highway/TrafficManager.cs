@@ -54,14 +54,14 @@ public class TrafficManager : MonoBehaviour
 
 	void SpawnVehicle()
 	{
-		int laneIndex = Random.Range(0, splines.Splines.Count); // Choose a spline from the container
+		// Randomly pick which spline (lane) to use
+		int laneIndex = Random.Range(0, splines.Splines.Count);
 
+		// Randomly pick a vehicle prefab
 		GameObject vehiclePrefab = vehiclePrefabs[Random.Range(0, vehiclePrefabs.Length)];
-		GameObject newVehicle = Instantiate(vehiclePrefab, vehicleParent); // Set parent to "Vehicles"
 
-		VehicleMovement vehicleMovement = newVehicle.AddComponent<VehicleMovement>();
+		// Calculate speed offset for this lane
 		float assignedSpeed = baseVehicleSpeed;
-
 		switch (laneIndex)
 		{
 			case 0:
@@ -77,16 +77,27 @@ public class TrafficManager : MonoBehaviour
 				break;
 		}
 
-		// Ensure the vehicle starts in the correct position immediately
+		// Get the spline and evaluate the start position/tangent
 		Spline spline = splines.Splines[laneIndex];
-		float startT = 0f; // Start at the beginning of the spline
+		float startT = 0f;
 		Vector3 startPosition = spline.EvaluatePosition(startT);
 		Quaternion startRotation = Quaternion.LookRotation(spline.EvaluateTangent(startT));
 
-		newVehicle.transform.position = startPosition;
-		newVehicle.transform.rotation = startRotation;
+		// Instantiate the vehicle at the proper world space position/rotation, with no parent
+		GameObject newVehicle = Instantiate(vehiclePrefab, startPosition, startRotation, null);
+		newVehicle.SetActive(false); // Ensure it won't render yet
 
+		// Optionally re-parent it under our "Vehicles" object, preserving world-space transform
+		newVehicle.transform.SetParent(vehicleParent, true);
+
+		// Attach and configure our movement script
+		VehicleMovement vehicleMovement = newVehicle.AddComponent<VehicleMovement>();
 		vehicleMovement.SetUp(splines, laneIndex, assignedSpeed, laneIndex < 2);
+
+		// Now that everything is set, activate the vehicle
+		newVehicle.SetActive(true);
 	}
+
+
 
 }
